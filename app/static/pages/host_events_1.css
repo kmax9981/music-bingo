@@ -1,0 +1,13 @@
+  .eventList{ display: flex; flex-direction: column; gap: 10px; }
+  .eventRow{ display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 10px 12px; align-items: center; padding: 10px; border-radius: 12px;
+             border: 1px solid rgb(var(--ink-rgb) / 0.10); background: rgb(var(--shade-rgb) / calc(0.14 * var(--shade-k))); }
+  .eventThumb{ width: 84px; height: 64px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #fff; overflow: hidden; }
+  .eventThumb img{ max-width: 100%; max-height: 100%; object-fit: contain; }
+  .eventThumb .muted{ color: #666; }
+  .eventBtns{ grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px; }
+  .eventBtns .btn{ padding: 8px 12px; font-size: 13px; cursor: pointer; }
+  .eventRowMsg{ grid-column: 1 / -1; min-height: 1.1em; }
+  #newEventPreview{ width: 56px; height: 56px; object-fit: contain; background: #fff; border-radius: 8px; padding: 4px; }
+  .eventNewActions{ display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+  [hidden]{ display: none !important; }
+  .logoHint{ margin-top: 6px; line-height: 1.4; }

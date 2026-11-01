@@ -1,0 +1,87 @@
+    /* one big card per US Letter page, black on white (no app theme) */
+    @page { size: letter; margin: 0.45in; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e9e9ee; color: #111; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+
+    .toolbar { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+               padding: 12px 16px; background: #1b1d33; color: #fff; }
+    .toolbar .title { font-weight: 700; margin: 0 auto 0 0; font-size: inherit; }
+    .toolbar .muted { color: #c9cbe0; font-size: 14px; }
+    .toolbar a, .toolbar button { font: inherit; font-weight: 700; border-radius: 10px; padding: 9px 16px; text-decoration: none; cursor: pointer; }
+    .toolbar button { background: #5b3fd9; color: #fff; border: 0; }   /* dark enough for white text (4.5:1) */
+    .toolbar a { color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+    .moreForm { display: flex; align-items: center; gap: 8px; margin: 0; }
+    .moreForm label { font-size: 14px; color: #c9cbe0; }
+    .moreForm input[type=number] { width: 4.2em; padding: 6px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); color: #fff; font: inherit; }
+    .toolbar .altBtn { background: transparent; border: 1px solid rgba(255,255,255,0.45); color: #fff; }
+
+    .sheet { width: 7.6in; height: 9.7in; margin: 24px auto; padding: 0; background: #fff; display: flex; flex-direction: column;
+             box-shadow: 0 2px 14px rgba(0,0,0,0.18); }
+    .sheet + .sheet { margin-top: 32px; }
+    .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 0 0 10px; border-bottom: 3px solid #111; }
+    .gameName { font-size: 26pt; font-weight: 800; line-height: 1.1; }
+    .cardNo { text-align: right; white-space: nowrap; }
+    .cardNo b { display: block; font-size: 26pt; line-height: 1; }
+    .cardNo span { font-size: 12pt; letter-spacing: 0.04em; }
+
+    /* minmax(0, 1fr): squares stay equal; a long title shrinks to fit instead of stretching its row */
+    .letters, .grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+    .letters { margin-top: 12px; }
+    .letters div { text-align: center; font-size: 30pt; font-weight: 900; letter-spacing: 0.02em; }
+    .grid { border-top: 2.5px solid #111; border-left: 2.5px solid #111; flex: 1; min-height: 0; grid-template-rows: repeat(5, minmax(0, 1fr)); }
+    .sq { border-right: 2.5px solid #111; border-bottom: 2.5px solid #111; display: flex; align-items: center; justify-content: center;
+          padding: 8px; text-align: center; overflow: hidden; min-width: 0; min-height: 0; }
+    .sqText { font-size: 18pt; font-weight: 700; line-height: 1.12; overflow-wrap: normal; max-width: 100%; }
+    .sq.free { background: #f1f1f1; }
+    .sq.free .freeWord { font-size: 24pt; font-weight: 900; letter-spacing: 0.06em; }
+    .sq.free img { max-width: 92%; max-height: 92%; object-fit: contain; }
+    .sq.free .eventName { font-size: 16pt; font-weight: 800; line-height: 1.12; }
+
+    .foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 10px; font-size: 11pt; color: #333; }
+    .foot .join { display: flex; align-items: center; gap: 10px; }
+    .foot .qr { width: 0.6in; height: 0.6in; flex: none; }
+    .foot .qr svg { width: 100%; height: 100%; display: block; }
+
+    .advice { max-width: 7.6in; margin: 16px auto 0; padding: 10px 14px; border-radius: 10px; background: #fff4d6; border: 1px solid #f0c75e; font-size: 14px; line-height: 1.45; }
+    .staleHolder:empty { display: none; }
+    .staleHolder { background: transparent; border: 0; padding: 0; }
+    .staleBanner { padding: 10px 14px; border-radius: 10px; background: #fff4d6; border: 1px solid #f0c75e; font-size: 14px; line-height: 1.45; }
+    .staleTitle { font-weight: 800; margin-bottom: 4px; }
+    .staleBtn { margin-top: 8px; font: inherit; font-weight: 700; border-radius: 10px; padding: 8px 16px; background: #5b3fd9; color: #fff; border: 0; cursor: pointer; }
+    .staleOk { color: #06603a; font-size: 14px; }
+    .staleMsg { margin-top: 6px; color: #8a5a00; }
+    .empty { max-width: 560px; margin: 80px auto; background: #fff; padding: 24px; border-radius: 12px; }
+
+    @media print {
+      html, body { background: #fff; margin: 0; padding: 0; }
+      .toolbar, .advice, .staleHolder { display: none; }
+      /* Same size as on screen, so titles fitted on screen fit on paper. A little shorter than the printable
+         area (10.1 in on Letter) so printers with bigger margins still fit one card per page. */
+      .sheet, .sheet + .sheet { margin: 0; box-shadow: none; width: 7.6in; height: 9.7in; overflow: hidden; break-after: auto; page-break-after: auto; }
+      /* The break goes BEFORE every card except the first. A break after each card also fires after the last
+         one, and Safari/Firefox then print an empty final page (a :last-child rule can't prevent that: the
+         script tags after the last card mean it isn't the last child). */
+      .sheet + .sheet { break-before: page; page-break-before: always; }
+      .sq.free { background: #f1f1f1; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  
+
+.mt6 { margin-top: 6px; }
+
+    .colorForm { display: flex; align-items: center; gap: 8px; margin: 0; }
+    .colorForm label { font-size: 14px; color: #c9cbe0; }
+    .colorForm select { padding: 6px 8px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.08); color: #fff; font: inherit; }
+    .colorForm select option { color: #111; }
+
+/* Cards colored with the host's theme (chosen when the game was created): the paper stays white, so ink use stays low.
+   The lines, game name and card number are the theme's main color; each B-I-N-G-O letter sits in a box filled with the
+   highlight color and edged in the main color (Maize boxes with a Blue edge in Maize & Blue). The center square is not
+   shaded at all (plain white), so an event logo in the theme's colors always shows. */
+html[data-theme] .head{ border-bottom-color: var(--accent); }
+html[data-theme] .gameName, html[data-theme] .cardNo b{ color: var(--accent); }
+html[data-theme] .grid{ border-top-color: var(--accent); border-left-color: var(--accent); }
+html[data-theme] .sq{ border-right-color: var(--accent); border-bottom-color: var(--accent); }
+html[data-theme] .letters{ gap: 8px; padding-bottom: 8px; }
+html[data-theme] .letters div{ background: var(--accent2); color: var(--paper-letter-text, #111); border: 3px solid var(--accent); border-radius: 10px; padding: 2px 0;
+                               -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html[data-theme] .sq.free{ background: #fff; }

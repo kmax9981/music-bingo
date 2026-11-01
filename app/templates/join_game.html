@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block head_scripts %}<script src="{{ static_url('mono.js') }}"></script>{% endblock %}
+{% block content %}
+  {% include '_mono_switch.html' %}
+  {% set join_blocked = join_blocked|default(false) %}
+  <div class="panel centerPanel">
+    <div class="panelHeader centerHeader">
+      <h1 class="title">Join Game</h1>
+      <div class="codePill">{{ code }}</div>
+    </div>
+
+    {% if error %}
+      {% if join_blocked %}
+        <div class="alert alertBad joinBlocked">
+          <div class="joinBlockedTitle">{{ error_title|default(error) }}</div>
+          <div class="joinBlockedSub">{{ error_sub|default("") }}</div>
+        </div>
+      {% else %}
+        <div class="alert alertBad">{{ error|e|replace('\n', '<br>'|safe)|replace('\r\n', '<br>'|safe) }}</div>
+      {% endif %}
+    {% endif %}
+
+    {% if join_blocked %}
+      <div class="is15">
+        <a class="btn btnPrimary" href="/">Home</a>
+      </div>
+    {% else %}
+      {% if existing_player %}
+        <div class="alert alertOk">
+          You've already joined as <b>{{ existing_player.name }}</b>.
+          <a class="is16 btn btnPrimary" href="/player/{{ code }}/{{ existing_player.number }}">Go to my card</a>
+        </div>
+        <form method="post" action="/game/{{ code }}/not_me" class="notMeForm">
+          <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+          <span class="muted">Not you?</span> <button type="submit" class="linkBtn">Join as someone else</button>
+        </form>
+      {% endif %}
+      <form method="post" action="/game/{{ code }}/join" class="form">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+        <label class="label" for="f_name">Your name</label>
+        <input id="f_name" class="input" name="name" autocomplete="name" required />
+        {% include '_avatar_picker.html' %}
+        <button class="btn btnPrimary" type="submit">Join</button>
+      </form>
+    {% endif %}
+  </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ static_url('pages/avatar_pick_1.js') }}"></script>
+{% endblock %}

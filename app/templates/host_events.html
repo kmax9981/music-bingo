@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="h1">Events</h1>
+    <div class="muted">The places you run bingo. An event's logo (or its name, if there is no logo) goes in the center square of paper cards.</div>
+  </div>
+  <div class="topActions"></div>
+</div>
+
+{% set options_active = 'events' %}{% include "_options_nav.html" %}
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Add an event</div>
+    <div class="sub">The name is required. The logo is optional (PNG or JPG); it is shrunk in your browser before it is saved.</div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <label class="label" for="newEventName">Event name</label>
+      <input class="input" id="newEventName" maxlength="80" placeholder="Family Game Night" aria-required="true" />
+    </div>
+    <div class="col">
+      <label class="label" for="newEventLogo">Logo (optional)</label>
+      <input class="input" type="file" id="newEventLogo" accept="image/png,image/jpeg" />
+      <div class="muted small logoHint">PNG or JPG, up to 5 MB. A simple, roughly square logo on a white or transparent background looks best in the center square of a paper card. It is shrunk automatically.</div>
+    </div>
+  </div>
+  <div class="eventNewActions">
+    <img data-hide id="newEventPreview" alt="Logo preview" />
+    <button class="btn btnPrimary" type="button" id="newEventSave">Save event</button>
+    <span class="muted small" id="newEventMsg"></span>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Your events</div>
+    <div class="sub">Games already made with an event keep what they printed. Deleting an event only means new cards use FREE. Logos: PNG or JPG, up to 5 MB, roughly square works best.</div>
+  </div>
+  <div id="eventList" class="eventList">
+    {% for v in events %}
+    <div class="eventRow" data-id="{{ v.id }}">
+      <div class="eventThumb">{% if v.logo_url %}<img src="{{ v.logo_url }}" alt="{{ v.name }} logo" />{% else %}<span class="muted small">No logo</span>{% endif %}</div>
+      <input class="input eventNameIn" value="{{ v.name }}" maxlength="80" aria-label="Event name" />
+      <div class="eventBtns">
+        <button class="btn btnGhost eventRename" type="button">Save name</button>
+        <label class="btn btnGhost eventLogoBtn">{% if v.logo_url %}Change logo{% else %}Add logo{% endif %}<input type="file" class="eventLogoIn" accept="image/png,image/jpeg" hidden /></label>
+        {% if v.logo_url %}<button class="btn btnGhost eventNoLogo" type="button">Remove logo</button>{% endif %}
+        <button class="btn btnGhost eventDel" type="button">Delete</button>
+      </div>
+      <div class="muted small eventRowMsg" aria-live="polite"></div>
+    </div>
+    {% endfor %}
+    <div class="muted" id="eventEmpty"{% if events %} hidden{% endif %}>No events yet. Add one above, or from the Create Game form when you make paper cards.</div>
+  </div>
+</div>
+
+</div></div>
+
+<link rel="stylesheet" href="{{ static_url('pages/host_events_1.css') }}" />
+<script src="{{ static_url('event_logo.js') }}"></script>
+<script src="{{ static_url('pages/host_events_1.js') }}"></script>
+{% endblock %}

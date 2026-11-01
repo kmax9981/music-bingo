@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" {{ theme_attrs(request, game) }}>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="{{ request.state.csrf_token }}" />
+<script src="{{ static_url('csrf.js') }}"></script>
+<link rel="icon" href="{{ static_url('favicon-qr.svg') }}" type="image/svg+xml">
+<title>Scoreboard: {{ game.name or game.code }}</title>
+<link rel="stylesheet" href="{{ static_url('themes.css') }}" />
+<link rel="stylesheet" href="{{ static_url('avatars.css') }}" />
+  {{ theme_head(request, game) }}
+<link rel="stylesheet" href="{{ static_url('pages/game_scoreboard_1.css') }}" />
+</head>
+<body data-code="{{ game.code }}">
+  <main class="board">
+    <h1>{{ game.name or game.code }}</h1>
+    <div class="sub" id="roundNow">{% if board.round > 1 %}Round {{ board.round }}{% endif %}</div>
+    <section class="cols">
+      <div class="col">
+        <h2>Winners</h2>
+        <ol class="winsList" id="winsList"><li class="muted">No winners yet.</li></ol>
+      </div>
+      <div class="col">
+        <h2>Most wins</h2>
+        <ol class="standList" id="standList"><li class="muted">No winners yet.</li></ol>
+      </div>
+    </section>
+  </main>
+<script src="{{ static_url('pages/game_scoreboard_1.js') }}"></script>
+</body>
+</html>

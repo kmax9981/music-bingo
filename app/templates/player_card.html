@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block head_scripts %}<script src="{{ static_url('mono.js') }}"></script>{% endblock %}
+{% from "_pattern.html" import pattern_badge %}
+{% from "_avatar.html" import avatar %}
+
+{% block content %}
+
+
+
+
+<!-- Page header -->
+<div class="patternStrip muted">{{ pattern_badge(pattern, round_no) }}</div>
+<div class="topbar">
+  <div>
+    <h1 class="h1">Music Bingo</h1>
+Game {{ game.code }} — {{ (playlist_name or game.playlist_name or game.playlist or 'Unknown') }}
+      <div class="muted playerLine"><span class="dLabel">Player:</span> {{ avatar(player, 'sm') }} <b>{{ player.name }}</b> <label class="displayInline"><span class="dLabel">Display</span> <select class="displaySelect" id="displaySelect" aria-label="Display"><option value="color">Color</option><option value="light">Light</option><option value="dark">Dark</option></select></label> <label class="hintSwitch" id="hintToggleWrap" hidden title="Light up the letter of the column to look in for the song now playing"><input type="checkbox" role="switch" id="hintChk"> Hints</label></div>
+  </div>
+<div class="patternTop muted">{{ pattern_badge(pattern, round_no) }}</div>
+<div class="topActions">
+  <div class="nowPlaying nowPlayingCompact" id="nowPlaying">
+    <div class="npTitle" id="npTitle">{{ current_title }}</div>
+    <div class="npArtist" id="npArtist">{{ current_artist }}</div>
+    <!-- covers the box while a new song is still hidden -->
+    <div class="npCountdown" id="npCountdown" hidden>
+      <div class="npcLine" aria-hidden="true"><span id="npcLabel">Song revealed in</span> <span class="npcNum" id="npcNum"></span></div>
+      <div class="npcSub" id="npcSub" aria-hidden="true">Guess it by ear</div>
+      <div class="npcBar" aria-hidden="true"><div class="npcFill" id="npcFill"></div></div>
+      <span class="npcSr" id="npcSr" aria-live="polite"></span>
+    </div>
+  </div>
+  <!-- Countdown styles live here because base.html has no {% raw %}{% block styles %}{% endraw %} (that block never renders). -->
+  <link rel="stylesheet" href="{{ static_url('pages/player_card_1.css') }}" />
+</div>
+</div>
+
+
+{% if not player.admitted %}
+  <div class="alert alertWarn" id="waitingMsg">Waiting to be admitted by the host…</div>
+{% endif %}
+
+<!-- Outside the card panel: players who were never admitted have no visible card, and still need to see that the game is over -->
+<div id="gameOverOverlay" class="is27 bingoOverlay hidden" aria-hidden="true">
+  <div class="is28">
+    <div class="is29">Game Over, thanks for playing.</div>
+    <ol class="finalWinners" id="finalWinners"></ol>
+    <div class="is30">Click anywhere to continue.</div>
+  </div>
+</div>
+
+<details class="winnersBox" id="winnersBox" hidden>
+  <summary>Winners so far (<span id="winnersCount">0</span>)</summary>
+  <ol id="winnersList"></ol>
+</details>
+
+<div class="panel" id="cardPanel"{% if not player.admitted %} data-hide{% endif %}>
+  <div class="panelHeader">
+    <div class="title">Bingo Card</div>
+    <div class="sub">Tap squares to dab. FREE is always valid.</div>
+
+  </div>
+
+  <div class="cardGrid" id="cardGrid">
+    <div class="cardLetter" aria-hidden="true">B</div><div class="cardLetter" aria-hidden="true">I</div><div class="cardLetter" aria-hidden="true">N</div><div class="cardLetter" aria-hidden="true">G</div><div class="cardLetter" aria-hidden="true">O</div>
+    {% for sq in squares %}
+      <button class="sq {% if sq.is_free %}free{% endif %}{% if sq.is_free and event %} hasEvent{% endif %}" 
+              data-pos="{{ sq.pos }}" 
+              data-title="{{ sq.title }}"
+              type="button"
+              {% if sq.is_free %}data-free="true"{% endif %}>
+        <span class="sqText">{{ display_title(sq.title) }}</span>
+        {% if sq.is_free and event %}
+          {% if event.has_logo %}<span class="eventMark"><img src="/game/{{ game.code }}/event_logo" alt="{{ event.name or 'Event' }} logo" /></span>
+          {% else %}<span class="eventMark eventMarkName"><span class="eventNameText">{{ event.name }}</span></span>{% endif %}
+        {% endif %}
+      </button>
+    {% endfor %}
+  </div>
+
+  <div class="row actionsRow">
+    <button class="btn btnPrimary bigBtn" id="bingoBtn" type="button">BINGO!</button>
+    <div id="playerMsg" class="mt10 muted"></div>
+    <div class="muted small" id="claimMsg"></div>
+    <div data-hide class="mt10 alert alert-danger" id="rejectionMsg">
+      Your bingo claim was not valid. Please try again!
+    </div>
+  </div>
+  <!-- Bingo overlays (players only) -->
+
+  <div id="bingoOverlay" class="bingoOverlay hidden" aria-hidden="true">
+    <canvas id="fireworksCanvas" class="fireworksCanvas" aria-hidden="true"></canvas>
+    <script src="{{ static_url('fireworks.js') }}"></script>
+    <div class="bingoOverlayInner">
+      <div id="bingoOverlayTitle" class="bingoOverlayTitle"></div>
+      <div id="bingoOverlaySub" class="bingoOverlaySub"></div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ static_url('bingo_hint.js') }}"></script>
+<script nonce="{{ request.state.csp_nonce }}">
+window.BINGO_PLAYER = { code: "{{ game.code }}", number: {{ player.number|int }}, status: "{{ game.status }}", hintMode: "{{ hint_mode }}" };
+</script>
+<script src="{{ static_url('pattern_badge.js') }}"></script>
+<script src="{{ static_url('pages/winners_1.js') }}"></script>
+<script src="{{ static_url('pages/player_header_1.js') }}"></script>
+<script src="{{ static_url('player_card.js') }}"></script>
+{% endblock %}

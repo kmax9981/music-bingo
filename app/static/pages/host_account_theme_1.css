@@ -1,0 +1,58 @@
+  /* Theme picker: each card carries data-theme, so the preview uses that theme's own color variables (themes.css) */
+  .themeGrid{ display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin: 10px 0 16px; }
+  .themeCard{ position: relative; display: flex; flex-direction: column; gap: 8px; padding: 10px; border-radius: 14px; cursor: pointer;
+              border: 2px solid rgb(var(--ink-rgb) / 0.12); background: rgb(var(--shade-rgb) / calc(0.18 * var(--shade-k))); }
+  .themeCard:hover{ border-color: rgb(var(--ink-rgb) / 0.28); }
+  .themeCard input{ position: absolute; opacity: 0; pointer-events: none; }
+  .themeCard:has(input:checked){ border-color: var(--accent2); box-shadow: 0 0 0 3px rgb(var(--accent2-rgb, 167 139 250) / 0.30); }
+  .themeCard:has(input:focus-visible){ outline: 2px solid var(--accent2); outline-offset: 2px; }
+  .themePreview{ display: flex; flex-direction: column; justify-content: space-between; gap: 8px; height: 64px; padding: 8px; border-radius: 10px;
+                 border: 1px solid var(--border); background: linear-gradient(180deg, var(--bgTop), var(--bgBot)); }
+  .themeBar{ height: 10px; width: 70%; border-radius: 6px; background: linear-gradient(180deg, var(--panelTop), var(--panelBot)); border: 1px solid var(--border); }
+  .themeBtn{ height: 16px; width: 45%; border-radius: 8px; background: linear-gradient(180deg, var(--accent2), var(--accent)); }
+  .themeName{ font-weight: 800; font-size: 14px; }
+
+  /* Custom theme: three color pickers and a preview of a phone card and a paper card (both use the colors being picked) */
+  .customEditor{ margin: 0 0 16px; padding: 14px; border-radius: 14px; border: 1px solid var(--border); background: rgb(var(--shade-rgb) / calc(0.14 * var(--shade-k))); }
+  .customEditor[hidden]{ display: none; }
+  .customHead .title{ font-weight: 900; }
+  .customHead .sub{ color: var(--muted); font-size: 13px; margin-top: 2px; }
+  .customPickers{ display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin: 12px 0; }
+  .customPick{ display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 12px; border: 2px solid var(--border); cursor: pointer; text-align: left;
+               font: inherit; color: var(--text); background: transparent; min-width: 0; }
+  .customPick:hover{ border-color: rgb(var(--ink-rgb) / 0.35); }
+  .customPick.active{ border-color: var(--accent2); box-shadow: 0 0 0 3px rgb(var(--accent2-rgb) / 0.25); }
+  .customSwatch{ flex: none; width: 44px; height: 44px; border-radius: 50%; border: 2px solid rgb(var(--ink-rgb) / 0.4); background: #888; }
+  .customPickText{ display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .customPickText small{ color: var(--muted); font-size: 12px; font-weight: 400; }
+  /* The color wheel: round is the hue, distance from the middle is the strength, the slider is the brightness */
+  .wheelBox{ display: flex; flex-wrap: wrap; gap: 18px; align-items: center; margin: 0 0 16px; }
+  .wheelCanvas{ width: 260px; max-width: 100%; height: auto; aspect-ratio: 1; border-radius: 50%; cursor: crosshair; touch-action: none; flex: none;
+                box-shadow: 0 0 0 2px rgb(var(--ink-rgb) / 0.25); }
+  .wheelCanvas:focus-visible{ outline: 3px solid var(--accent2); outline-offset: 4px; }
+  .wheelSide{ display: flex; flex-direction: column; gap: 12px; flex: 1 1 220px; min-width: 0; max-width: 340px; }
+  .wheelEditing{ font-size: 14px; color: var(--muted); }
+  .wheelEditing b{ color: var(--text); }
+  .wheelRow{ display: flex; align-items: center; gap: 12px; font-size: 14px; }
+  .wheelRow > span{ width: 88px; flex: none; color: var(--muted); }
+  .wheelRow input[type=range]{ flex: 1; min-width: 0; padding: 0; accent-color: var(--accent2); }
+  .wheelHex{ width: 8.5em; font-family: ui-monospace, Menlo, Consolas, monospace; text-transform: lowercase; }
+  .wheelHelp{ font-size: 12px; line-height: 1.4; }
+  .customPreviews{ display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+  .customPreviewBox{ flex: 1 1 260px; max-width: 340px; min-width: 0; }
+  .customPreviewBox .label{ margin-bottom: 6px; }
+  .customPreviewBox .cpDigital.cardGrid{ gap: 5px; margin: 0; padding: 10px; border-radius: 14px; border: 1px solid var(--border);
+                                         background: linear-gradient(180deg, var(--panelTop), var(--panelBot)); }
+  .cpDigital.cardGrid .cardLetter{ height: 24px !important; font-size: 13px !important; border-radius: 8px; }
+  .cpDigital.cardGrid .sq{ min-height: 0; height: 44px; padding: 3px; border-radius: 9px; display: flex; align-items: center; justify-content: center; text-align: center; cursor: default; }
+  .cpDigital.cardGrid .sqText{ font-size: 9px; line-height: 1.1; font-weight: 800; }
+  /* The paper preview mirrors the printed card: white paper, lines and game name in the main color, each letter in a highlight box edged in the main color */
+  .cpPaper{ background: #fff; color: #111; padding: 10px; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.25); font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  .cpPaperHead{ display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding-bottom: 5px; border-bottom: 2px solid var(--accent); }
+  .cpPaperName{ font-size: 13px; font-weight: 800; color: var(--accent); }
+  .cpPaperNo{ font-size: 15px; color: var(--accent); }
+  .cpLetters{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; margin: 6px 0 4px; }
+  .cpLetters div{ text-align: center; font-size: 13px; font-weight: 900; background: var(--accent2); color: var(--paper-letter-text, #111); border: 2px solid var(--accent); border-radius: 6px; padding: 1px 0; }
+  .cpPaperGrid{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1.5px solid var(--accent); border-left: 1.5px solid var(--accent); }
+  .cpCell{ border-right: 1.5px solid var(--accent); border-bottom: 1.5px solid var(--accent); min-height: 38px; padding: 2px; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 8.5px; font-weight: 700; line-height: 1.1; overflow: hidden; }
+  .cpCell.cpFree{ font-weight: 900; letter-spacing: 0.06em; }

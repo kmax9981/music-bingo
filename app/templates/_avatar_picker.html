@@ -1,0 +1,19 @@
+{# Animal and color pickers for the join forms (both the code page and the game's own join page) #}
+<fieldset class="pickFieldset">
+  <legend class="label">Pick your picture <span class="muted">(optional)</span></legend>
+  <div class="avatarGrid" id="avatarGrid">
+    {% for key, emoji in avatar_options %}
+      <label class="avatarOpt"><input type="radio" name="avatar" value="{{ key }}"><span class="avatar avc-purple" aria-hidden="true">{{ emoji }}</span><span class="srOnly">{{ key }}</span></label>
+    {% endfor %}
+  </div>
+</fieldset>
+<fieldset class="pickFieldset">
+  <legend class="label">Color <span class="muted">(optional)</span></legend>
+  <div class="colorGrid">
+    {% for c in avatar_colors %}
+      <label class="colorOpt"><input type="radio" name="avatar_color" value="{{ c }}"><span class="swatch avc-{{ c }}" aria-hidden="true"></span><span class="srOnly">{{ c }}</span></label>
+    {% endfor %}
+  </div>
+</fieldset>
+<div class="avatarPreview" id="avatarPreview"><span class="avatar avc-purple" id="previewAvatar" aria-hidden="true">🐾</span>
+  <span class="previewText"><b id="previewName">Your name</b></span></div>

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" {{ theme_attrs(request, game|default(none)) }}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title or "Music Bingo" }}</title>
+  <link rel="icon" href="{{ static_url('favicon.svg') }}" type="image/svg+xml" />
+<link rel="stylesheet" href="{{ static_url('app.css') }}" />
+  <link rel="stylesheet" href="{{ static_url('avatars.css') }}" />
+  <link rel="stylesheet" href="{{ static_url('themes.css') }}" />
+  <link rel="stylesheet" href="{{ static_url('mono.css') }}" />
+  {{ theme_head(request, game|default(none)) }}
+  <meta name="csrf-token" content="{{ request.state.csrf_token }}" />
+  <script src="{{ static_url('csrf.js') }}"></script>
+  {% block head_scripts %}{% endblock %}
+</head>
+<body>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  <script src="{{ static_url('inline_hide.js') }}"></script>
+  {% block scripts %}{% endblock %}
+  <script src="{{ static_url('host_user_menu.js') }}"></script>
+  <script src="{{ static_url('playlist_check.js') }}"></script>
+  <script src="{{ static_url('confirm.js') }}"></script>
+</body>
+</html>

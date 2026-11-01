@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="h1">Themes</h1>
+    <div class="muted">Pick the colors for your pages and for the games you host.</div>
+  </div>
+  <div class="topActions">
+  </div>
+</div>
+
+{% set options_active = 'themes' %}{% include "_options_nav.html" %}
+{% if error %}
+  <div class="alert alertBad">{{ error | e }}</div>
+{% endif %}
+{% if ok %}
+  <div class="alert alertOk">{{ ok | e }}</div>
+{% endif %}
+
+
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Theme</div>
+    <div class="sub">Pick the colors for your pages. Players see your theme on the games you host. Choosing one previews it right away; <b>Save theme</b> keeps it.</div>
+  </div>
+
+  <form method="post" action="/host/account/theme" class="form" id="themeForm">
+    <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+    <div class="themeGrid">
+      {% for tid, tname in THEMES %}
+      <label class="themeCard" data-theme="{{ tid }}">
+        <input type="radio" name="theme" value="{{ tid }}"{% if tid == current_theme %} checked{% endif %} />
+        <span class="themePreview"><span class="themeBar"></span><span class="themeBtn"></span></span>
+        <span class="themeName">{{ tname }}</span>
+      </label>
+      {% endfor %}
+    </div>
+
+    <div class="customEditor" id="customEditor"{% if current_theme != 'custom' %} hidden{% endif %}>
+      <div class="customHead">
+        <div class="title">Your colors</div>
+        <div class="sub">Pick three colors; the panels, text and borders are worked out from them. The cards below show how they look to players and on paper.</div>
+      </div>
+      <div class="customPickers" id="customPickers">
+        <button type="button" class="customPick active" data-target="customBg" aria-pressed="true"><span class="customSwatch" aria-hidden="true"></span><span class="customPickText"><b>Background</b><small>the page behind everything</small></span><input type="hidden" name="custom_bg" id="customBg" value="#{{ custom_colors[0] }}" /></button>
+        <button type="button" class="customPick" data-target="customAccent" aria-pressed="false"><span class="customSwatch" aria-hidden="true"></span><span class="customPickText"><b>Buttons</b><small>buttons and the main accent</small></span><input type="hidden" name="custom_accent" id="customAccent" value="#{{ custom_colors[1] }}" /></button>
+        <button type="button" class="customPick" data-target="customHighlight" aria-pressed="false"><span class="customSwatch" aria-hidden="true"></span><span class="customPickText"><b>Highlight</b><small>links, marked squares, B-I-N-G-O</small></span><input type="hidden" name="custom_highlight" id="customHighlight" value="#{{ custom_colors[2] }}" /></button>
+      </div>
+      <div class="wheelBox" id="wheelBox">
+        <canvas id="wheelCanvas" class="wheelCanvas" width="260" height="260" tabindex="0" role="slider" aria-label="Color wheel: turn for the color, move out from the middle for strength. Arrow keys work too."></canvas>
+        <div class="wheelSide">
+          <div class="wheelEditing">Choosing the color for: <b id="wheelEditing">Background</b></div>
+          <label class="wheelRow"><span>Brightness</span><input type="range" id="wheelV" min="0" max="100" value="100" /></label>
+          <label class="wheelRow"><span>Color code</span><input type="text" id="wheelHex" class="input wheelHex" maxlength="7" spellcheck="false" autocomplete="off" /></label>
+          <div class="wheelHelp muted">Click one of the three colors above, then click or drag on the wheel. The cards below change as you go.</div>
+        </div>
+      </div>
+      <div class="customPreviews" id="customPreviews">
+        <div class="customPreviewBox">
+          <div class="label">Phone card</div>
+          <div class="cpDigital cardGrid" aria-hidden="true">
+            {% for l in "BINGO" %}<div class="cardLetter{% if loop.index == 3 %} lit{% endif %}">{{ l }}</div>{% endfor %}
+            {% for t in ["Come On Eileen", "Footloose", "Waterfalls", "Zombie", "Vogue", "Kiss from a Rose", "Beat It", "FREE", "Material Girl", "Black Hole Sun", "No Diggity", "Bulls on Parade", "Mambo No. 5", "Jump", "Faith"] %}
+            <div class="sq{% if t == 'FREE' %} free{% endif %}{% if loop.index0 in (1, 11) %} marked{% endif %}"><span class="sqText">{{ t }}</span></div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="customPreviewBox">
+          <div class="label">Paper card</div>
+          <div class="cpPaper" aria-hidden="true">
+            <div class="cpPaperHead"><span class="cpPaperName">Friday Music Bingo</span><b class="cpPaperNo">7</b></div>
+            <div class="cpLetters">{% for l in "BINGO" %}<div>{{ l }}</div>{% endfor %}</div>
+            <div class="cpPaperGrid">
+              {% for t in ["Come On Eileen", "Footloose", "Waterfalls", "Zombie", "Vogue", "Kiss from a Rose", "Beat It", "FREE", "Material Girl", "Black Hole Sun", "No Diggity", "Bulls on Parade", "Mambo No. 5", "Jump", "Faith"] %}<div class="cpCell{% if t == 'FREE' %} cpFree{% endif %}">{{ t }}</div>{% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btnPrimary" type="submit">Save theme</button>
+  </form>
+</div>
+</div></div>
+
+<link rel="stylesheet" href="{{ static_url('pages/host_account_theme_1.css') }}" />
+<script src="{{ static_url('pages/color_wheel_1.js') }}"></script>
+<script src="{{ static_url('pages/host_account_theme_1.js') }}"></script>
+{% endblock %}

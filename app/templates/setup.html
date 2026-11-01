@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="h1">Welcome to Music Bingo</h1>
+    <div class="muted">Set it up: create the admin account, and tell the app where it lives. This screen only appears until the first account exists.</div>
+  </div>
+</div>
+
+<form method="post" action="/setup" class="form setupForm" autocomplete="off">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+  {% if error %}<div class="alert alertBad" role="alert">{{ error }}</div>{% endif %}
+
+  <div class="panel">
+    <div class="panelHeader">
+      <div class="title">1. Admin account</div>
+      <div class="sub">The admin creates host accounts for other people and manages the app settings. Choose a password only you know (at least 8 characters).</div>
+    </div>
+    <div class="row">
+      <div class="col"><label class="label" for="f_username">Username</label><input id="f_username" class="input" name="username" value="{{ v.username }}" required /></div>
+    </div>
+    <div class="row">
+      <div class="col"><label class="label" for="f_password">Password</label><input id="f_password" class="input" type="password" name="password" autocomplete="new-password" required /></div>
+      <div class="col"><label class="label" for="f_password2">Repeat the password</label><input id="f_password2" class="input" type="password" name="password2" autocomplete="new-password" required /></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panelHeader">
+      <div class="title">2. Address and Spotify</div>
+      <div class="sub">You can change these later on the Admin page.</div>
+    </div>
+    <div class="label">Public address of this app (used in join links, QR codes and the Spotify sign-in)</div>
+    {% if env_public %}
+      <div class="muted small">Already set in the server's settings file: {{ v.public_url }}</div>
+      <input type="hidden" name="public_url" value="{{ v.public_url }}" />
+    {% else %}
+      <input class="input" name="public_url" id="setupPublicUrl" value="{{ v.public_url }}" placeholder="https://bingo.example.com" />
+      <div class="muted small">Players open this address on their phones. Use https:// if you can: Spotify only signs in over https.</div>
+    {% endif %}
+
+    <div class="setupSpotify">
+      <div class="label">Spotify developer app (needed to host games with music; you can skip this and add it later on the Admin page)</div>
+      <div class="setupRedirect">Redirect URI to register in your Spotify app: <code id="setupRedirect">{{ v.public_url }}/auth/spotify/callback</code></div>
+      <details class="spotifyHow" open>
+        <summary>Where do I get a client ID and secret?</summary>
+        {% set steps_redirect = (v.spotify_redirect_uri or (v.public_url ~ '/auth/spotify/callback')) %}
+        {% include "_spotify_steps.html" %}
+      </details>
+      {% if env_spotify %}
+        <div class="muted small">Already set in the server's settings file.</div>
+      {% else %}
+      <label class="label" for="setupRedirectIn">Spotify redirect address (only if it must differ from the address above)</label>
+      <input class="input" name="spotify_redirect_uri" id="setupRedirectIn" value="{{ v.spotify_redirect_uri }}" placeholder="{{ v.public_url }}/auth/spotify/callback" spellcheck="false" />
+      <div class="muted small">Running it on your own computer with phones joining over the network? Spotify only accepts a plain http:// redirect for 127.0.0.1, so put <code>http://127.0.0.1:5000/auth/spotify/callback</code> here, set the public address above to your computer's network address (for example <code>http://192.168.1.20:5000</code>), and open the host pages at <code>http://127.0.0.1:5000</code>.</div>
+      <div class="row">
+        <div class="col"><label class="label" for="f_spotify_client_id">Client ID</label><input id="f_spotify_client_id" class="input" name="spotify_client_id" value="{{ v.spotify_client_id }}" spellcheck="false" /></div>
+        <div class="col"><label class="label" for="f_spotify_client_secret">Client secret</label><input id="f_spotify_client_secret" class="input" type="password" name="spotify_client_secret" autocomplete="off" spellcheck="false" /></div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <button class="btn btnPrimary" type="submit">Create the admin account and start</button>
+</form>
+
+<link rel="stylesheet" href="{{ static_url('pages/setup_1.css') }}" />
+<script src="{{ static_url('pages/setup_1.js') }}"></script>
+{% endblock %}

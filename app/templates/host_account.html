@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="h1">Account</h1>
+    <div class="muted">Change your password.</div>
+  </div>
+  <div class="topActions">
+  </div>
+</div>
+
+{% set options_active = 'account' %}{% include "_options_nav.html" %}
+{% if must_change and not error %}
+  <div class="alert alertBad">You are using a temporary password. Choose your own password below to continue.</div>
+{% endif %}
+{% if error %}
+  <div class="alert alertBad">{{ error | e }}</div>
+{% endif %}
+{% if ok %}
+  <div class="alert alertOk">{{ ok | e }}</div>
+{% endif %}
+
+
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Change password</div>
+    <div class="sub">You must enter your current password.</div>
+  </div>
+
+  <form method="post" action="/host/account/password" class="form">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+    <div class="row">
+      <div class="col">
+        <label class="label" for="f_current_password">Current password</label>
+        <input id="f_current_password" class="input" type="password" name="current_password" autocomplete="current-password" required />
+      </div>
+      <div class="col">
+        <label class="label" for="f_new_password">New password</label>
+        <input id="f_new_password" class="input" type="password" name="new_password" autocomplete="new-password" required />
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <label class="label" for="f_new_password2">Confirm new password</label>
+        <input id="f_new_password2" class="input" type="password" name="new_password2" autocomplete="new-password" required />
+      </div>
+      <div class="col"></div>
+    </div>
+
+    <button class="btn btnPrimary" type="submit">Update password</button>
+  </form>
+</div>
+</div></div>
+
+<script src="{{ static_url('pages/host_account_1.js') }}"></script>
+{% endblock %}

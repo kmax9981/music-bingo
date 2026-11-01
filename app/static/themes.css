@@ -1,0 +1,77 @@
+/* Color themes. A host picks one on the Account page; it is set as <html data-theme="..."> and overrides the color
+   variables defined in app.css (the default, "midnight", is the :root set there). Every selector also matches an element
+   that carries data-theme itself, so the swatch cards on the Account page show their own colors.
+   Dark themes keep light text and an accent that is dark enough for white button text; "light" is the one light theme. */
+
+/* The original look. app.css has the same values as its :root defaults; they are repeated here so the swatch card for
+   this theme keeps its own colors while another theme is being previewed. */
+html[data-theme="midnight"], .themeCard[data-theme="midnight"]{
+  --bgTop: #0a0b1f;  --bgMid: #0b0b20;  --bgBot: #070712;
+  --panelTop: rgba(26, 28, 58, 0.78);  --panelBot: rgba(18, 20, 40, 0.86);  --panelSolid: rgb(18, 20, 40);
+  --border: rgba(140, 140, 190, 0.28);
+  --accent: #8b5cf6;  --accent2: #a78bfa;  --accent-rgb: 139 92 246;  --accent2-rgb: 167 139 250;  --marked-rgb: 178 130 255;
+}
+
+html[data-theme="ocean"], .themeCard[data-theme="ocean"]{
+  --bgTop: #06142a;  --bgMid: #071630;  --bgBot: #040b1a;
+  --panelTop: rgba(20, 44, 84, 0.78);  --panelBot: rgba(12, 30, 60, 0.86);  --panelSolid: rgb(12, 30, 60);
+  --border: rgba(130, 170, 225, 0.28);
+  --accent: #2563eb;  --accent2: #60a5fa;  --accent-rgb: 37 99 235;  --accent2-rgb: 96 165 250;  --marked-rgb: 125 180 255;
+}
+
+html[data-theme="emerald"], .themeCard[data-theme="emerald"]{
+  --bgTop: #04140f;  --bgMid: #05170f;  --bgBot: #030c09;
+  --panelTop: rgba(16, 52, 42, 0.78);  --panelBot: rgba(10, 34, 28, 0.86);  --panelSolid: rgb(10, 34, 28);
+  --border: rgba(120, 200, 170, 0.28);
+  --accent: #059669;  --accent2: #34d399;  --accent-rgb: 5 150 105;  --accent2-rgb: 52 211 153;  --marked-rgb: 94 226 170;
+}
+
+html[data-theme="sunset"], .themeCard[data-theme="sunset"]{
+  --bgTop: #1a0b07;  --bgMid: #1c0c08;  --bgBot: #100604;
+  --panelTop: rgba(66, 32, 22, 0.78);  --panelBot: rgba(44, 22, 16, 0.86);  --panelSolid: rgb(44, 22, 16);
+  --border: rgba(220, 160, 120, 0.28);
+  --accent: #ea580c;  --accent2: #fb923c;  --accent-rgb: 234 88 12;  --accent2-rgb: 251 146 60;  --marked-rgb: 255 165 90;
+}
+
+html[data-theme="rose"], .themeCard[data-theme="rose"]{
+  --bgTop: #1a0914;  --bgMid: #1c0a16;  --bgBot: #10050c;
+  --panelTop: rgba(68, 26, 52, 0.78);  --panelBot: rgba(46, 18, 36, 0.86);  --panelSolid: rgb(46, 18, 36);
+  --border: rgba(225, 140, 185, 0.28);
+  --accent: #db2777;  --accent2: #f472b6;  --accent-rgb: 219 39 119;  --accent2-rgb: 244 114 182;  --marked-rgb: 250 135 195;
+}
+
+html[data-theme="graphite"], .themeCard[data-theme="graphite"]{
+  --bgTop: #0d0e11;  --bgMid: #0e0f13;  --bgBot: #08090b;
+  --panelTop: rgba(40, 42, 50, 0.78);  --panelBot: rgba(26, 28, 34, 0.86);  --panelSolid: rgb(26, 28, 34);
+  --border: rgba(170, 175, 190, 0.28);
+  --accent: #64748b;  --accent2: #cbd5e1;  --accent-rgb: 100 116 139;  --accent2-rgb: 203 213 225;  --marked-rgb: 205 215 228;
+}
+
+/* Maize & Blue: University of Michigan colors (Maize #FFCB05, Blue #00274C, plus the brand book's lighter blue).
+   Maize is the main color: primary buttons are solid maize with Blue text, links, glows, dabbed squares and the lit
+   B-I-N-G-O letter are maize too; panels are Michigan Blue with a faint maize edge. */
+html[data-theme="maize"], .themeCard[data-theme="maize"]{
+  --bgTop: #00152f;  --bgMid: #00183a;  --bgBot: #000b1c;
+  --panelTop: rgba(0, 39, 76, 0.86);  --panelBot: rgba(0, 28, 58, 0.92);  --panelSolid: rgb(0, 28, 58);
+  --border: rgba(255, 203, 5, 0.26);
+  --accent: #2e71b5;  --accent2: #ffcb05;  --accent-rgb: 46 113 181;  --accent2-rgb: 255 203 5;  --marked-rgb: 255 203 5;
+  --btn-bg: linear-gradient(180deg, #ffd83a, #ffcb05);  --btn-text: #00274c;
+  --lit-bg: linear-gradient(180deg, #ffd84d, #ffcb05);  --lit-text: #00274c;
+  --glow2-rgb: 70 140 210;   /* the glow in the page corner stays blue (translucent maize over navy looks olive) */
+}
+
+/* Light: white panels on a pale page, dark text. --ink-rgb is the tint of the subtle lines and fills drawn on the
+   panels (white on the dark themes, dark ink here); text colors that are fixed in the stylesheets for dark panels
+   (amber warnings, light-red errors, ...) are re-colored at the end of app.css under html[data-theme="light"]. */
+html[data-theme="light"], .themeCard[data-theme="light"]{
+  --bgTop: #f5f7fc;  --bgMid: #eef1f9;  --bgBot: #e4e9f4;
+  --panelTop: rgba(255, 255, 255, 0.96);  --panelBot: rgba(250, 251, 255, 0.98);  --panelSolid: rgb(255, 255, 255);
+  --border: rgba(40, 52, 110, 0.20);
+  --text: #1a1f3a;  --muted: rgba(26, 31, 58, 0.68);
+  --accent: #6a3fe0;  --accent2: #5330c4;  --accent-rgb: 106 63 224;  --accent2-rgb: 83 48 196;  --marked-rgb: 124 84 240;
+  --field-bg: #ffffff;  --field-border: rgba(40, 52, 110, 0.32);  --btn-border: rgba(40, 52, 110, 0.22);  --menu-bg: #ffffff;  --menu-text: #1a1f3a;  --banner-bg: #1c1450;  --banner-big: #c4b5fd;  --banner-text: #f5f3ff;
+  --btn-text: #ffffff;  --lit-text: #ffffff;  --paper-letter-text: #ffffff;
+  --ink-rgb: 26 31 58;  --shade-rgb: 26 31 58;  --shade-k: 0.28;
+  --shadow: 0 18px 44px rgba(40, 52, 110, 0.16);
+  --glow2-rgb: 120 150 235;
+}

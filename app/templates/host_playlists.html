@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="h1">Saved Playlists</h1>
+    <div class="muted">Save playlists for quick reuse.</div>
+  </div>
+  <div class="topActions">
+  </div>
+</div>
+
+{% set options_active = 'playlists' %}{% include "_options_nav.html" %}
+{% if error %}
+<div class="alert alertBad">{{ error }}{% if reconnect %} <a class="is10 btn btnPrimary" href="/host/spotify/connect?next=/host/playlist">Reconnect Spotify</a>{% endif %}</div>
+{% endif %}
+<div id="cleanJobs" aria-live="polite"></div>
+
+<div class="panel plSaveBar">
+  <div class="plSaveHead">
+    <div class="title">Save / update playlist</div>
+    <div class="sub">Requires Spotify connected. Playlists made by Spotify (like Today's Top Hits or Daily Mix) can't be saved; save a copy to your own library first.</div>
+  </div>
+
+  {% if not spotify_connected %}
+    <div class="plSaveWarn">
+      <span class="spotifyState spotifyWarn">Spotify not connected yet</span>
+      <a class="btn btnPrimary" href="/host/spotify/connect?next=/host/playlist">Connect Spotify</a>
+    </div>
+  {% endif %}
+
+  <form method="post" action="/host/playlist/save" class="plSaveRow">
+    <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+    <input class="input" name="name" placeholder="Name" aria-label="Playlist name" required />
+    <div class="plSaveField">
+      <input class="input" name="playlist_id_or_url" placeholder="Spotify playlist link or ID" aria-label="Spotify playlist link or ID" required data-playlist-input />
+    </div>
+    <label class="plSwitch plSaveSwitch" title="Public: every host can use this playlist. Switch off to keep it private to you.">
+      <input type="checkbox" name="is_public" value="1" checked />
+      <span class="plTrack" aria-hidden="true"></span>
+      <span><b>Public</b></span>
+    </label>
+    <button class="btn btnPrimary" type="submit">Save Playlist</button>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Saved playlists</div>
+    <div class="sub">Public playlists from every host, plus your private ones. Only the host who added a playlist can change or remove it.</div>
+  </div>
+
+  <div class="list">
+    <div class="plTools"><label class="hideExplicit"><input type="checkbox" data-hide-explicit=".listRow" /> Hide playlists with explicit songs</label><label class="plSortLabel">Sort by <select class="input plSort" data-playlist-sort=".listRow"><option value="new">Newest first</option><option value="name">Name A–Z</option><option value="name_desc">Name Z–A</option><option value="songs_desc">Most songs</option><option value="songs">Fewest songs</option><option value="explicit_desc">Most explicit songs</option></select></label></div>
+    {% for pl in playlists %}
+      {% set mine = (uid is not none and pl.created_by_user_id == uid) %}
+      <div class="listRow" data-pl-id="{{ pl.id }}" data-explicit="{{ 1 if pl.explicit_count else 0 }}" data-name="{{ pl.name|lower|e }}" data-songs="{{ pl.track_count or 0 }}" data-explicit-count="{{ pl.explicit_count or 0 }}" data-order="{{ loop.index }}">
+        <div class="plMain">
+          <div class="listTitle">{{ pl.name }}
+            {% if not mine %}{% if pl.is_public %}<span class="plBadge plPublic">Public</span>{% else %}<span class="plBadge plPrivate">Private</span>{% endif %}{% endif %}
+            {% if pl.explicit_count %}<span class="plBadge plExplicit" title="Spotify marks {{ pl.explicit_count }} of the {{ pl.track_count }} songs in this playlist as explicit">⚠ {{ pl.explicit_count }} explicit</span>
+            {% elif pl.track_count is not none %}<span class="plBadge plPublic">Clean</span>{% endif %}
+          </div>
+          <div class="muted small">
+            {% if mine %}Added by you{% else %}Added by {{ owners.get(pl.created_by_user_id, 'another host') }}{% endif %}
+            · {{ pl.spotify_playlist_id }}
+            {% if pl.track_count is not none %}· {{ pl.track_count }} songs{% elif pl.explicit_checked_at %}· <span class="plUnreadable">couldn't be read from Spotify (deleted or made private?)</span>{% else %}· not checked for explicit songs yet{% endif %}
+            {% if pl.explicit_count %}· <a href="#" class="link plShowExplicit" data-id="{{ pl.id }}">Show which songs</a>{% endif %}
+            {% if pl.explicit_count %}<form method="post" action="/host/playlist/clean_copy" class="plRecheck plCleanForm" data-confirm="Make a copy of {{ pl.name|e }} in your Spotify with the {{ pl.explicit_count }} explicit songs left out? The original stays as it is, and the copy is saved here too."><input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/><input type="hidden" name="playlist_id" value="{{ pl.id }}" /><button type="submit" class="link plLinkBtn" title="Creates a new playlist in your Spotify without the explicit songs">Make clean copy</button></form>{% endif %}
+            <form method="post" action="/host/playlist/explicit_refresh" class="plRecheck"><input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/><input type="hidden" name="playlist_id" value="{{ pl.id }}" /><button type="submit" class="link plLinkBtn" title="Check the playlist again">Re-check</button></form>
+          </div>
+          <div class="small plJobStatus" hidden></div>
+          <div class="muted small plExplicitList" hidden></div>
+          {% if mine %}
+          <form method="post" action="/host/playlist/rename" class="plRenameForm" hidden>
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+            <input type="hidden" name="playlist_id" value="{{ pl.id }}" />
+            <input class="input" name="name" value="{{ pl.name }}" maxlength="200" aria-label="Playlist name" required />
+            <button class="btn btnPrimary" type="submit">Save name</button>
+            <button class="btn btnGhost plRenameCancel" type="button">Cancel</button>
+          </form>
+          {% endif %}
+        </div>
+        {% if mine %}
+        <div class="plActions">
+          <!-- Public switch: saves as soon as it's flipped (on = every host can use it, off = only you) -->
+          <form method="post" action="/host/playlist/visibility" class="plVisForm">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+            <input type="hidden" name="playlist_id" value="{{ pl.id }}" />
+            <label class="plSwitch" title="On: every host can use it. Off: only you.">
+              <input type="checkbox" name="is_public" value="1" {% if pl.is_public %}checked{% endif %} />
+              <span class="plTrack" aria-hidden="true"></span>
+              <span class="plSwitchText">Public</span>
+            </label>
+          </form>
+          <button class="btn btnGhost plRenameBtn" type="button">Rename</button>
+          <form method="post" action="/host/playlist/delete" data-confirm="Remove the saved playlist {{ pl.name|e }}? Games already created with it are not affected.">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+            <input type="hidden" name="playlist_id" value="{{ pl.id }}" />
+            <button class="btn btnDanger" type="submit">Delete</button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+    {% else %}
+      <div class="muted">No saved playlists yet.</div>
+    {% endfor %}
+  </div>
+</div>
+
+</div></div>
+
+<link rel="stylesheet" href="{{ static_url('pages/host_playlists_1.css') }}" />
+<script src="{{ static_url('pages/host_playlists_1.js') }}"></script>
+{% endblock %}

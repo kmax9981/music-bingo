@@ -1,0 +1,11 @@
+  .savedList{ display: flex; flex-direction: column; gap: 12px; }
+  .savedGame{ padding: 12px 14px; border-radius: 14px; border: 1px solid rgb(var(--ink-rgb) / 0.10); background: rgb(var(--shade-rgb) / calc(0.2 * var(--shade-k))); }
+  .savedTop{ display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .savedRename{ display: flex; gap: 6px; flex: 1 1 260px; margin: 0; min-width: 0; }
+  .savedName{ flex: 1; min-width: 0; font-weight: 800; }
+  .savedFacts{ margin: 6px 2px 10px; line-height: 1.6; }
+  .savedFacts b{ color: var(--text); }
+  .savedBtns{ display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .savedBtns form{ margin: 0; }
+  .savedTop .pill{ padding: 3px 11px; border-radius: 999px; font-size: 13px; font-weight: 700; border: 1px solid rgb(var(--ink-rgb) / 0.12); background: rgb(var(--ink-rgb) / 0.06); }
+  .eventThumb{ height: 24px; width: auto; max-width: 90px; object-fit: contain; vertical-align: middle; margin-left: 4px; padding: 2px; border-radius: 5px; background: #fff; }

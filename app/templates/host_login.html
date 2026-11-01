@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="panel">
+  <div class="panelHeader">
+    <h1 class="title">Login</h1>
+</div>
+
+  {% if error %}
+  <div class="alert alertBad">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" action="/login" class="form">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+  
+    <input type="hidden" name="next" value="{{ next or '' }}" />
+{% if error %}
+    <div class="alert alertBad">{{ error }}</div>
+  {% endif %}
+
+  <label class="label" for="f_username">Username</label>
+      <input id="f_username" class="input" name="username" autocomplete="username" required />
+
+  <label class="label" for="f_password">Password</label>
+      <input id="f_password" class="input" type="password" name="password" autocomplete="current-password" required />
+    <button class="btn btnPrimary" type="submit">Login</button>
+  
+</form>
+</div>
+{% endblock %}

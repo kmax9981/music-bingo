@@ -1,0 +1,7 @@
+<div class="optionsLayout">
+  <nav class="optionsNav" aria-label="Options">
+    {% for key, href, icon, label in [('account', '/host/account', '👤', 'Account'), ('themes', '/host/themes', '🎨', 'Themes'), ('saved', '/host/saved', '⭐', 'Saved Games'), ('history', '/host/history', '🕘', 'Game History'), ('playlists', '/host/playlist', '🎵', 'Manage Playlists'), ('events', '/host/events/manage', '📍', 'Events')] %}
+    <a class="optionsNavItem{% if key == options_active %} active{% endif %}" href="{{ href }}"{% if key == options_active %} aria-current="page"{% endif %}><span class="optionsNavIcon" aria-hidden="true">{{ icon }}</span><span>{{ label }}</span></a>
+    {% endfor %}
+  </nav>
+  <div class="optionsMain">

@@ -1,0 +1,35 @@
+    /* Winner fireworks: canvas fills the overlay behind the WINNER! text; never blocks taps */
+    #bingoOverlay .fireworksCanvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+    #bingoOverlay .bingoOverlayInner { position: relative; z-index: 1; }
+    #nowPlaying { position: relative; }
+    /* Revealed title/band lines clip overflow (for the "…"); at line-height 1.2 that cut descenders (g, y, p)
+       with Windows' Segoe UI, whose glyphs need ~1.33em. */
+    #nowPlaying .npTitle, #nowPlaying .npArtist { line-height: 1.35 !important; padding-bottom: 0.05em; }
+    #nowPlaying .npCountdown {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8px 14px;
+      background: var(--panelSolid);  /* opaque (--panelBot is translucent and let the title underneath show through) */
+      border-radius: inherit;
+    }
+    #nowPlaying .npCountdown[hidden] { display: none; }
+    /* flex-shrink:0 — in a box shorter than the two lines, flex used to squeeze the second line and clip it */
+    #nowPlaying .npcLine { flex-shrink: 0; line-height: 1.25; white-space: nowrap; font-weight: 700; color: var(--text); }
+    #nowPlaying .npcNum {
+      font-weight: 900;
+      font-size: 1.15em;
+      line-height: 1;  /* bigger digit must not make its line taller */
+      font-variant-numeric: tabular-nums;
+      color: var(--accent2);
+    }
+    /* padding-bottom: overflow:hidden (needed for the "…") would otherwise clip descenders like the "y" in "by" */
+    #nowPlaying .npcSub { flex-shrink: 0; line-height: 1.25; margin-top: 2px; padding-bottom: 0.15em; font-size: 0.9em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #nowPlaying .npcBar { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: rgb(var(--ink-rgb) / 0.06); }
+    #nowPlaying .npcFill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+    #nowPlaying .npCountdown.isPaused .npcNum { color: var(--muted); }
+    #nowPlaying .npcSr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    @media (prefers-reduced-motion: reduce) { #nowPlaying .npcFill { transition: none !important; } }
+  

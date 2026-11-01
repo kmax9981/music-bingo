@@ -1,0 +1,6 @@
+.tableWrap{ overflow:auto; }
+.table{ width:100%; border-collapse: collapse; }
+.table th, .table td{ padding:10px 12px; border-bottom: 1px solid rgb(var(--ink-rgb) / 0.08); vertical-align: top; }
+.checkboxRow{ display:flex; align-items:center; gap:10px; margin: 10px 0 14px; }
+.btnDanger{ background: rgba(255,60,60,0.15); border: 1px solid rgba(255,60,60,0.35); }
+.btnDanger:hover{ background: rgba(255,60,60,0.22); }

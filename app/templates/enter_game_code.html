@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block head_scripts %}<script src="{{ static_url('mono.js') }}"></script>{% endblock %}
+
+{% block content %}
+  {% include '_mono_switch.html' %}
+  <div class="panel centerPanel">
+    <div class="panelHeader centerHeader">
+      <h1 class="title">Join Music Bingo</h1>
+      <div class="is25 sub">After you join, wait for the host to admit you.</div>
+    </div>
+
+    {% if error %}
+      <!-- Display any errors if present -->
+      <div class="alert alertBad">{{ error|e|replace('\\n', '<br>'|safe)|replace('\n', '<br>'|safe) }}</div>
+    {% endif %}
+
+    <form method="post" action="/game/{{ code }}/join" class="form">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+      <div class="enterRow">
+        <div class="col">
+          <label class="label" for="f_code">Game code</label>
+          <input id="f_code" class="is26 input" name="code" value="{{ code }}" required / autocapitalize="characters" autocomplete="off" spellcheck="false" inputmode="text">
+        </div>
+        <div class="col">
+          <label class="label" for="f_name">Your name</label>
+          <input id="f_name" class="input" name="name" autocomplete="name" required />
+        </div>
+      </div>
+      {% include '_avatar_picker.html' %}
+
+      <button class="btn btnPrimary" type="submit">Join</button>
+    </form>
+
+    <div class="mt10 sub">
+      Host? <a href="/home" class="link">Log in</a>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ static_url('pages/enter_game_code_1.js') }}"></script>
+<script src="{{ static_url('pages/avatar_pick_1.js') }}"></script>
+{% endblock %}
+
+<script src="{{ static_url('pages/enter_game_code_2.js') }}"></script>
+
+<script src="{{ static_url('pages/enter_game_code_3.js') }}"></script>

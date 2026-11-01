@@ -1,0 +1,14 @@
+  html, body { margin: 0; min-height: 100%; background: var(--bgBot, #0b0c1a); color: var(--text, #eee); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { background: radial-gradient(circle at 15% 10%, rgb(var(--accent-rgb) / 0.20), transparent 55%), var(--bgBot, #0b0c1a); min-height: 100vh; }
+  .board { max-width: 1100px; margin: 0 auto; padding: 4vmin 3vmin; text-align: center; }
+  h1 { margin: 0; font-size: 6vmin; }
+  .sub { font-size: 3vmin; color: var(--muted, #aaa); margin: 1vmin 0 3vmin; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 3vmin; text-align: left; }
+  .col { background: var(--panel, rgb(255 255 255 / 0.06)); border: 1px solid rgb(var(--ink-rgb) / 0.12); border-radius: 16px; padding: 2.4vmin 3vmin; }
+  h2 { margin: 0 0 1.6vmin; font-size: 3.4vmin; }
+  ol { margin: 0; padding-left: 1.6em; font-size: 3vmin; line-height: 1.5; }
+  li { padding: 0.3vmin 0; }
+  li .what { color: var(--muted, #aaa); font-size: 0.8em; }
+  li b { font-weight: 800; }
+  .muted { color: var(--muted, #aaa); list-style: none; margin-left: -1.6em; }
+  @media (max-width: 760px) { .cols { grid-template-columns: 1fr; } }

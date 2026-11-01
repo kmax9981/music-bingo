@@ -1,0 +1,8 @@
+{# The win pattern: its name and a tiny picture of the squares it needs (no picture for "any line"). "Round N" only appears once the game
+   has moved past its first round, because plenty of games are played as a single round. #}
+{% macro pattern_badge(p, round_no=1) %}
+<span class="patternBadge" data-pattern="{{ p.key }}">
+  <span class="patternMini" aria-hidden="true">{% for i in range(25) %}<i{% if i in p.squares %} class="on"{% endif %}></i>{% endfor %}</span>
+  <span class="patternText"><span class="roundPart"{% if round_no <= 1 %} hidden{% endif %}>Round <b class="roundNo">{{ round_no }}</b><span class="sepDot"> · </span></span><span class="patternWhat">Win pattern: <b class="patternName">{{ p.label }}</b></span></span>
+</span>
+{% endmacro %}

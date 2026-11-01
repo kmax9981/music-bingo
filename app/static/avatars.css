@@ -1,0 +1,64 @@
+/* Player pictures: an animal in a colored circle */
+.avatar{ display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 2.2em; height: 2.2em; border-radius: 50%; font-size: 20px; line-height: 1; vertical-align: middle; color: #fff; }
+.avatar.sm{ width: 1.7em; height: 1.7em; font-size: 18px; }
+.avatar.lg{ width: 2.6em; height: 2.6em; font-size: 26px; }
+.avc-purple{ background: #7c4ddb; } .avc-orange{ background: #e8590c; } .avc-blue{ background: #1c7ed6; }
+.avc-green{ background: #2f9e44; } .avc-pink{ background: #d6336c; } .avc-yellow{ background: #f59f00; }
+.avc-red{ background: #e03131; } .avc-teal{ background: #0c8599; } .avc-indigo{ background: #3b5bdb; }
+.avc-lime{ background: #66a80f; } .avc-brown{ background: #8a5a2b; } .avc-slate{ background: #495057; }
+.playerInfo{ display: flex; align-items: center; gap: 10px; }
+.playerInfo .playerText{ min-width: 0; }
+.claimHead .avatar{ margin-right: 8px; }
+.srOnly{ position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.pickFieldset{ border: 0; padding: 0; margin: 14px 0 0; min-width: 0; }
+.pickFieldset legend{ padding: 0; margin-bottom: 6px; }
+.avatarGrid{ display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.colorGrid{ display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }   /* the same columns as the animals above */
+.avatarOpt, .colorOpt{ position: relative; cursor: pointer; }
+.avatarOpt input, .colorOpt input{ position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.avatarOpt .avatar{ width: 100%; height: auto; aspect-ratio: 1; font-size: 26px; border: 2px solid transparent; transition: transform .1s; }
+.avatarOpt:hover .avatar{ transform: scale(1.08); }
+.avatarOpt input:checked + .avatar, .colorOpt input:checked + .swatch{ border-color: #ffd43b; box-shadow: 0 0 0 3px rgb(255 212 59 / 0.35); }
+.avatarOpt input:focus-visible + .avatar, .colorOpt input:focus-visible + .swatch{ outline: 3px solid var(--accent2, #a78bfa); outline-offset: 2px; }
+.swatch{ display: block; width: 100%; aspect-ratio: 1; border-radius: 50%; border: 2px solid transparent; }
+.avatarPreview{ display: flex; align-items: center; gap: 12px; margin: 16px 0 8px; padding: 10px 12px; border-radius: 12px; background: rgb(var(--ink-rgb) / 0.06); font-size: 14px; }
+.avatarPreview .avatar{ width: 52px; height: 52px; font-size: 28px; }
+@media (min-width: 640px){ .avatarGrid, .colorGrid{ grid-template-columns: repeat(8, 1fr); } }
+/* A wide window: two rows of twelve and tighter spacing, so the whole join page fits without scrolling */
+@media (min-width: 900px){
+  .avatarGrid, .colorGrid{ grid-template-columns: repeat(12, 1fr); gap: 6px; }
+  .avatarOpt .avatar{ font-size: 22px; }
+  .pickFieldset{ margin-top: 10px; }
+  .avatarPreview{ margin: 12px 0 6px; padding: 8px 12px; }
+  .avatarPreview .avatar{ width: 44px; height: 44px; font-size: 24px; }
+}
+
+.enterRow{ display: flex; gap: 10px; flex-direction: column; }
+.enterRow .col{ flex: 1; }
+@media (min-width: 640px){ .enterRow{ flex-direction: row; } }
+
+/* The round and win pattern, centred at the top of the player's page: it sits in the empty space between the title and the song box, so the card keeps its height */
+.patternTop{ flex: 1 1 auto; align-self: center; text-align: center; min-width: 0; }
+.patternTop .patternBadge, .patternStrip .patternBadge{ line-height: 1.2; }
+.patternTop .patternMini, .patternStrip .patternMini{ grid-template-columns: repeat(5, 5px); gap: 1px; }
+.patternTop .patternMini i, .patternStrip .patternMini i{ width: 5px; height: 5px; }
+/* An upright phone has no empty space beside the title: there it is a slim centred strip above it instead */
+.patternStrip{ display: none; line-height: 1; font-size: 12px; align-items: center; justify-content: center; gap: 14px; }
+@media (max-width: 980px) and (orientation: portrait){ .patternStrip{ display: flex; margin: 0 0 2px; } .patternStrip #hintToggleWrap{ margin-left: 0; } .patternTop{ display: none; } }
+/* The join pages' switch sits in the top corner, out of the way of the form */
+.monoCorner{ position: absolute; top: 12px; right: 16px; }
+.patternStrip .patternMini{ grid-template-columns: repeat(5, 3px); }
+.patternStrip .patternMini i{ width: 3px; height: 3px; }
+@media (max-width: 520px){ #hintToggleWrap{ margin-left: 4px; gap: 4px; font-size: 12px; } .displayInline{ font-size: 12px; margin-left: 4px; } .displayInline .dLabel{ display: none; } .displaySelect{ font-size: 12px; padding: 2px 2px 2px 6px; max-width: 76px; } }
+.claimWho{ display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.claimHead .avatar{ margin-right: 0; }
+
+/* The player's Display choice: Color, White on black, Black on white */
+.displayInline{ display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; font-size: 14px; vertical-align: middle; color: var(--muted); }
+.displaySelect{ font: inherit; font-weight: 600; color: var(--text); background-color: var(--field-bg, rgb(var(--shade-rgb) / 0.35)); border: 2px solid var(--field-border, var(--border)); border-radius: 8px; padding: 2px 2px 2px 8px; width: 76px; min-height: 0; }
+/* A narrow phone: the header's left column is small, so the picture and name get the room ("Player:" and "Display" labels go) */
+@media (max-width: 520px){
+  .dLabel{ display: none; }
+  .displayInline .displaySelect{ font-size: 12px; padding: 2px 2px 2px 6px; width: 70px; max-width: 70px; }
+}
+.playerLine{ margin-top: 5px; }

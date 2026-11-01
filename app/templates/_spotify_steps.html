@@ -1,0 +1,6 @@
+<ol class="spotifySteps">
+  <li>Go to <a class="link" href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">developer.spotify.com/dashboard</a> and log in with a Spotify <b>Premium</b> account (the app's owner needs Premium to use it).</li>
+  <li>Choose <b>Create app</b>. Give it any name and description. For <b>Redirect URI</b> add exactly: <code class="spotifyStepRedirect">{{ steps_redirect }}</code> and tick <b>Web API</b> and <b>Web Playback SDK</b> as the APIs you plan to use. Save.</li>
+  <li>Open your new app and go to <b>Settings</b>. The <b>Client ID</b> is shown there; choose <b>View client secret</b> to see the secret. Copy both into the boxes here.</li>
+  <li>The app starts in "Development Mode": only people you add under <b>User Management</b> in its settings (their Spotify email, up to 5) can connect their Spotify to it.</li>
+</ol>

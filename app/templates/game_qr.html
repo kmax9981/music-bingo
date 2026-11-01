@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en" {{ theme_attrs(request, game) }}>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="{{ request.state.csrf_token }}" />
+<script src="{{ static_url('csrf.js') }}"></script>
+<link rel="icon" href="{{ static_url('favicon-qr.svg') }}" type="image/svg+xml">
+<title>Join {{ game.name or game.code }}</title>
+<link rel="stylesheet" href="{{ static_url('themes.css') }}" />
+  {{ theme_head(request, game) }}
+<link rel="stylesheet" href="{{ static_url('pages/game_qr_1.css') }}" />
+</head>
+<body data-code="{{ game.code }}" data-room="{{ 1 if room_reveal else 0 }}" data-sound="{{ 1 if room_sound else 0 }}" data-started="{{ 1 if started else 0 }}" data-ended="{{ 1 if ended else 0 }}">
+  <main class="qrView" id="qrView">
+    <h1>Scan to join the game</h1>
+    <div class="qr" id="qr" data-qr="{{ join_url }}"></div>
+    <div class="url">{{ public_host }}/game/{{ game.code }}</div>
+    <div class="code">{% if game.name %}Game Name: <strong>{{ game.name }}</strong>{% else %}Game code: <strong>{{ game.code }}</strong>{% endif %}</div>
+  </main>
+
+  <!-- Song reveal for the room: replaces the QR code once the game starts, when the host turned it on -->
+  <section class="room" id="room" hidden aria-live="polite">
+    <div class="roomName">{{ game.name or game.code }}</div>
+    <div class="roomMain">
+      <div class="roomLabel" id="roomLabel"></div>
+      <div class="roomBig" id="roomBig"></div>
+      <div class="roomSub" id="roomSub"></div>
+      <div class="roomBar" id="roomBar" hidden><div class="roomFill" id="roomFill"></div></div>
+    </div>
+    <div class="roomRecent empty" id="roomRecent">
+      <div class="roomRecentHead">Last song</div>
+      <ol id="roomList"></ol>
+    </div>
+    <div class="roomBanner" id="roomBanner" hidden>
+      <canvas class="roomFireworks" id="roomFireworks" aria-hidden="true"></canvas>
+      <div class="roomBannerText" id="roomBannerText"></div>
+    </div>
+  </section>
+  <!-- Optional: make this browser tab a Spotify speaker ("Bingo Room Screen"), so the music you control from the host page plays out of this screen's speakers / HDMI -->
+  <div class="soundCtl" id="soundCtl"{% if not (room_reveal and room_sound) %} hidden{% endif %}>
+    <button type="button" id="soundBtn" class="soundBtn" title="Lets the music you start on the host page play through this screen's speakers (needs the host's Spotify Premium)">🔊 Play the game music on this screen</button>
+    <div class="soundMsg" id="soundMsg" hidden></div>
+  </div>
+<script src="{{ static_url('qrcode.js') }}"></script>
+<script src="{{ static_url('pages/game_qr_1.js') }}"></script>
+<script src="{{ static_url('fireworks.js') }}"></script>
+<script src="{{ static_url('pages/game_qr_2.js') }}"></script>
+<script src="{{ static_url('pages/game_qr_3.js') }}"></script>
+</body>
+</html>

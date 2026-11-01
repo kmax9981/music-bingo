@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% from "_pattern.html" import pattern_badge %}
+{% from "_avatar.html" import avatar %}
+{% block content %}
+
+
+
+<!-- Page header -->
+<div class="topbar">
+  <div>
+    <h1 class="h1">Music Bingo</h1>
+Game {{ game.code }} — {{ (playlist_name or game.playlist_name or game.playlist or 'Unknown') }}
+  </div>
+  <div class="topActions"></div>
+</div>
+
+
+  <div class="hostGrid3">
+    <div class="hostCol hostCol1">
+          <div class="panel">
+      <div class="panelHeader">
+            <div class="title">Join Link</div>
+          </div>
+
+          <div class="row">
+            <input class="input" id="joinLink" aria-label="Join link" readonly value="{{ public_base }}/game/{{ game.code }}" />
+            <a class="btn btnPrimary" id="qrBtn" href="/host/game/{{ game.code }}/qr" target="_blank" rel="noopener" title="Open a large QR code to cast to another screen">QR code</a>
+          </div>
+          <div class="hintLine"><div class="muted" id="copyHint">Click the link to copy it</div><div class="muted small" id="hostMsg"></div></div>
+
+          <hr class="sep" />
+
+            <div class="row gcRow">
+              <button class="btn btnPrimary" type="button" id="admitBtn">Admit All</button>
+              <button class="btn btnPrimary{% if game.status != 'lobby' %} isHidden{% endif %}" type="button" id="startBtn">Start Game</button>
+              <button class="btn btnPrimary endGameBtn{% if game.status != 'started' %} isHidden{% endif %}" type="button" id="endGameMainBtn">End Game</button>
+              <form method="post" action="/host/game/{{ game.code }}/reset" class="playAgainForm{% if game.status != 'ended' %} isHidden{% endif %}" id="playAgainForm" title="Starts a new session of this game: same code{% if paper_count %}, same paper cards{% endif %}, empty played list.">
+                <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+                <button class="btn btnPrimary" type="submit" id="playAgainBtn">Play again</button>
+              </form>
+            </div>
+
+            {% if notice %}<div class="mt8 alert alertOk">{{ notice }}</div>{% endif %}
+            <div class="paperLinkRow"><a class="link paperCardsBtn" href="/host/game/{{ game.code }}/paper" target="_blank" rel="noopener" {% if paper_count %}data-stale-badge="{{ game.code }}"{% endif %}>Paper cards{% if paper_count %} ({{ paper_count }}){% endif %}</a>
+              {% if game.is_saved %}
+              <span class="muted small savedNote">★ Saved. <a class="link" href="/host/saved" target="_blank" rel="noopener">Manage in Saved Games</a></span>
+              {% else %}
+              <form method="post" action="/host/game/{{ game.code }}/save" class="saveGameForm">
+                <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+                <input type="hidden" name="saved" value="1"/>
+                <button class="linkBtn" type="submit" title="Saved games keep their game code and paper cards so you can play them again">☆ Save game</button>
+              </form>
+              {% endif %}
+            </div>
+            <div class="hintRow" id="hintRow">
+              <label class="hintSwitch" title="Light up the B-I-N-G-O letter of the column where the song now playing is on each card"><input type="checkbox" role="switch" id="hintOn"{% if hint_mode != 'off' %} checked{% endif %}> Bingo hints</label>
+              <label class="hintSwitch{% if hint_mode == 'off' %} isOff{% endif %}" id="hintOptinWrap" title="Needs Bingo hints turned on. Off: everyone sees the hints. On: each player turns hints on or off for themselves"><input type="checkbox" role="switch" id="hintOptin"{% if hint_mode == 'optin' %} checked{% endif %}{% if hint_mode == 'off' %} disabled{% endif %}> Players choose</label>
+              <label class="hintSwitch" title="Once the game starts, the QR screen (cast to a TV) becomes a song-reveal screen for the room, with a 3-2-1 countdown before the first song"><input type="checkbox" role="switch" id="roomRevealOn"{% if room_reveal %} checked{% endif %}> Reveal on QR screen</label>
+              <label class="hintSwitch{% if not room_reveal %} isOff{% endif %}" id="roomSoundWrap" title="Needs 'Reveal on QR screen'. Puts a button on the QR screen that makes it a speaker for the game music (pick 'Bingo Room Screen' under Refresh devices)"><input type="checkbox" role="switch" id="roomSoundOn"{% if room_sound %} checked{% endif %}{% if not room_reveal %} disabled{% endif %}> Music on QR screen</label>
+            </div>
+
+          <hr class="sep" />
+
+          <div class="panelHeader">
+            <div class="rowHeader">
+  <div class="title">Spotify <span id="spotifyConnBadge" class="spotifyConnBadge {% if spotify_connected %}on{% else %}off{% endif %}">{% if spotify_connected %}Connected{% else %}Not connected{% endif %}</span></div>
+  <button id="deviceRefreshBtn" class="btn btnSecondary btnTight" type="button" title="Look for other Spotify devices (a phone, speaker or computer)">Refresh devices</button>
+</div>
+            
+    <!-- Hybrid playback device selector (default = embedded) -->
+    <div data-hide class="row deviceRow" id="deviceRow">
+      <select id="deviceSelect" class="input" aria-label="Playback device">
+        <option value="" selected>Embedded (Bingo Host Player) — recommended</option>
+      </select>
+    </div>
+    <div id="deviceNowPlaying" class="mt6 muted small">
+      Playing on: (unknown)
+    </div>
+      <div class="spotifyStatus">
+      <div data-hide id="deviceTransferStatus" class="mt2 muted small"></div>
+      <div class="mt6 muted small" id="sdkStatusWrap"><span class="muted small" id="sdkStatus">Not started</span></div>
+      </div>
+
+          </div>
+
+          {% if not spotify_connected %}
+<a class="btn btnPrimary" href="/host/spotify/connect">Connect Spotify</a>
+          {% else %}
+              {% if playlist_name %}
+              {% endif %}
+{% endif %}
+
+          <div class="nowPlaying compact" id="hostNowPlaying" data-layout="compact">
+            <div class="npTitle" id="hostNpTitle"></div>
+            <div class="npArtist" id="hostNpArtist"></div>
+            <div class="npTimer muted small" id="hostNpTimer"></div>
+          </div>
+            <div id="transportMsg" class="muted small transportMsg"></div>
+<div class="row actionsRow">
+            <button class="btn btnPrimary" type="button" id="playBtn">Play</button>
+            <button class="btn btnGhost" type="button" id="pauseBtn">Pause</button>
+            <button class="btn btnGhost" type="button" id="nextBtn">Next</button>
+          </div>
+
+          
+
+              <hr class="sep" />
+
+          <div class="panelHeader">
+          </div>
+        </div>
+    </div>
+    <div class="hostCol hostCol2">
+          <div class="panel">
+      <div class="panelHeader">
+            <div class="title">Played Tracks: <span id="songsCount">0</span></div>            <div class="sub">Most recent first.</div>
+          </div>
+
+          <div class="chips" id="playedList">
+            {% for t in played %}
+              <div class="chip"><span class="playedTrackTitle">{{ t.title }}</span> <span class="playedTrackArtist">— {{ t.artist }}</span></div>
+            {% else %}
+              <div class="muted">No tracks played yet.</div>
+            {% endfor %}
+          </div>
+          </div>
+    </div>
+    <div class="hostCol hostCol3">
+          <div class="panel">
+      <div class="panelHeader">
+            <div class="title">Players: <span class="pillCount" id="playersCount">0</span></div>          </div>
+
+          <div class="playersList" id="playersList">
+            {% for p in players %}
+              <div class="playerRow">
+                <div class="playerInfo">
+                  {{ avatar(p, 'sm') }}
+                  <div class="playerText">
+                    <div class="playerName">{{ p.name }}</div>
+                    <div class="playerMeta">{% if p.admitted %}Admitted{% else %}Waiting{% endif %}</div>
+                  </div>
+                </div>
+                {% if game.status != 'ended' %}
+                <div class="playerBtns">
+                  {% if not p.admitted %}<button class="btn btnSmall btnPrimary" type="button" data-player-admit="{{ p.number }}">Admit</button>{% endif %}
+                  <button class="btn btnSmall danger" type="button" data-player-kick="{{ p.number }}">Kick</button>
+                </div>
+                {% endif %}
+              </div>
+            {% else %}
+              <div class="muted">No players yet.</div>
+            {% endfor %}
+          </div>
+          </div>
+
+      <div class="panel">
+        <div class="panelHeader rowHeader">
+          <div class="title">Bingo Claims</div>
+          <span class="headLinks"><a class="link small" href="/host/game/{{ game.code }}/scoreboard" target="_blank" rel="noopener" title="Winners and wins per player, to cast to a TV">Scoreboard</a>
+          <button class="linkBtn" id="cohostBtn" type="button" title="A link for a second person to accept or reject bingo calls on their own phone">Co-host link</button></span>
+        </div>
+        <div class="cohostBox" id="cohostBox" hidden>
+          <div class="small muted">Anyone with this link can accept or reject bingo calls for this game. Share it only with someone you trust; "Turn off" stops it working.</div>
+          <div class="cohostRow">
+            <input class="input" id="cohostUrl" readonly aria-label="Co-host link" />
+            <button class="btn btnPrimary mini" id="cohostCopy" type="button">Copy</button>
+            <button class="btn btnDanger mini" id="cohostOff" type="button">Turn off</button>
+          </div>
+        </div>
+        <div class="patternRow compact" id="patternRow">
+              <label for="patternSel">Bingo is</label>
+              <select class="input patternSelect" id="patternSel" aria-label="What counts as bingo"{% if game.status != 'lobby' %} disabled{% endif %}>
+                {% for key, label in win_pattern_options %}<option value="{{ key }}"{% if key == pattern.key %} selected{% endif %}>{{ label }}</option>{% endfor %}
+              </select>
+              {{ pattern_badge(pattern, round_no) }}
+              <span class="small muted" id="patternLock"{% if game.status == 'lobby' %} hidden{% endif %}>Locked while a round is being played. You can change it after a bingo.</span>
+            </div>
+
+        {% if paper_count %}
+        <form class="paperCheckRow" id="paperCheckForm" autocomplete="off">
+          <input class="input" id="paperCode" placeholder="Code, e.g. 12-KXR" aria-label="Paper card code" />
+          <button class="btn btnPrimary" type="submit">Check card</button>
+        </form>
+        <div class="small claimWhy" id="paperCheckMsg"></div>
+        {% endif %}
+
+            <div class="list" id="claimsList">
+              {% if claim_banner %}<div class="claimBanner" role="alert">⚠ {{ claim_banner }} Check each one.</div>{% endif %}
+              {% for c in claims %}
+                <div class="claimRow{% if c.rank is defined and c.rank == 1 and claim_banner %} claimFirst{% endif %}" data-status="{{ c.status }}" data-round="{{ c.claim_round or 0 }}">
+                  <div class="claimHead">
+                    <span class="claimWho">{{ avatar(c.player, 'sm') }}<span class="claimName">{% if c.rank is defined and claim_banner %}<span class="claimRank{% if c.rank == 1 %} first{% endif %}">{{ 'First' if c.rank == 1 else (c.rank|string + ('nd' if c.rank == 2 else 'rd' if c.rank == 3 else 'th')) }}</span> {% endif %}{{ c.player.name }}</span></span>
+                    <span class="claimBadge {% if c.auto_valid %}ok{% else %}bad{% endif %}">{% if c.auto_valid %}Auto-check: valid{% else %}Auto-check: not valid{% endif %}</span>
+                  </div>
+                  {% set why = c.detail|claim_reason %}
+                  {% if why and not c.auto_valid %}<div class="small claimWhy">{{ why }}</div>{% endif %}
+                  <div class="muted small claimStatus">Status: {{ c.status }} · <time class="claimTime" datetime="{{ c.created_at.strftime('%Y-%m-%dT%H:%M:%S.%f') }}Z">{{ c.created_at.strftime('%H:%M:%S') }} UTC</time>{% if c.status == "rejected" %}<button class="claimRemove" type="button" data-claim-delete="{{ c.id }}" title="Remove this rejected claim from the list">✕ Remove</button>{% endif %}</div>
+                  {% if c.status != "accepted" and c.status != "rejected" %}
+                  <div class="claimActions">
+                    {# The host always decides; the auto-check only suggests (it can miss a song that played). #}
+                    {% if c.auto_valid %}
+                      <button class="btn btnPrimary mini" type="button" data-claim="{{ c.id }}" data-status="accepted">Accept</button>
+                      <button class="btn btnGhost mini" type="button" data-claim="{{ c.id }}" data-status="rejected">Reject</button>
+                    {% else %}
+                      <button class="btn btnDanger mini" type="button" data-claim="{{ c.id }}" data-status="rejected">Reject</button>
+                      <button class="btn btnGhost mini" type="button" data-claim="{{ c.id }}" data-status="accepted">Accept anyway</button>
+                    {% endif %}
+                  </div>
+                  {% endif %}
+                </div>
+              {% else %}
+                <div class="muted">No claims yet.</div>
+              {% endfor %}
+            </div>
+
+              <div id="bingoDecisionBar" class="bingoDecisionBar hidden">
+                <div class="bingoDecisionText">Bingo accepted.</div>
+                <div class="bingoDecisionBtns">
+                  <button id="btnContinueGame" class="btn btnSmall" type="button">Continue playing</button>
+                  <button id="btnContinueFull" class="btn btnSmall" type="button"{% if pattern.key == 'full' %} hidden{% endif %}>Continue with Full card</button>
+                  <button id="btnEndGame" class="btn btnSmall danger" type="button">End Game</button>
+                </div>
+              </div>
+      </div>
+    </div>
+  </div>
+<!-- a called paper card, checked against the songs that have played -->
+<div data-hide class="paperModal" id="paperModal" role="dialog" aria-modal="true" aria-labelledby="pmTitle">
+  <div class="paperModalInner">
+    <div class="pmHead">
+      <div class="pmTitle" id="pmTitle">Card</div>
+      <button class="btn btnGhost mini" type="button" id="pmClose" aria-label="Close">Close</button>
+    </div>
+    <div class="pmVerdict" id="pmVerdict"></div>
+    <div class="pmGrid" id="pmGrid"></div>
+    <div class="pmLegend muted small"><span class="pmKey pmKeyPlayed"></span> played <span class="pmKey pmKeyWrong"></span> marked but not played</div>
+    <div class="pmTap muted small" id="pmTap">Player disagrees? Tap the squares they marked to see which haven't played.</div>
+    <div class="pmMsg small" id="pmMsg"></div>
+    <div class="pmActions">
+      <button class="btn btnPrimary" type="button" id="pmAccept">Accept bingo</button>
+      <button class="btn btnDanger" type="button" id="pmReject">Reject</button>
+    </div>
+  </div>
+</div>
+<link rel="stylesheet" href="{{ static_url('pages/host_game_1.css') }}" />
+{% endblock %}
+
+{% block scripts %}
+<script nonce="{{ request.state.csp_nonce }}">
+window.BINGO_HOST = { code: "{{ game.code }}", status: "{{ game.status }}", round: {{ round_no|int - 1 }}, paperCount: {{ paper_count|int }} };
+</script>
+<script src="{{ static_url('pattern_badge.js') }}"></script>
+<script src="{{ static_url('host_game.js') }}"></script>
+<script src="{{ static_url('host_paper_check.js') }}"></script>
+<script src="{{ static_url('paper_stale.js') }}"></script>
+<script src="https://sdk.scdn.co/spotify-player.js" async></script>
+
+
+{% endblock %}

@@ -1,0 +1,21 @@
+  html, body { margin: 0; min-height: 100%; background: var(--bgBot, #0b0c1a); color: var(--text, #eee); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { background: radial-gradient(circle at 15% 10%, rgb(var(--accent-rgb) / 0.20), transparent 55%), var(--bgBot, #0b0c1a); min-height: 100vh; }
+  .cohost { max-width: 640px; margin: 0 auto; padding: 16px; }
+  h1 { margin: 0 0 4px; font-size: 26px; }
+  h2 { margin: 22px 0 8px; font-size: 18px; }
+  .sub, .muted { color: var(--muted, #aaa); font-size: 14px; }
+  .info { margin: 12px 0 0; padding: 10px 12px; border-radius: 12px; background: rgb(var(--ink-rgb) / 0.07); }
+  .msg { min-height: 1.4em; margin-top: 8px; font-size: 14px; color: var(--muted, #aaa); }
+  .claim { margin: 10px 0; padding: 12px; border-radius: 14px; background: rgb(var(--ink-rgb) / 0.07); border: 1px solid rgb(var(--ink-rgb) / 0.12); }
+  .claim .head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 18px; font-weight: 800; }
+  .badge { font-size: 12px; font-weight: 700; padding: 3px 8px; border-radius: 999px; }
+  .badge.ok { background: rgb(60 200 120 / 0.2); }
+  .badge.bad { background: rgb(255 90 90 / 0.2); }
+  .why { margin-top: 6px; font-size: 14px; color: var(--muted, #aaa); }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .actions button { min-height: 48px; border-radius: 12px; border: 1px solid rgb(var(--ink-rgb) / 0.25); background: rgb(var(--ink-rgb) / 0.08); color: inherit; font-size: 16px; font-weight: 800; cursor: pointer; }
+  .actions button.yes { background: var(--accent, #8b5cf6); border-color: var(--accent2, #a78bfa); color: #fff; }
+  .done { margin-top: 6px; font-size: 14px; color: var(--muted, #aaa); }
+  .played { margin: 0; padding-left: 1.4em; font-size: 15px; line-height: 1.6; }
+  .played .a { color: var(--muted, #aaa); }
+  .played li.muted { list-style: none; margin-left: -1.4em; }

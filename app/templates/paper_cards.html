@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en"{% if paper_theme %} {{ theme_attrs_for_spec(paper_theme) }}{% endif %}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="csrf-token" content="{{ request.state.csrf_token }}" />
+  <title>Paper cards · {{ game.name }}</title>
+  <link rel="icon" href="{{ static_url('favicon.svg') }}" />
+  {% if paper_theme %}<link rel="stylesheet" href="{{ static_url('themes.css') }}" />{{ theme_head_for_spec(paper_theme) }}{% endif %}
+  <link rel="stylesheet" href="{{ static_url('pages/paper_cards_1.css') }}" />
+</head>
+<body>
+<main>
+  <div class="toolbar">
+    <h1 class="title">{{ game.name }} · {% if subset == 'updated' %}{{ new_cards }} updated of {{ total_cards }}{% elif only_new %}{{ new_cards }} new of {{ total_cards }}{% else %}{{ total_cards }}{% endif %} paper card{{ '' if total_cards == 1 else 's' }}</h1>
+    <span class="muted">One card per page, US Letter.</span>
+    {% if only_new or subset == 'updated' %}<a href="/host/game/{{ game.code }}/paper">Show all {{ total_cards }} cards</a>{% endif %}
+    {% if total_cards < paper_max %}
+    <form class="moreForm" method="post" action="/host/game/{{ game.code }}/paper/add">
+      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+      <label>Make <input type="number" name="count" min="1" max="{{ paper_max - total_cards }}" value="{{ [10, paper_max - total_cards]|min }}" /> more cards</label>
+      <button type="submit" class="altBtn">Make more</button>
+    </form>
+    {% endif %}
+    {% if game.status != 'started' %}
+    <form method="post" action="/host/game/{{ game.code }}/paper/regenerate" data-confirm="Regenerate all {{ total_cards }} cards from the playlist as it is now?&#10;&#10;Card numbers and check codes stay the same, but every square is re-picked, so any cards you already printed will no longer match. You will need to reprint all of them.">
+      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+      <button type="submit" class="altBtn">Regenerate all</button>
+    </form>
+    {% endif %}
+    <form class="colorForm" method="post" action="/host/game/{{ game.code }}/paper/theme">
+      <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+      <label>Card colors <select name="mode">
+        <option value="plain"{% if not paper_theme %} selected{% endif %}>Black &amp; white</option>
+        <option value="theme"{% if paper_theme %} selected{% endif %}>My theme ({{ my_theme_name }})</option>
+      </select></label>
+      <button type="submit" class="altBtn">Apply</button>
+    </form>
+    <a href="/host/game/{{ game.code }}">Back to game</a>
+    <button type="button" id="printBtn">Print{% if only_new or subset == 'updated' %} these {{ new_cards }}{% else %} all{% endif %}</button>
+  </div>
+  {% if advice %}<div class="advice">{{ advice }}</div>{% endif %}
+  <div class="advice staleHolder" data-stale-check="{{ game.code }}" data-status="{{ game.status }}"></div>
+  {% if subset == 'updated' %}<div class="advice">These are the cards that were updated. Reprint them and throw away the old versions: the old printed cards no longer match.</div>{% endif %}
+
+  {% for c in cards %}
+  <div class="sheet">
+    <div class="head">
+      <div class="gameName">{{ game.name }}</div>
+      <div class="cardNo"><b>Card {{ c.number }}</b><span>Check code {{ c.code }}</span></div>
+    </div>
+    <div class="letters" aria-hidden="true"><div>B</div><div>I</div><div>N</div><div>G</div><div>O</div></div>
+    <div class="grid">
+      {% for sq in c.squares %}
+        {% if sq.is_free %}
+          <div class="sq free">
+            {% if event and event.logo_url %}<img src="{{ event.logo_url }}" alt="{{ event.name or 'Event logo' }}" />
+            {% elif event and event.name %}<span class="eventName fit">{{ event.name }}</span>
+            {% else %}<span class="freeWord">FREE</span>{% endif %}
+          </div>
+        {% else %}
+          <div class="sq"><span class="sqText fit">{{ sq.title }}</span></div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="foot">
+      <span>Card {{ c.number }} · {{ c.code }}</span>
+      {% if game.paper_join_footer %}<span class="join"><span class="qr" data-qr="{{ public_base }}/game/{{ game.code }}"></span><span>Join on your phone: {{ public_host }}/game/{{ game.code }}</span></span>{% endif %}
+    </div>
+  </div>
+  {% else %}
+  <div class="empty">This game has no paper cards yet. Use <b>Make more</b> in the bar above to create some.</div>
+  {% endfor %}
+
+<script src="{{ static_url('confirm.js') }}"></script>
+<script src="{{ static_url('paper_stale.js') }}"></script>
+<script src="{{ static_url('qrcode.js') }}"></script>
+<script src="{{ static_url('pages/paper_cards_1.js') }}"></script>
+<script src="{{ static_url('pages/paper_cards_2.js') }}"></script>
+</main>
+</body>
+</html>

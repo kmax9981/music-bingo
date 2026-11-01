@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="h1">Saved Games</h1>
+    <div class="muted">Games you run again and again, with their game code, song list and paper cards. <a class="link" href="/host">Back to the dashboard</a></div>
+  </div>
+  <div class="topActions"></div>
+</div>
+
+{% set options_active = 'saved' %}{% include "_options_nav.html" %}
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Your saved games</div>
+    <div class="sub"><b>Play again</b> starts a fresh session (empty played list, no phone players) with the same game code and the same paper cards, so cards you've already printed keep working. To save a game, use <b>Save</b> on its page or in Recent Games.</div>
+  </div>
+
+  <div class="savedList">
+    {% for row in rows %}
+      {% set g = row.g %}
+      <div class="savedGame">
+        <div class="savedTop">
+          <form method="post" action="/host/game/{{ g.code }}/rename" class="savedRename">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+            <input type="hidden" name="next" value="/host/saved"/>
+            <input class="input savedName" name="name" value="{{ g.name }}" maxlength="120" aria-label="Game name" />
+            <button class="btn btnGhost mini" type="submit">Rename</button>
+          </form>
+        </div>
+        <div class="muted small savedFacts">
+          Status: <b class="savedStatus">{% if g.status == 'started' %}In progress{% else %}Ready{% endif %}</b> · Game Code: <b>{{ g.code }}</b> · Songs: <b>{{ g.playlist_name or 'playlist' }}</b>
+          · {% if row.paper %}<b>{{ row.paper }}</b> paper card{{ '' if row.paper == 1 else 's' }}{% else %}no paper cards{% endif %}
+          {% if row.event %}· event <b>{{ row.event.name or 'logo' }}</b>{% if row.event.has_logo %} <img class="eventThumb" src="/host/events/{{ row.event.id }}/logo" alt="{{ row.event.name or 'Event' }} logo" />{% endif %}{% endif %}
+          {% if row.paper and g.paper_theme %}· card colors <b>{{ theme_label(g.paper_theme) }}</b>{% endif %}
+          · played <b>{{ g.sessions_played or 0 }}</b> time{{ '' if (g.sessions_played or 0) == 1 else 's' }}
+          {% if g.last_played_at %}· last {{ g.last_played_at.strftime('%Y-%m-%d') }}{% endif %}
+        </div>
+        {% if row.paper %}<div data-stale-check="{{ g.code }}" data-status="{{ g.status }}" class="savedStale"></div>{% endif %}
+        <div class="savedBtns">
+          <form method="post" action="/host/game/{{ g.code }}/reset"{% if g.status != 'lobby' %} data-confirm="Start a new session of {{ g.name|e }}? This clears its played songs, claims and phone players, and keeps the game code, song list{% if row.paper %} and paper cards{% endif %}."{% endif %}>
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+            <button class="btn btnPrimary" type="submit">{% if g.status == 'lobby' %}Open game{% else %}Play again{% endif %}</button>
+          </form>
+          {% if g.status != 'lobby' %}<a class="btn btnGhost" href="/host/game/{{ g.code }}">View last session</a>{% endif %}
+          {% if row.paper %}<a class="btn btnGhost" href="/host/game/{{ g.code }}/paper">Cards ({{ row.paper }})</a>{% endif %}
+          <form method="post" action="/host/game/{{ g.code }}/save">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+            <input type="hidden" name="saved" value="0"/><input type="hidden" name="next" value="/host/saved"/>
+            <button class="btn btnGhost" type="submit" title="Take it off this page; it stays in Game History">Remove from saved</button>
+          </form>
+          <form method="post" action="/host/game/{{ g.code }}/delete" data-confirm="Delete the saved game {{ g.name|e }} for good{% if row.paper %}, including its {{ row.paper }} paper cards{% endif %}? Printed cards will stop working. This cannot be undone.">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+            <input type="hidden" name="from_saved" value="1"/>
+            <button class="btn btnDanger" type="submit">Delete</button>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <div class="muted">No saved games yet. Open a game and click <b>Save game</b> (or use <b>Save</b> in <a class="link" href="/host/history">Game History</a>) to keep it here.</div>
+    {% endfor %}
+  </div>
+</div>
+
+</div></div>
+
+<link rel="stylesheet" href="{{ static_url('pages/host_saved_games_1.css') }}" />
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ static_url('paper_stale.js') }}"></script>
+{% endblock %}

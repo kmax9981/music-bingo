@@ -1,0 +1,55 @@
+  /* On/off switch (a styled checkbox, so it stays keyboard- and screen-reader-friendly) */
+  .plSwitch{ display: inline-flex; align-items: center; gap: 10px; cursor: pointer; color: var(--muted); font-size: 14px; user-select: none; }
+  .plSwitch input{ position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .plTrack{ position: relative; flex-shrink: 0; width: 42px; height: 24px; border-radius: 999px;
+            background: rgb(var(--ink-rgb) / 0.14); border: 1px solid rgb(var(--ink-rgb) / 0.18); transition: background .15s, border-color .15s; }
+  .plTrack::after{ content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
+                   background: #fff; transition: transform .15s; }
+  .plSwitch input:checked + .plTrack{ background: #10b981; border-color: #34d399; }
+  .plSwitch input:checked + .plTrack::after{ transform: translateX(18px); }
+  .plSwitch input:focus-visible + .plTrack{ outline: 2px solid var(--accent2); outline-offset: 2px; }
+  .plSwitch b, .plSwitch input:checked ~ .plSwitchText{ color: var(--text); }
+  .plSwitchText{ font-weight: 700; min-width: 3.4em; }
+  .plActions{ align-items: center; }
+  @media (prefers-reduced-motion: reduce){ .plTrack, .plTrack::after{ transition: none; } }
+  .plMain{ min-width: 0; }
+  .plBadge{ display: inline-block; margin-left: 8px; padding: 1px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; vertical-align: 2px; }
+  .plPublic{ background: rgba(52,211,153,0.14); color: #6ee7b7; border: 1px solid rgba(52,211,153,0.3); }
+  .plExplicit{ background: rgba(248,113,113,0.12); color: #fca5a5; border: 1px solid rgba(248,113,113,0.35); }
+  .plUnreadable{ color: #fca5a5; }
+  .plRecheck{ display: inline; margin: 0 0 0 8px; }
+  .plLinkBtn{ background: none; border: 0; padding: 0; font: inherit; color: var(--accent2, #a78bfa); cursor: pointer; text-decoration: underline; }
+  .plExplicitList{ margin-top: 6px; line-height: 1.5; }
+  .plJobStatus{ margin-top: 4px; }
+  .plJobRunning{ color: var(--muted); }
+  .plJobError{ color: #fca5a5; }
+  .plJobStatus[hidden], .plCleanForm[hidden]{ display: none; }
+  .cleanJobLine{ margin: 6px 0; }
+  .plTools{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; margin: 8px 0; }
+  .plTools .hideExplicit{ margin: 0; }
+  .plSortLabel{ display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+  .plSort{ width: auto; padding: 4px 8px; font-size: 14px; }
+  .hideExplicit{ display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 14px; color: var(--muted); }
+  .plRenameForm{ display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .plRenameForm[hidden]{ display: none; }
+  .plRenameForm .input{ flex: 1; min-width: 180px; }
+  .plPrivate{ background: rgba(251,191,36,0.12); color: #fcd34d; border: 1px solid rgba(251,191,36,0.3); }
+  .plActions{ display: flex; gap: 8px; flex-shrink: 0; }
+  .plActions form{ margin: 0; }
+  @media (max-width: 560px){
+    .listRow{ flex-wrap: wrap; }
+    .plActions{ width: 100%; }
+    .plActions form, .plActions .btn{ flex: 1; width: 100%; }
+  }
+  /* Save / update playlist as one slim box: title and help on top, then name, link, Public switch and Save in a row */
+  .plSaveHead{ display: flex; align-items: baseline; gap: 4px 14px; flex-wrap: wrap; }
+  .plSaveHead .title{ font-weight: 900; font-size: 18px; }
+  .plSaveWarn{ display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+  .plSaveWarn .btn{ padding: 7px 16px; }
+  .plSaveRow{ display: grid; grid-template-columns: minmax(140px, 1fr) minmax(220px, 2fr) auto auto; gap: 10px 14px; align-items: start; margin: 10px 0 0; }
+  .plSaveRow .input{ margin: 0; }
+  .plSaveRow .plSaveSwitch{ margin: 0; align-self: center; white-space: nowrap; }
+  .plSaveRow .btn{ white-space: nowrap; padding: 11px 20px; }
+  @media (max-width: 900px){ .plSaveRow{ grid-template-columns: 1fr 1fr; } .plSaveRow .plSaveField{ grid-column: 1 / -1; order: 2; } }
+  @media (max-width: 560px){ .plSaveRow{ grid-template-columns: 1fr; } .plSaveRow .plSaveSwitch{ order: 3; } .plSaveRow .btn{ order: 4; } }
+  .plSaveBar{ margin-bottom: 14px; }

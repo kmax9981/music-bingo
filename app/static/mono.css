@@ -1,0 +1,60 @@
+/* A player's own Display choice (see mono.js): "White on black" and "Black on white" are plain two-tone looks that do not depend
+   on the host's theme. Every color variable is replaced by black, white or grey, and a grayscale filter catches anything
+   with a fixed color (the animal pictures, status text). The marked squares become solid inverse, so the song name stays
+   fully readable. Selectors start with html.mono-... so they win over the theme's own rules. */
+html.mono{ filter: grayscale(1); }
+
+html.mono-dark{
+  --bgTop: #000; --bgMid: #000; --bgBot: #000;
+  --panelTop: #000; --panelBot: #000; --panelSolid: #000;
+  --border: rgba(255,255,255,0.65); --text: #fff; --muted: rgba(255,255,255,0.8);
+  --accent: #fff; --accent2: #e6e6e6; --accent-rgb: 255 255 255; --accent2-rgb: 230 230 230; --marked-rgb: 255 255 255; --glow2-rgb: 255 255 255;
+  --field-bg: #000; --field-border: rgba(255,255,255,0.75); --btn-border: rgba(255,255,255,0.75); --menu-bg: #000; --menu-text: #fff;
+  --btn-text: #000; --lit-text: #000; --paper-letter-text: #000; --lit-bg: #fff;
+  --ink-rgb: 255 255 255; --shade-rgb: 255 255 255; --shade-k: 0.14; --shadow: none;
+  --mono-on: #000;
+}
+html.mono-light{
+  --bgTop: #fff; --bgMid: #fff; --bgBot: #fff;
+  --panelTop: #fff; --panelBot: #fff; --panelSolid: #fff;
+  --border: rgba(0,0,0,0.7); --text: #000; --muted: rgba(0,0,0,0.78);
+  --accent: #000; --accent2: #333; --accent-rgb: 0 0 0; --accent2-rgb: 51 51 51; --marked-rgb: 0 0 0; --glow2-rgb: 255 255 255;
+  --field-bg: #fff; --field-border: rgba(0,0,0,0.8); --btn-border: rgba(0,0,0,0.8); --menu-bg: #fff; --menu-text: #000;
+  --btn-text: #fff; --lit-text: #fff; --paper-letter-text: #fff; --lit-bg: #000;
+  --ink-rgb: 0 0 0; --shade-rgb: 0 0 0; --shade-k: 0.14; --shadow: none;
+  --mono-on: #fff;
+}
+
+html.mono body{ background: var(--bgBot) !important; color: var(--text); }
+html.mono .panel, html.mono .card, html.mono #cardPanel, html.mono #nowPlaying, html.mono .topbar{
+  background: var(--panelSolid) !important; backdrop-filter: none !important; box-shadow: none !important;
+}
+html.mono .panel, html.mono #cardPanel, html.mono #nowPlaying{ border: 2px solid var(--border) !important; }
+html.mono .topbar{ border-color: transparent !important; }
+html.mono .h1, html.mono h1, html.mono .title, html.mono .topbar, html.mono .muted, html.mono .sub, html.mono .label{ color: var(--text) !important; }
+html.mono .muted, html.mono .sub, html.mono .label{ color: var(--muted) !important; }
+html.mono a, html.mono .link{ color: var(--text) !important; text-decoration: underline; }
+
+html.mono .sq{ background: var(--panelSolid) !important; border: 2px solid var(--border) !important; color: var(--text) !important; }
+html.mono .sq *{ color: var(--text) !important; }
+html.mono .sq.marked{ background: var(--text) !important; outline: 3px solid var(--text) !important; }
+html.mono .sq.marked, html.mono .sq.marked *{ color: var(--mono-on) !important; }
+html.mono .cardGrid .cardLetter{ background: var(--panelSolid) !important; color: var(--text) !important; border: 2px solid var(--text) !important; box-shadow: none !important; }
+html.mono .cardGrid .cardLetter.lit{ background: var(--text) !important; color: var(--mono-on) !important; }
+
+html.mono .btn, html.mono button.btn{ background: var(--panelSolid) !important; color: var(--text) !important; border: 2px solid var(--text) !important; box-shadow: none !important; }
+html.mono .btnPrimary, html.mono #bingoBtn{ background: var(--text) !important; color: var(--mono-on) !important; border: 2px solid var(--text) !important; }
+html.mono input, html.mono select, html.mono textarea{ background-color: var(--field-bg) !important; color: var(--text) !important; border: 2px solid var(--field-border) !important; }
+html.mono .alert{ background: var(--panelSolid) !important; color: var(--text) !important; border: 2px solid var(--text) !important; }
+html.mono .codePill{ background: var(--panelSolid) !important; color: var(--text) !important; border: 2px solid var(--text) !important; }
+html.mono .avatar{ background: #8c8c8c !important; }
+html.mono .avatarOpt input:checked + .avatar, html.mono .colorOpt input:checked + .swatch{ border-color: var(--text) !important; box-shadow: 0 0 0 3px var(--text) !important; }
+html.mono .avatarPreview, html.mono .winnersBox, html.mono .cohostBox{ background: var(--panelSolid) !important; border: 2px solid var(--border) !important; }
+html.mono .patternMini i{ background: var(--border) !important; } html.mono .patternMini i.on{ background: var(--text) !important; }
+html.mono .hintSwitch input{ background: var(--panelSolid) !important; border: 2px solid var(--text) !important; }
+html.mono .hintSwitch input::after{ background: var(--text) !important; }
+html.mono .hintSwitch input:checked{ background: var(--text) !important; }
+html.mono .hintSwitch input:checked::after{ background: var(--mono-on) !important; }
+html.mono .bingoOverlay{ background: var(--panelSolid) !important; color: var(--text) !important; }
+html.mono .bingoOverlay *{ color: var(--text) !important; }
+html.mono .fireworksCanvas{ display: none !important; }

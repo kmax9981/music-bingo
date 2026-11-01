@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="topbar">
+  <div>
+    <h1 class="h1">Play Alone</h1>
+    
+{% set _err = (request.query_params.get("err") if request is defined else None) %}
+{% if (not spotify_connected) or (_err == "spotify") %}
+  <div class="mt14 panel">
+    <div class="panelHeader">
+      <div class="title">Spotify Connection</div>
+      <div class="sub">Solo play uses Spotify Web Playback. You must connect Spotify on this account.</div>
+    </div>
+
+    {% if _err == "spotify" %}
+      <div class="mt10 alert alertWarn">
+        Spotify is not connected for this user. Click <b>Connect Spotify</b> below, then come back and start Solo again.
+      </div>
+    {% else %}
+      <div class="mt10 alert alertWarn">
+        Spotify is not connected for this user.
+      </div>
+    {% endif %}
+
+    <div class="is3 row">
+      <a class="btn btnPrimary" href="/host/spotify/connect?next=/play">Connect Spotify</a>
+      <a class="btn btnGhost" href="/host/account">Account</a>
+      <span class="muted small">After connecting, refresh this page.</span>
+    </div>
+  </div>
+{% endif %}
+<div class="muted">Start a solo session</div>
+  </div>
+  <div class="topActions">
+  </div>
+</div>
+
+{% if error %}
+  <div class="alert alertBad">{{ error }}</div>
+{% endif %}
+
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Setup</div>
+  </div>
+
+  <form method="post" action="/play/start" class="form">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+<label class="label" for="f_playlist">Enter a playlist (link or ID)</label>
+    <input id="f_playlist" class="input" name="playlist" autocomplete="off" placeholder="https://open.spotify.com/playlist/..." data-playlist-input />
+    <div class="mt4 muted small">Playlists made by Spotify (like Today's Top Hits or Daily Mix) can't be used; save a copy to your own library first.</div>
+
+    <div class="label">Or choose a saved playlist from the dropdown menu</div>
+    <div class="plTools"><label class="hideExplicit"><input type="checkbox" data-hide-explicit="select[name=saved_playlist_id]" /> Hide playlists with explicit songs</label><label class="plSortLabel">Sort by <select class="input plSort" data-playlist-sort="select[name=saved_playlist_id]"><option value="new">Newest first</option><option value="name">Name A–Z</option><option value="name_desc">Name Z–A</option><option value="songs_desc">Most songs</option><option value="songs">Fewest songs</option><option value="explicit_desc">Most explicit songs</option></select></label></div>
+    <select class="input" name="saved_playlist_id" aria-label="Saved playlist">
+      <option value="" selected>Select…</option>
+      {% for p in saved_playlists %}
+        <option value="{{ p.id }}" data-explicit="{{ 1 if p.explicit_count else 0 }}" data-name="{{ p.name|lower|e }}" data-songs="{{ p.track_count or 0 }}" data-explicit-count="{{ p.explicit_count or 0 }}" data-order="{{ loop.index }}">{{ p.name }}{% if not p.is_public %} (private){% endif %}{{ explicit_note(p) }}</option>
+      {% endfor %}
+    </select>
+{% if not (saved_playlists or []) %}
+      <div class="is5 muted">
+        No saved playlists found yet. You can still paste a playlist link/ID above.
+      </div>
+    {% endif %}
+
+    <button class="mt14 btn btnPrimary" type="submit">Start</button>
+  </form>
+
+  <div class="is6 muted">
+    This uses your host Spotify connection. Playback will start shuffled on the embedded player.
+  </div>
+</div>
+
+<div class="mt16 panel">
+  <div class="panelHeader">
+    <div class="title">Recent Solo Games</div>
+    <div class="sub">Reopen a previous solo session (this user only).</div>
+  </div>
+
+  {% if recent_solo_games and recent_solo_games|length > 0 %}
+    <div class="list">
+      {% for g in recent_solo_games %}
+        <div class="listRow">
+          <div class="listMain">
+            <div class="listTitle">
+              <a class="link" href="/play/solo/{{ g.code }}/1">{{ g.name }}</a>
+            </div>
+            <div class="muted">Code: <span class="pill">{{ g.code }}</span> • Status: <span class="pill">{{ g.status|capitalize }}</span></div>
+          </div>
+          <div class="is8 listMeta muted">
+            {% if g.created_at %}{{ g.created_at.strftime("%Y-%m-%d %H:%M") }}{% endif %}
+          
+            <form class="is9" method="post" action="/play/solo/{{ g.code }}/delete" data-confirm="Delete solo game {{ g.code }}? This cannot be undone.">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+              <button class="btn btnGhost" type="submit">Delete</button>
+            </form>
+</div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="mt10 muted">No solo games yet.</div>
+  {% endif %}
+</div>
+
+{% endblock %}

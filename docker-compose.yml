@@ -1,0 +1,57 @@
+# Music Bingo: the app and its database in ONE file. It works as it is:
+#   docker compose up -d
+# (or paste it into Portainer, Dockge, Unraid, a Synology stack, ...). Then open http://127.0.0.1:5000 and follow the setup
+# screen to choose your admin username and password.
+#
+# ./run.sh does the same and also gives the database a random password, prints the address and waits until it is up.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bingo
+      POSTGRES_USER: bingo
+      # The database is only on the private "backend" network below (no published port, no internet), so only the app can
+      # reach it. ./run.sh makes a random DB_PASSWORD in .env; without it this built-in value is used.
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-bingo-private-network-only}
+    volumes:
+      - bingo-db:/var/lib/postgresql/data
+    networks: [backend]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bingo -d bingo"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    image: ${BINGO_IMAGE:-ghcr.io/kmax9981/music-bingo:latest}
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://bingo:${DB_PASSWORD:-bingo-private-network-only}@db:5432/bingo
+      # Everything below is optional: the setup screen asks for it, and an admin can change it later in the app.
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-}
+      SPOTIFY_CLIENT_ID: ${SPOTIFY_CLIENT_ID:-}
+      SPOTIFY_CLIENT_SECRET: ${SPOTIFY_CLIENT_SECRET:-}
+      SPOTIFY_REDIRECT_URI: ${SPOTIFY_REDIRECT_URI:-}
+      HOST_ADMIN_PASSWORD: ${HOST_ADMIN_PASSWORD:-}
+      COOKIE_SECRET: ${COOKIE_SECRET:-}
+      TRUST_PROXY_HEADERS: ${TRUST_PROXY_HEADERS:-true}
+    ports:
+      - "${BINGO_PORT:-5000}:5000"
+    volumes:
+      - bingo-data:/data
+    networks: [backend, default]
+    ulimits:
+      nofile: { soft: 65536, hard: 65536 }   # every connected phone keeps a socket open; many hosts allow containers only 1024 files
+
+networks:
+  backend:
+    internal: true   # no route to or from the outside: only the containers on it can talk to the database
+
+volumes:
+  bingo-db:
+  bingo-data:

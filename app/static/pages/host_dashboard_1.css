@@ -1,0 +1,35 @@
+  /* Spotify box buttons: equal halves that together span the status bar above (one button = full width) */
+  .spotifyBtns{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+  .spotifyBtns.spotifyBtnsOne{ grid-template-columns: 1fr; }
+  .spotifyBtns form{ margin: 0; }
+  .spotifyBtns .btn{ width: 100%; height: 100%; justify-content: center; text-align: center; box-sizing: border-box;
+                     font-family: inherit; font-size: 15px; font-weight: 800; }  /* <button> and <a> otherwise differ */
+  .createTips{ margin: 6px 0 2px; padding-left: 18px; color: var(--muted); font-size: 13px; line-height: 1.5; }
+  .createTips li{ margin: 2px 0; }
+  .createTips b{ color: var(--text); font-weight: 700; }
+  .paperBlock{ margin: 6px 0 14px; padding: 12px 14px; border: 1px solid rgb(var(--ink-rgb) / 0.10); border-radius: 12px; background: rgb(var(--shade-rgb) / calc(0.14 * var(--shade-k))); }
+  .paperCheck{ display: flex; align-items: flex-start; gap: 10px; cursor: pointer; color: var(--muted); font-size: 14px; line-height: 1.45; }
+  .paperCheck input{ margin-top: 3px; width: 18px; height: 18px; flex-shrink: 0; }
+  .paperCheck b{ color: var(--text); }
+  .paperOptions{ margin-top: 10px; }
+  .paperOptions > .paperCheck{ margin-top: 10px; }
+  .eventPicked, .eventNewActions{ display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 8px; }
+  .eventPicked img, .eventNewActions img{ width: 56px; height: 56px; object-fit: contain; background: #fff; border-radius: 8px; padding: 4px; }
+  .eventNew{ margin-top: 8px; padding: 10px 12px; border-radius: 10px; background: rgb(var(--ink-rgb) / 0.04); }
+  .savedLabelRow{ display: flex; justify-content: space-between; align-items: baseline; gap: 10px; min-height: 20px; }
+  /* Spotify box as one slim row: name and status on the left, the buttons on the right (stacks on a phone) */
+  .spotifyPanel{ margin-bottom: 14px; }
+  .spotifyBar{ display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; padding: 12px 18px; }
+  .spotifyInfo{ display: flex; align-items: baseline; gap: 6px 14px; flex-wrap: wrap; min-width: 0; }
+  .spotifyInfo .title{ font-weight: 900; font-size: 18px; }
+  .spotifyBar .spotifyBtns{ margin-top: 0; grid-template-columns: auto auto; }
+  .spotifyBar .spotifyBtns.spotifyBtnsOne{ grid-template-columns: auto; }
+  .spotifyBar .spotifyBtns .btn{ padding: 9px 18px; white-space: nowrap; }
+  @media (max-width: 700px){
+    .spotifyBar .spotifyBtns, .spotifyBar .spotifyBtns.spotifyBtnsOne{ width: 100%; grid-template-columns: 1fr 1fr; }
+    .spotifyBar .spotifyBtns.spotifyBtnsOne{ grid-template-columns: 1fr; }
+    .spotifyBar .spotifyBtns .btn{ min-width: 0; padding: 9px 8px; white-space: normal; text-align: center; }
+  }
+  .logoHint{ margin-top: 6px; line-height: 1.4; }
+  .eventBlock, .patternBlock{ margin: 6px 0 14px; }
+  .eventBlock .eventPicked{ margin-top: 8px; }

@@ -1,0 +1,9 @@
+  .helpPage{ line-height: 1.55; }
+  .helpPage h2{ margin: 26px 0 8px; font-size: 20px; scroll-margin-top: 14px; }
+  .helpPage p, .helpPage li{ color: inherit; }
+  .helpPage ol, .helpPage ul{ margin: 8px 0 8px 22px; padding: 0; }
+  .helpPage li{ margin: 5px 0; }
+  .helpPage code{ padding: 1px 6px; border-radius: 6px; background: rgb(var(--ink-rgb) / 0.1); }
+  .helpToc{ display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+  .helpToc a{ padding: 5px 12px; border-radius: 999px; border: 1px solid rgb(var(--ink-rgb) / 0.18); font-size: 14px; text-decoration: none; color: inherit; }
+  .helpToc a:hover{ background: rgb(var(--ink-rgb) / 0.08); }

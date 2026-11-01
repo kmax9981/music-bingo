@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en" {{ theme_attrs(request, game) }}>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="csrf-token" content="{{ request.state.csrf_token }}" />
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<script src="{{ static_url('csrf.js') }}"></script>
+<link rel="icon" href="{{ static_url('favicon.svg') }}" type="image/svg+xml">
+<title>Co-host: {{ game.name or game.code }}</title>
+<link rel="stylesheet" href="{{ static_url('themes.css') }}" />
+<link rel="stylesheet" href="{{ static_url('avatars.css') }}" />
+  {{ theme_head(request, game) }}
+<link rel="stylesheet" href="{{ static_url('pages/cohost_1.css') }}" />
+</head>
+<body data-code="{{ game.code }}" data-token="{{ token }}">
+  <main class="cohost">
+    <h1>{{ game.name or game.code }}</h1>
+    <div class="sub">You are co-hosting. You can accept or reject bingo calls; the host runs the music and the game.</div>
+    <div class="info" id="info"><span id="roundPart" hidden>Round <b id="roundNo">1</b> · </span>Win pattern: <b id="patternName">…</b></div>
+    <div class="msg" id="msg" role="status"></div>
+    <h2>Bingo calls</h2>
+    <div id="claims"><div class="muted">No bingo calls yet.</div></div>
+    <h2>Last songs played</h2>
+    <ol id="played" class="played"><li class="muted">Nothing played yet.</li></ol>
+  </main>
+<script src="{{ static_url('pages/cohost_1.js') }}"></script>
+</body>
+</html>

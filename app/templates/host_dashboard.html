@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+
+  {% set dash_error = error %}
+  {% if dash_error %}
+    <div class="alert alertBad">{{ dash_error | e }}</div>
+  {% endif %}
+
+<div class="topbar">
+  <div>
+    <h1 class="h1">Host Dashboard</h1>
+    <div class="muted">Create a game, pick a playlist, admit players, and run the show.</div>
+  </div>
+  <div class="topActions">
+    <form method="post" action="/host/logout">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+      <button class="btn btnGhost" type="submit">Logout</button>
+    </form>
+  </div>
+</div>
+
+
+<!-- Styles go inside the content block: template text outside blocks is never rendered -->
+
+<link rel="stylesheet" href="{{ static_url('pages/host_dashboard_1.css') }}" />
+
+<div class="panel spotifyPanel spotifyBar">
+  <div class="spotifyInfo">
+    <div class="title">Spotify</div>
+    {% if spotify_connected %}
+      <span class="spotifyState spotifyOk">Connected ✅</span>
+    {% else %}
+      <span class="spotifyState spotifyWarn">Not connected yet</span>
+    {% endif %}
+    <div class="sub">Required for playlist validation + host playback.</div>
+  </div>
+  {% if spotify_connected %}
+    <div class="spotifyBtns">
+      <form method="post" action="/host/spotify/disconnect" data-confirm="Disconnect Spotify in this app? (This does NOT revoke access in Spotify.)">
+        <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+        <button class="btn btnGhost" type="submit">Disconnect Spotify</button>
+      </form>
+      <a class="btn btnGhost" href="https://www.spotify.com/account/apps/" target="_blank" rel="noopener">Manage in Spotify</a>
+    </div>
+  {% else %}
+    <div class="spotifyBtns spotifyBtnsOne"><a class="btn btnPrimary" href="/host/spotify/connect">Connect Spotify</a></div>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Create Game</div>
+    <ul class="createTips">
+      <li>Use a playlist with <b>at least 24 different songs</b>. Around 75 or fewer works best; bigger playlists make games run long.</li>
+      <li><b>Include each song only once.</b> Duplicate songs can cause issues for players.</li>
+      <li><b>Playlists made by Spotify can't be used</b> (like Today's Top Hits, Daily Mix or "This Is…"). Spotify doesn't let apps read them; save a copy to your own library first.</li>
+    </ul>
+  </div>
+
+  <form method="post" action="/host/create_game" class="form">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+    <div class="row">
+      <div class="col">
+        <label class="label" for="f_game_name">Game name</label>
+        <input id="f_game_name" class="input" name="game_name" value="Music Bingo" required />
+      </div>
+      <div class="col">
+        <label class="label" for="playlist_mode">Playlist source</label>
+        <select class="input" name="playlist_mode" id="playlist_mode">
+          <option value="paste">Paste link / ID</option>
+          <option value="saved">Use saved playlist</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="pasteBlock">
+      <label class="label" for="f_playlist_id_or_url">Spotify playlist link or ID</label>
+      <input id="f_playlist_id_or_url" class="input" name="playlist_id_or_url" placeholder="https://open.spotify.com/playlist/..." data-playlist-input />
+    </div>
+
+    <div data-hide id="savedBlock">
+      <div class="label savedLabelRow">Saved playlist <a class="link small" href="/host/playlist">Manage playlists</a></div>
+      <div class="plTools"><label class="hideExplicit"><input type="checkbox" data-hide-explicit="select[name=saved_playlist_id]" /> Hide playlists with explicit songs</label><label class="plSortLabel">Sort by <select class="input plSort" data-playlist-sort="select[name=saved_playlist_id]"><option value="new">Newest first</option><option value="name">Name A–Z</option><option value="name_desc">Name Z–A</option><option value="songs_desc">Most songs</option><option value="songs">Fewest songs</option><option value="explicit_desc">Most explicit songs</option></select></label></div>
+      <select class="input" name="saved_playlist_id" aria-label="Saved playlist">
+        <option value="">-- select --</option>
+        {% for pl in playlists %}
+          <option value="{{ pl.id }}" data-explicit="{{ 1 if pl.explicit_count else 0 }}" data-name="{{ pl.name|lower|e }}" data-songs="{{ pl.track_count or 0 }}" data-explicit-count="{{ pl.explicit_count or 0 }}" data-order="{{ loop.index }}">{{ pl.name }}{% if not pl.is_public %} (private){% endif %}{{ explicit_note(pl) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- the event for this game: its logo (or name) goes in the center square of phone cards and paper cards -->
+    <div class="row alignTop">
+    <div class="col eventBlock">
+      <div class="label savedLabelRow"><span>Event (optional): its logo or name goes in the center square of the cards</span> <a class="link small" href="/host/events/manage">Add or change events</a></div>
+      <select class="input" name="event_id" id="eventSelect" aria-label="Event (optional)">
+        <option value="">No event (plain FREE square)</option>
+        {% for v in events %}
+          <option value="{{ v.id }}" data-logo="{{ v.logo_url or '' }}">{{ v.name or 'Logo' }}{% if v.has_logo and v.name %} (logo){% endif %}</option>
+        {% endfor %}
+      </select>
+      <div class="eventPicked" data-hide id="eventPicked"><img data-hide id="eventPickedLogo" alt="" /></div>
+    </div>
+    <div class="col patternBlock">
+      <div class="label savedLabelRow"><label for="winPattern">What counts as bingo</label></div>
+      <select class="input" name="win_pattern" id="winPattern">
+        {% for key, label in win_pattern_options %}<option value="{{ key }}">{{ label }}</option>{% endfor %}
+      </select>
+    </div>
+    </div>
+
+    <!-- print paper cards for this game (phones can still join) -->
+    <div class="paperBlock">
+      <label class="paperCheck"><input type="checkbox" name="paper_cards" value="1" id="paperToggle" />
+        <span><b>Paper cards</b>: print bingo cards for players without phones. Phone players can still join.</span></label>
+      <div data-hide id="paperOptions" class="paperOptions">
+        <div class="row">
+          <div class="col">
+            <label class="label" for="f_paper_count">How many cards (up to 100)</label>
+            <input id="f_paper_count" class="input" type="number" name="paper_count" min="1" max="100" value="30" />
+          </div>
+        </div>
+        <label class="paperCheck"><input type="checkbox" name="paper_join_footer" value="1" checked />
+          <span>Print "Join on your phone" with the game code on each card</span></label>
+        <label class="paperCheck"><input type="checkbox" name="paper_theme" value="1" />
+          <span>Use my theme's colors on the cards (<b>{{ my_theme_name }}</b>): the paper stays white, only the lines, letters and center square are colored</span></label>
+      </div>
+    </div>
+
+    <button class="btn btnPrimary" type="submit" id="createBtn">Create Game</button>
+  </form>
+</div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ static_url('pages/host_dashboard_1.js') }}"></script>
+{% endblock %}
+
+<link rel="stylesheet" href="{{ static_url('pages/host_dashboard_2.css') }}" />
+
+<script src="{{ static_url('pages/host_dashboard_2.js') }}"></script>
+
+<script src="{{ static_url('pages/host_dashboard_3.js') }}"></script>

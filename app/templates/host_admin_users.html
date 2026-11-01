@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="h1">Host Admin</h1>
+    <div class="muted">Manage host accounts and Spotify connections. <span class="small">Music Bingo {{ app_version }}</span></div>
+  </div>
+  <div class="topActions">
+  </div>
+</div>
+
+{% if error %}
+  <div class="alert alertBad">{{ error }}</div>
+{% endif %}
+{% if ok %}
+  <div class="alert alertOk">{{ ok }}</div>
+{% endif %}
+
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">App settings</div>
+    <div class="sub">The public address and your Spotify developer app. Anything set in the server's settings (the <code>.env</code> file or the compose file) is shown here but can only be changed there.</div>
+  </div>
+  <form method="post" action="/host/admin/settings" class="form" autocomplete="off">
+    <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+    <div class="label">Public address (join links, QR codes, Spotify sign-in)</div>
+    {% if cfg.public_src == 'env' %}
+      <div class="muted">{{ cfg.public_url }} <span class="small">(set in the settings file)</span></div>
+    {% else %}
+      <input class="input" name="public_url" value="{{ cfg.public_url if cfg.public_src else '' }}" placeholder="https://bingo.example.com" />
+    {% endif %}
+    <details class="spotifyHow">
+      <summary>Where do I get a Spotify client ID and secret?</summary>
+      {% set steps_redirect = cfg.redirect_uri %}
+      {% include "_spotify_steps.html" %}
+    </details>
+    <div class="label mt10">Spotify redirect address to register in your Spotify developer app</div>
+    <div class="muted"><code>{{ cfg.redirect_uri }}</code></div>
+    {% if cfg.redirect_src == 'env' %}<div class="muted small">Set in the settings file.</div>
+    {% else %}
+    <label class="label mt10" for="f_spotify_redirect_uri">Spotify redirect address, only if it must differ from the public address</label>
+    <input id="f_spotify_redirect_uri" class="input" name="spotify_redirect_uri" value="{{ cfg.redirect_saved }}" placeholder="{{ cfg.public_url }}/auth/spotify/callback" spellcheck="false" />
+    <div class="muted small">On your own computer with phones joining over the network, use <code>http://127.0.0.1:5000/auth/spotify/callback</code> here (Spotify accepts a plain http:// redirect only for 127.0.0.1) and open the host pages at that address.</div>
+    {% endif %}
+    <div class="row">
+      <div class="col">
+        <label class="label" for="spotifyClientId">Spotify client ID</label>
+        {% if cfg.spotify_id_src == 'env' %}<div class="muted">{{ cfg.spotify_id }} <span class="small">(set in the settings file)</span></div>
+        {% else %}<input class="input" id="spotifyClientId" name="spotify_client_id" value="{{ cfg.spotify_id }}" spellcheck="false" />{% endif %}
+      </div>
+      <div class="col">
+        <label class="label" for="spotifyClientSecret">Spotify client secret</label>
+        {% if cfg.spotify_secret_src == 'env' %}<div class="muted">Set in the settings file</div>
+        {% else %}<input class="input" id="spotifyClientSecret" type="password" name="spotify_client_secret" autocomplete="off" spellcheck="false" placeholder="{{ 'Saved. Type to replace it.' if cfg.spotify_secret_src else 'Not set' }}" />{% endif %}
+      </div>
+    </div>
+    <button class="btn btnPrimary" type="submit">Save settings</button>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Create host user</div>
+    <div class="sub">Users will log in at /login with their own username + password. The password you set here is temporary: they are asked to choose their own at their first login.</div>
+  </div>
+
+  <form method="post" action="/host/admin/users/create" class="form">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+    <div class="row">
+      <div class="col">
+        <label class="label" for="f_username">Username</label>
+        <input id="f_username" class="input" name="username" autocomplete="username" required />
+      </div>
+      <div class="col">
+        <label class="label" for="f_password">Temporary password</label>
+        <input id="f_password" class="input" name="password" type="password" autocomplete="new-password" required />
+      </div>
+    </div>
+
+    <label class="checkboxRow">
+      <input type="checkbox" name="is_admin" value="1" />
+      <span>Admin</span>
+    </label>
+
+    <button class="btn btnPrimary" type="submit">Create user</button>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Existing users</div>
+    <div class="sub">Reset passwords, toggle admin, or delete.</div>
+  </div>
+
+  <div class="tableWrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Admin</th>
+          <th>Spotify</th>
+          <th class="is11">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td><strong>{{ u.username }}</strong></td>
+          <td>{% if u.is_admin %}✅{% else %}—{% endif %}</td>
+          <td>
+            {% if u.spotify_connected %}
+              ✅ connected
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td>
+            <form class="is12" method="post" action="/host/admin/users/set_password">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+              <input type="hidden" name="user_id" value="{{ u.id }}" />
+              <input class="is13 input" name="password" type="password" autocomplete="new-password" placeholder="new password" required />
+              <button class="btn btnGhost" type="submit">Set password</button>
+            </form>
+
+            <form class="is12" method="post" action="/host/admin/users/toggle_admin">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+              <input type="hidden" name="user_id" value="{{ u.id }}" />
+              <button class="btn btnGhost" type="submit">{% if u.is_admin %}Remove admin{% else %}Make admin{% endif %}</button>
+            </form>
+
+            <form class="is14" method="post" action="/host/admin/users/delete" data-confirm="Delete this host user?">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+              <input type="hidden" name="user_id" value="{{ u.id }}" />
+              <button class="btn btnDanger" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+        {% if not users or users|length == 0 %}
+        <tr><td colspan="4" class="muted">No users found.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<link rel="stylesheet" href="{{ static_url('pages/host_admin_users_1.css') }}" />
+<link rel="stylesheet" href="{{ static_url('pages/setup_1.css') }}" />
+{% endblock %}

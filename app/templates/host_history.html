@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="h1">Game History</h1>
+    <div class="muted">Your last {{ limit }} games, newest first. <a class="link" href="/host">Back to the dashboard</a></div>
+  </div>
+  <div class="topActions"></div>
+</div>
+
+{% set options_active = 'history' %}{% include "_options_nav.html" %}
+<div class="panel">
+  <div class="panelHeader">
+    <div class="title">Your games</div>
+    <div class="sub"><b>Play again</b> starts a fresh session with the same game code and paper cards. <b>Save</b> keeps a game on the Saved Games page; a game that is not saved can be deleted here.</div>
+  </div>
+
+  <div class="savedList">
+    {% for row in rows %}
+      {% set g = row.g %}
+      <div class="savedGame">
+        <div class="savedTop">
+          <a class="link histName" href="/host/game/{{ g.code }}">{{ g.name }}</a>
+          {% if g.is_saved %}<span class="pill">★ Saved</span>{% endif %}
+        </div>
+        <div class="muted small savedFacts">
+          {% if g.status == 'started' %}<b>In progress</b>{% elif g.status == 'ended' %}<b>Finished</b>{% else %}<b>Ready</b>{% endif %}
+          · Game Code: <b>{{ g.code }}</b> · Songs: <b>{{ g.playlist_name or 'playlist' }}</b>
+          · <b>{{ row.players }}</b> player{{ '' if row.players == 1 else 's' }}
+          · {% if row.paper %}<b>{{ row.paper }}</b> paper card{{ '' if row.paper == 1 else 's' }}{% else %}no paper cards{% endif %}
+          {% if row.event %}· event <b>{{ row.event.name or 'logo' }}</b>{% if row.event.has_logo %} <img class="eventThumb" src="/host/events/{{ row.event.id }}/logo" alt="{{ row.event.name or 'Event' }} logo" />{% endif %}{% endif %}
+          {% if row.paper and g.paper_theme %}· card colors <b>{{ theme_label(g.paper_theme) }}</b>{% endif %}
+          {% if g.created_at %}· created {{ g.created_at.strftime('%Y-%m-%d %H:%M') }}{% endif %}
+        </div>
+        <div class="savedBtns">
+          <a class="btn btnPrimary" href="/host/game/{{ g.code }}">{% if g.status == 'started' %}Resume{% elif g.status == 'ended' %}View{% else %}Open{% endif %}</a>
+          {% if g.status != 'lobby' %}
+          <form method="post" action="/host/game/{{ g.code }}/reset" data-confirm="Start a new session of {{ g.name|e }}? This clears its played songs, claims and phone players, and keeps the game code, song list{% if row.paper %} and paper cards{% endif %}.">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+            <button class="btn btnGhost" type="submit">Play again</button>
+          </form>
+          {% endif %}
+          {% if row.paper %}<a class="btn btnGhost" href="/host/game/{{ g.code }}/paper">Cards ({{ row.paper }})</a>{% endif %}
+          <form method="post" action="/host/game/{{ g.code }}/save">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+            <input type="hidden" name="saved" value="{{ '0' if g.is_saved else '1' }}"/><input type="hidden" name="next" value="/host/history"/>
+            <button class="btn btnGhost" type="submit" title="{{ 'Take it off the Saved Games page' if g.is_saved else 'Keep this game (and its paper cards) on the Saved Games page to play again' }}">{{ 'Remove from saved' if g.is_saved else 'Save' }}</button>
+          </form>
+          {% if not g.is_saved %}
+          <form method="post" action="/host/game/{{ g.code }}/delete" data-confirm="Delete game {{ g.code }}{% if row.paper %} and its {{ row.paper }} paper cards{% endif %}? This cannot be undone.">
+            <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+            <input type="hidden" name="next" value="/host/history"/>
+            <button class="btn btnDanger" type="submit">Delete</button>
+          </form>
+          {% endif %}
+        </div>
+      </div>
+    {% else %}
+      <div class="muted">No games yet. Create one from the dashboard.</div>
+    {% endfor %}
+  </div>
+</div>
+
+</div></div>
+
+<link rel="stylesheet" href="{{ static_url('pages/host_saved_games_1.css') }}" />
+<link rel="stylesheet" href="{{ static_url('pages/host_history_1.css') }}" />
+{% endblock %}

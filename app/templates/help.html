@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="h1">Getting Started</h1>
+    <div class="muted">How Music Bingo works, for hosts and players.</div>
+  </div>
+  <div class="topActions"></div>
+</div>
+
+<div class="panel helpPage">
+  <div class="helpToc">
+    <a href="#overview">The idea</a>
+    <a href="#before">Before your first game</a>
+    <a href="#host">Hosting a game</a>
+    <a href="#claims">Bingo claims</a>
+    <a href="#players">For players</a>
+    <a href="#hints">Bingo hints</a>
+    <a href="#room">The QR screen: join code, song reveal and room speaker</a>
+    <a href="#paper">Paper cards</a>
+    <a href="#saved">Saved games, Game History and Play again</a>
+    <a href="#playlists">Playlists</a>
+    <a href="#account">Your account and themes</a>
+    <a href="#solo">Playing alone</a>
+    <a href="#tips">Tips and troubleshooting</a>
+  </div>
+
+  <h2 id="overview">The idea</h2>
+  <p>Music Bingo is bingo where the squares are <b>song titles</b>. Every player gets a card with a different mix of songs from the host's playlist. The host plays the songs one at a time, and players mark the songs they hear. The first player with five in a row (across, down or diagonal) calls <b>Bingo</b>, and the host checks it.</p>
+  <p>You can play with phones, with printed paper cards, or both in the same game.</p>
+
+  <h2 id="before">Before your first game</h2>
+  <ol>
+    <li><b>Connect Spotify.</b> On the Host Dashboard, click <b>Connect Spotify</b> and sign in with the Spotify account that will play the music. Playing music needs Spotify Premium. You only need to do this once, unless Spotify asks you to reconnect.</li>
+    <li><b>Pick a playlist.</b> It needs <b>at least 24 different songs</b>; around 75 or fewer works best, since bigger playlists make games run long. Include each song only once, because duplicates can cause issues for players. Playlists made by Spotify itself can't be used; make your own copy of the songs in a playlist you own.</li>
+    <li><b>Save the playlist</b> under <b>Options</b> &rarr; <b>Manage Playlists</b> (<b>Options</b> is in the menu at the top right) to reuse it easily. You can keep it private, or make it public so other hosts can use it too.</li>
+  </ol>
+
+  <h2 id="host">Hosting a game</h2>
+  <ol>
+    <li>On the <b>Host Dashboard</b>, choose a playlist and click <b>Create Game</b>. You get a 5-character <b>game code</b> and a <b>join link</b>.</li>
+    <li>Share the link or code. Players open it on their phones and enter their name. They wait in the lobby until you admit them.</li>
+    <li>Click <b>Admit All</b> to let everyone in, then <b>Start Game</b>. In the <b>Players</b> list every player also has their own <b>Admit</b> button (while they are waiting) and a <b>Kick</b> button, which removes the player, their card and any bingo claim. The player is sent back to the start page and can join again with a different name (handy for an inappropriate name). Players who joined before you started can still be admitted once the game is running; new people can't join a game that has started.</li>
+    <li>Use <b>Play</b>, <b>Pause</b> and <b>Next</b> to run the music. <b>Embedded (Bingo Host Player)</b> plays in the browser tab you're using, which is the easiest option and the default. To use another device (a phone, speaker or computer), click <b>Refresh devices</b> in the Spotify box: a picker appears if Spotify finds one, and the message under the button says what it found. Play Alone sessions are never offered as a device for a hosted game.</li>
+    <li>The <b>Played Tracks</b> list shows what has been played, most recent first.</li>
+    <li>When the game is over, click <b>End Game</b> (the <b>Start Game</b> button turns into <b>End Game</b> once the game has started). Every player's phone then shows <b>Game Over</b>; tapping it takes them back to the start page. The button then becomes <b>Play again</b>, which starts a fresh session of the same game.</li>
+  </ol>
+  <p>Under the <b>Admit All</b> and <b>Start Game</b> buttons you can also turn on <b>Bingo hints</b> for the game; see <a href="#hints">Bingo hints</a> below. The switches <b>Reveal on QR screen</b> and <b>Music on QR screen</b> turn the QR screen into a song-reveal screen for the room, and can play the music through it; see <a href="#room">The QR screen</a>.</p>
+
+  <h2 id="claims">Bingo claims</h2>
+  <p>When a player taps <b>Bingo</b>, the claim appears in <b>Bingo Claims</b> on your page. The app checks the card against the songs actually played and tells you whether the line is complete. Then you choose:</p>
+  <ul>
+    <li><b>Accept</b> if it's a real bingo. You then get <b>Continue Game</b> (keep going for more winners) or <b>End Game</b>.</li>
+    <li><b>Reject</b> if it isn't. The player is told, and play carries on.</li>
+  </ul>
+  <p>For a paper card, type its <b>check code</b> (printed on the card, like <code>12-KXR</code>) into <b>Check card</b>. You'll see the card, which squares have played, and whether it has a winning line, then accept or reject it the same way.</p>
+
+  <h2 id="players">For players</h2>
+  <ol>
+    <li>Open the join link (or go to the site and enter the game code), type your name and join.</li>
+    <li>Wait for the host to admit you and start the game.</li>
+    <li>You get a card of song titles. The free square in the middle is already marked. If the host chose an event, its logo (or name) is shown in that square. The card wears the host's <a href="#account">theme</a>.</li>
+    <li>As songs play, the song title is shown on your screen a few seconds in. Tap the matching square on your card to mark it.</li>
+    <li>Got five in a row? Tap <b>Bingo</b>. The host checks it and accepts or rejects it.</li>
+  </ol>
+  <p>If you close the page by accident, open the same link again on the same phone to get back to your card.</p>
+
+  <h2 id="hints">Bingo hints</h2>
+  <p>Cards have <b>B I N G O</b> above the five columns. With <b>Bingo hints</b> on, the letter of one column lights up each time a new song starts, to tell the player where to look.</p>
+  <ul>
+    <li><b>If the song is on your card,</b> the letter of the column it is in lights up.</li>
+    <li><b>If the song is not on your card,</b> a different column lights up anyway. So a lit letter only means "if this song is on your card, it is in this column". It doesn't tell you whether you have it.</li>
+    <li>Different players can see different letters for the same song, because their cards are different.</li>
+  </ul>
+  <p><b>For hosts:</b> on your game page, under the <b>Admit All</b> and <b>Start Game</b> buttons, switch on <b>Bingo hints</b> to turn them on for the game. They are off by default. Then choose who gets them:</p>
+  <ul>
+    <li><b>Players choose</b> switched on: each player gets a <b>Hints</b> switch next to their name and turns it on or off for themselves.</li>
+    <li><b>Players choose</b> switched off: hints are on for everyone.</li>
+  </ul>
+  <p>You can change this at any time, even during a game. Paper cards can't light up, so hints only help phone players and solo players. Hints work best with playlists of 40 songs or more.</p>
+  <p><b>Playing alone:</b> use the <b>Bingo hints</b> switch next to the status line. It is remembered for that game on that device.</p>
+
+  <h2 id="room">The QR screen: join code, song reveal and room speaker</h2>
+  <p>Click <b>QR code</b> next to the join link on your game page to open a full-screen page with a large QR code and the game address. Cast it to a TV or projector (or open it on a computer connected to one) so people can scan it and join.</p>
+  <p><b>Song reveal for the room.</b> Under <b>Admit All</b> and <b>Start Game</b>, switch on <b>Reveal on QR screen</b>. When you click <b>Start Game</b>, the QR screen turns into a big, themed screen: <b>Game starting in 3, 2, 1</b>, then each song with the same 10-second <b>Song revealed in</b> countdown the phones use, followed by the title and artist in large text. The song before it stays at the bottom as <b>Last song</b>. When a bingo is accepted the screen shows <b>BINGO!</b> and the winner's name with fireworks until you click <b>Continue</b>, and <b>Game over</b> when you end the game. This is handy for people playing with paper cards, who have no phone to see the reveal. It is off by default and you can switch it on or off at any time.</p>
+  <p><b>Music through the QR screen's speakers.</b> If you want the sound to come out of the cast device or the room's HDMI/speaker system, switch on <b>Music on QR screen</b> (it is available once the reveal is on). A small <b>🔊 Play the game music on this screen</b> button then appears in the bottom corner of the QR screen:</p>
+  <ol>
+    <li>On the QR screen, click that button once (browsers won't play sound until a page is clicked). This needs the QR screen to be signed in as you and your Spotify Premium; nothing is installed on that device.</li>
+    <li>On your game page, click <b>Refresh devices</b> and choose <b>Bingo Room Screen</b>. You can do this before <b>Start Game</b> or during a game, and the music moves there.</li>
+    <li>You still control everything from your game page: <b>Start Game</b>, <b>Play</b>, <b>Pause</b> and <b>Next</b>.</li>
+  </ol>
+  <p>If you cast a browser tab from your own computer with its sound, the normal <b>Embedded</b> player already plays through the cast, and you don't need this option. If "Bingo Room Screen" doesn't show up, wait a few seconds and click <b>Refresh devices</b> again, or click the button on the QR screen once more.</p>
+
+  <h2 id="paper">Paper cards</h2>
+  <p>Hosts can print cards for people without phones, or for a whole crowd.</p>
+  <ul>
+    <li>When creating a game, tick <b>Paper cards</b> and choose how many (up to 100 per game).</li>
+    <li>Any game, with or without paper cards, can have an <b>event</b>: choose it in the <b>Event</b> box when you create the game. Its logo (or its name, if it has no logo) goes in the center square of the paper cards and of the phone cards. You set events up under <b>Options</b> &rarr; <b>Events</b>: an event needs a <b>name</b>; a <b>logo</b> (PNG or JPG) is optional and, if there is one, it is shown instead of the name.</li>
+    <li>Tick <b>Use my theme's colors on the cards</b> to print them in your <a href="#account">theme</a>: the paper stays white (to save ink), and only the lines, the game name and the <b>B I N G O</b> letters are colored; the letters sit in boxes. The choice is saved with the game, so changing your theme later doesn't change cards you already made.</li>
+    <li>On the game page, click <b>Paper cards</b> to open the print page: one large card per page. Click <b>Print</b>.</li>
+    <li>Each card has a number and a <b>check code</b>. Phone cards and paper cards never match each other.</li>
+    <li>Paper players listen to the same music as everyone else and mark their own cards. They call bingo out loud, and you check their card code.</li>
+    <li><b>Make more</b> adds extra cards to the game.</li>
+    <li>The <b>Card colors</b> switch on the print page turns your theme colors on or off for a game that already has cards. Only how the cards look changes: numbers, squares and check codes stay the same, so cards you've already printed still work.</li>
+    <li>If songs are later removed from the playlist, a notice appears and <b>Update cards</b> swaps only the removed songs on only the affected cards. Reprint those cards. <b>Regenerate all</b> rebuilds every card from the current playlist (the numbers and check codes stay the same, but all printed cards must be replaced). Neither works while a game is being played.</li>
+    <li>If you leave the join footer on, each card shows a QR code and the web address so people can also join on their phone.</li>
+  </ul>
+
+  <h2 id="saved">Saved games, Game History and Play again</h2>
+  <p>If you run the same game again and again (a weekly family game night, for example), click <b>Save game</b> on its page. Saved games appear under <b>Options</b> &rarr; <b>Saved Games</b>, with their game code, playlist and paper cards.</p>
+  <p><b>Play again</b> starts a fresh session: the played list, claims and phone players are cleared, but the game code, playlist, event and paper cards stay the same, so cards you've already printed keep working.</p>
+  <p><b>Game History</b> (under <b>Options</b>) lists your last 50 games, saved or not, newest first. Each row shows the game code, the playlist, how many players and paper cards it had, the event (with its logo), the card colors if a theme was used, and when it was created. For each game you can <b>Open</b> (or <b>Resume</b> or <b>View</b>) it, <b>Play again</b>, open its <b>Cards</b>, <b>Save</b> it (or <b>Remove from saved</b>), and <b>Delete</b> it. A saved game can't be deleted from here: remove it from saved first, or delete it on the Saved Games page.</p>
+
+  <h2 id="playlists">Playlists</h2>
+  <ul>
+    <li><b>Manage Playlists</b> (under <b>Options</b>) lists the playlists you've saved and public ones from other hosts.</li>
+    <li>Only the host who added a playlist can delete it or change it between public and private.</li>
+    <li>Paste a Spotify playlist link when creating a game or saving a playlist. The page warns you straight away if it's a Spotify-made playlist.</li>
+  </ul>
+
+  <h2 id="account">Your account and themes</h2>
+  <p>Open the menu at the top right and choose <b>Options</b>. A menu down the left side has <b>Account</b>, <b>Themes</b>, <b>Saved Games</b>, <b>Game History</b>, <b>Manage Playlists</b> and <b>Events</b> (add, rename and delete events, and add, change or remove their logos). On <b>Themes</b> you can:</p>
+  <ul>
+    <li><b>Pick a theme.</b> Choose from eight ready-made color themes: <b>Midnight Purple</b> (the original), <b>Ocean Blue</b>, <b>Emerald</b>, <b>Sunset</b>, <b>Rose</b>, <b>Graphite</b>, <b>Maize &amp; Blue</b> and <b>Light</b> (dark text on white panels, for bright rooms or if you prefer it). Or pick <b>Custom</b> to choose your own: a color wheel for three colors (background, buttons, highlight; click one, then click or drag on the wheel, and use the Brightness slider or type a color code), and the app works out the panels, text and borders. A preview of a phone card and a paper card updates as you pick. Players see your colors, and paper cards can use them too ("Use my theme's colors"). Cards that were already made keep the colors they were made with. Click a swatch to preview it right away, then click <b>Save theme</b> to keep it. If you leave without saving, nothing changes.</li>
+  </ul>
+  <p>On <b>Account</b> you can change your password (you'll need your current password).</p>
+  <p>Your theme is used on all your pages and on the games you host: players see it on their phones (the join page, their card and the winner screen), so a game looks the same on every device. Paper cards use it only if you ask (see <a href="#paper">Paper cards</a>). Pages with no host behind them, like the page where you enter a game code, always use the original look. Each host picks their own theme.</p>
+
+  <h2 id="solo">Playing alone</h2>
+  <p>On the home page, choose <b>Play Alone</b> to play by yourself. Songs play through your Spotify and you mark your own card. If you call a bingo by mistake, the app tells you which squares you marked that haven't played.</p>
+
+  <h2 id="tips">Tips and troubleshooting</h2>
+  <ul>
+    <li><b>No sound:</b> open <b>Refresh devices</b> in the Spotify box and pick your device, or use the embedded player. Make sure Spotify is Connected and that you have Premium.</li>
+    <li><b>The QR screen is stuck on "Get ready…":</b> the first song hasn't started yet. Click <b>Play</b> on your game page, and check the music is playing on the device you picked.</li>
+    <li><b>Spotify says it needs reconnecting:</b> click <b>Connect Spotify</b> again on the dashboard.</li>
+    <li><b>Players seeing an old screen:</b> ask them to refresh the page.</li>
+    <li><b>A page looks out of date after an update:</b> do a hard refresh (<b>Ctrl+Shift+R</b>, or <b>Cmd+Shift+R</b> on a Mac) so the browser fetches the new styles.</li>
+    <li><b>A player joined by mistake or under the wrong name:</b> use <b>Kick</b> next to their name in the Players list. If it is their own phone, they can open the join link again (while the game hasn't started) and tap <b>Not you? Join as someone else</b> to leave and join under a new name.</li>
+    <li><b>Game code not found:</b> check the code. Codes are 5 letters and numbers, and capitals don't matter.</li>
+    <li><b>Locked out of your account:</b> ask the administrator to reset your password.</li>
+  </ul>
+</div>
+
+<p class="muted small helpVersion">Music Bingo {{ app_version }}</p>
+
+<link rel="stylesheet" href="{{ static_url('pages/help_1.css') }}" />
+{% endblock %}

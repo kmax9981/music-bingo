@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0f1024"/>
+      <stop offset="1" stop-color="#2b1a4d"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a855f7"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Rounded app tile -->
+  <rect x="10" y="10" width="108" height="108" rx="26" fill="url(#bg)" stroke="url(#accent)" stroke-width="4" filter="url(#shadow)"/>
+
+  <!-- Bingo grid (3x3) -->
+  <g transform="translate(28,32)">
+    <rect x="0" y="0" width="72" height="72" rx="14" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.10)" stroke-width="2"/>
+    <!-- grid lines -->
+    <path d="M24 8 V64 M48 8 V64 M8 24 H64 M8 48 H64" stroke="rgba(255,255,255,0.14)" stroke-width="3" stroke-linecap="round"/>
+    <!-- filled 'marked' squares -->
+    <rect x="8"  y="8"  width="16" height="16" rx="6" fill="url(#accent)"/>
+    <rect x="32" y="32" width="16" height="16" rx="6" fill="url(#accent)"/>
+    <rect x="48" y="48" width="16" height="16" rx="6" fill="url(#accent)"/>
+  </g>
+
+  <!-- Music note -->
+  <g transform="translate(70,38)">
+    <path d="M18 6 v44c0 7-6 12-13 12S-8 57-8 50s6-12 13-12c2 0 4 .4 6 1.2V14l22-6v10z"
+          fill="rgba(255,255,255,0.88)"/>
+  </g>
+</svg>

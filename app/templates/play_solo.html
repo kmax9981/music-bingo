@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block head_scripts %}<script src="{{ static_url('mono.js') }}"></script>{% endblock %}
+{% block content %}
+
+<script nonce="{{ request.state.csp_nonce }}">
+window.BINGO_SOLO = {
+  code: {{ (code|default(''))|string|tojson }}, playerno: {{ (playerno|default(''))|string|tojson }}, gameEnded: {{ "true" if game_ended else "false" }},
+  playerName: {{ (player_name|default(''))|string|tojson }}, gameStatus: {{ (game_status|default(''))|string|tojson }},
+  token: {{ (access_token|default(''))|string|tojson }}, playlistId: {{ (spotify_playlist_id|default(''))|string|tojson }}
+};
+document.body.classList.add('soloPage');
+</script>
+
+<div class="topbar">
+  <div>
+    <h1 class="h1">Play Alone</h1>
+    <div class="muted">Session {{ code }} — {{ playlist_name }}</div>
+    <div class="muted"><label class="displayInline"><span class="dLabel">Display</span> <select class="displaySelect" id="displaySelect" aria-label="Display"><option value="color">Color</option><option value="light">Light</option><option value="dark">Dark</option></select></label></div>
+  </div>
+  <div class="topActions">
+    <!-- same box + 10s reveal countdown as the hosted player card -->
+    <div class="nowPlaying nowPlayingCompact" id="nowPlaying">
+      <div class="npTitle" id="npTitle"></div>
+      <div class="npArtist" id="npArtist"></div>
+      <div class="npCountdown" id="npCountdown" hidden>
+        <div class="npcLine" aria-hidden="true"><span id="npcLabel">Song revealed in</span> <span class="npcNum" id="npcNum"></span></div>
+        <div class="npcSub" id="npcSub" aria-hidden="true">Guess it by ear</div>
+        <div class="npcBar" aria-hidden="true"><div class="npcFill" id="npcFill"></div></div>
+        <span class="npcSr" id="npcSr" aria-live="polite"></span>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Same countdown styles as player_card.html (base.html has no styles block, so they live inline) -->
+<link rel="stylesheet" href="{{ static_url('pages/play_solo_1.css') }}" />
+<script src="{{ static_url('solo_reveal.js') }}"></script>
+
+{% if error %}
+  <div class="alert alertBad">{{ error }}</div>
+{% endif %}
+
+<div id="soloRoot" class="soloLayout">
+
+  <!-- LEFT: card + ended banner + overlay -->
+  <div class="panel" id="soloCardPanel">
+      <div id="soloRotateHint" class="rotateHint" role="note" aria-live="polite">
+        <span class="rotateHintIcon" aria-hidden="true">↻</span>
+        <span class="rotateHintText">Best experience on phones: rotate to <b>landscape</b>.</span>
+      </div>
+
+        <div class="is20 panelHeader">
+      <div class="is21" id="soloHeaderNormal">
+        <div class="title" id="soloCardHeaderTitle">Your Bingo Card</div>
+        <div class="sub" id="soloCardHeaderSub">Tap squares to dab. FREE is always valid.</div>
+      </div>
+
+      <div data-hide id="soloHeaderEnded">
+        <div data-hide id="soloGameOver" class="is22 alert alertWarn">
+          <span><b>Game over — nice bingo!</b> This solo session is finished.</span>
+          <a class="btn btnGhost" href="/play">Return to Play Alone</a>
+        </div>
+      </div>
+    </div>
+
+<div class="cardGrid" id="soloCardGrid" aria-label="Solo bingo card">
+      <div class="cardLetter" aria-hidden="true">B</div><div class="cardLetter" aria-hidden="true">I</div><div class="cardLetter" aria-hidden="true">N</div><div class="cardLetter" aria-hidden="true">G</div><div class="cardLetter" aria-hidden="true">O</div>
+      {% if squares is defined and squares %}
+        {% for sq in squares %}
+          <button class="sq {% if sq.is_free %}free{% endif %}{% if sq.marked %} marked{% endif %}"
+                  data-pos="{{ sq.pos }}"
+                  type="button"
+                  {% if sq.is_free %}data-free="true"{% endif %}>
+            <span class="sqText">{{ sq.title }}</span>
+          </button>
+        {% endfor %}
+      {% elif card_grid %}
+        {% for r_i in range(card_grid|length) %}
+          {% set row = card_grid[r_i] %}
+          {% for c_i in range(row|length) %}
+            {% set cell = row[c_i] %}
+            {% set pos = (r_i * 5) + c_i %}
+            <button class="sq {% if r_i == 2 and c_i == 2 %}free{% endif %}{% if cell.marked %} marked{% endif %}"
+                    data-pos="{{ pos }}"
+                    type="button"
+                    {% if r_i == 2 and c_i == 2 %}data-free="true"{% endif %}>
+              <span class="sqText">{{ cell.title }}</span>
+            </button>
+          {% endfor %}
+        {% endfor %}
+      {% else %}
+        <div class="muted">No card data found for this session.</div>
+      {% endif %}
+    </div>
+
+    <div id="bingoResult" class="muted"></div>
+
+<div id="soloEmbedWrap" class="soloEmbedWrap">
+      <div id="embedPlayer"></div>
+    </div>
+
+    <!-- Winner overlay (only used when game not already ended) -->
+    <div id="bingoOverlay" class="bingoOverlay hidden" aria-hidden="true">
+      <canvas id="fireworksCanvas" class="fireworksCanvas" aria-hidden="true"></canvas>
+      <script src="{{ static_url('fireworks.js') }}"></script>
+      <div class="bingoOverlayInner">
+        <div id="bingoOverlayTitle" class="bingoOverlayTitle"></div>
+        <div id="bingoOverlaySub" class="bingoOverlaySub"></div>
+        <div class="mt10 muted small">Click anywhere to continue</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: controls + played tracks -->
+  <div class="panel" id="soloPlayedPanel">
+
+    {% if game_status != 'ended' %}
+    <div class="soloControlsRow">
+      <button class="btn btnPrimary" id="btnBingo" type="button">Bingo</button>
+      <button class="btn" id="btnPlay" type="button">Play</button>
+      <button class="btn" id="btnPause" type="button">Pause</button>
+      <button class="btn" id="btnNext" type="button">Next</button>
+    </div>
+    {% endif %}
+
+    <div class="is23 muted" id="soloPlayStatus">
+  Status: <strong id="soloPlayStatusText">Paused</strong>
+  <label class="is24 hintSwitch" id="soloHintWrap" title="Light up the letter of the column to look in for the song now playing"><input type="checkbox" role="switch" id="soloHintChk"> Bingo hints</label>
+  <div data-hide id="playStatus"></div>
+</div>
+
+    <div id="soloRightPanel" class="mt8 panelHeader">
+      <div class="title">Played Tracks <span id="songsCount"></span></div>
+    </div>
+
+    <div class="chips" id="playedList">
+      <div class="muted">No tracks played yet.</div>
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}
+
+{% block styles %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ static_url('bingo_hint.js') }}"></script>
+<script src="{{ static_url('play_solo.js') }}"></script>
+{% endblock %}

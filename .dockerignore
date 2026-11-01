@@ -1,0 +1,15 @@
+.git
+.github
+.claude
+backups
+config
+tests
+docs
+tools
+*.md
+__pycache__
+*.pyc
+.env
+.env.*
+config-bingo.env
+*.env

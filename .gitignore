@@ -1,0 +1,48 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+config-bingo.env
+config/postgres/data/
+.DS_Store
+\n
+
+# === Local-only / server artifacts (DO NOT COMMIT) ===
+backups/
+old_patches/
+*_backup_*/
+_patch_backup_*/
+_emergency_backup_*/
+_full_snapshot_*/
+_pre_restore_*
+_db_dump_*/
+container__*.bak.*
+_opt_bingo_*.bak.*
+
+# === Specific backup files ===
+app/templates/*.bak
+app/templates/*.bak2
+
+# === Generated backup artifacts ===
+*.bak.*
+*.broken.*
+
+# Env / secrets
+config-bingo.env
+*.env
+.env
+.env.*
+*.pem
+*.key
+*secret*
+*token*
+*password*
+
+# source files whose names contain "password" but hold no secrets
+!app/passwords.py
+!app/reset_password.py
+config-bingo.env.redacted
+
+# but keep the example
+!.env.example

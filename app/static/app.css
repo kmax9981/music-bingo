@@ -1,0 +1,2693 @@
+:root{
+  --bgTop: #0a0b1f;
+  --bgMid: #0b0b20;
+  --bgBot: #070712;
+
+  --panelTop: rgba(26, 28, 58, 0.78);
+  --panelBot: rgba(18, 20, 40, 0.86);
+
+  --border: rgba(140, 140, 190, 0.28);
+  --muted: rgba(240,240,255,0.65);
+  --text: #f0f0ff;
+
+  --panelSolid: rgb(18, 20, 40);   /* opaque version of the panel color, for overlays that must not show what is behind them */
+
+  --accent: #8b5cf6;
+  --accent2: #a78bfa;
+  --accent-rgb: 139 92 246;        /* the same colors as space-separated numbers, for translucent uses: rgb(var(--accent-rgb) / 0.2) */
+  --accent2-rgb: 167 139 250;
+  --marked-rgb: 178 130 255;       /* dabbed squares on the card */
+
+  --ink-rgb: 255 255 255;          /* the tint of subtle lines and fills drawn on the panels (white on the dark themes, dark on the light one) */
+
+  --shade-rgb: 0 0 0;              /* the darker fills behind lists and fields; --shade-k scales their opacity (the light theme uses faint ink instead) */
+  --shade-k: 1;
+
+  --shadow: 0 28px 70px rgba(0,0,0,0.55);
+}
+
+*{ box-sizing:border-box; }
+html { height: 100%; }
+body { min-height: 100%; display: flow-root; }   /* as tall as its content, so the page background reaches the bottom; flow-root keeps a child's top margin inside the page instead of showing the html color above it */
+
+body{
+  margin:0;
+  color: var(--text);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background:
+    radial-gradient(circle at 15% 10%, rgb(var(--accent-rgb) / 0.20), transparent 55%),
+    radial-gradient(circle at 90% 0%, rgb(var(--glow2-rgb, var(--accent2-rgb)) / 0.16), transparent 55%),
+    linear-gradient(180deg, var(--bgTop), var(--bgMid) 40%, var(--bgBot));
+  background-attachment: fixed;   /* Keep background fixed while scrolling */
+  background-size: cover;         /* Scale to cover viewport */
+  background-position: center;    /* Center the background */
+}
+
+.container{
+  width: min(1240px, 92vw);
+  margin: 24px auto 56px;
+}
+
+a{ color: var(--accent2); text-decoration: none; }
+a:hover{ text-decoration: underline; }
+
+.h1{  font-weight: 900; letter-spacing: 0.2px; }
+h1.h1{ margin: 0; }                  /* the page title is a real heading now; keep the look it had as a plain block */
+label.label{ display: block; }       /* field captions are real labels now (they used to be plain blocks) */
+.muted{ color: var(--muted); }
+.small{ font-size: 12px; }
+
+.topbar{
+  display:flex;
+  align-items:flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.topActions{ display:flex; align-items:center; gap: 10px; }
+
+.panel{
+  background: linear-gradient(180deg, var(--panelTop), var(--panelBot));
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.centerPanel{
+  width: min(560px, 92vw);
+  margin: 70px auto 0;
+}
+
+.panelHeader{ margin-bottom: 12px; }
+.centerHeader{ display:flex; align-items:center; justify-content: center; gap: 12px; flex-direction: column; text-align:center; }
+.title{ font-size: 20px; font-weight: 900; }
+h1.title{ margin: 0; }
+.sub{ color: var(--muted); font-size: 13px; margin-top: 6px; }
+
+.codePill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--accent2-rgb) / 0.38);
+  background: rgb(var(--accent-rgb) / 0.14);
+  letter-spacing: 3px;
+  font-weight: 900;
+}
+.codePill.inline{ padding: 4px 10px; letter-spacing: 2px; }
+
+.form{ display:flex; flex-direction: column; gap: 10px; }
+.label{ font-size: 12px; color: var(--muted); }
+
+.input{
+  width: 100%;
+  padding: 12px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--field-border, rgba(210,210,255,0.20));
+  background: var(--field-bg, rgba(12, 12, 26, 0.55));
+  color: var(--text);
+  outline: none;
+}
+.input:focus{
+  border-color: rgb(var(--accent2-rgb) / 0.65);
+  box-shadow: 0 0 0 3px rgb(var(--accent2-rgb) / 0.18);
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius: 12px;
+  border: 1px solid var(--btn-border, rgba(210,210,255,0.18));
+  background: rgb(var(--ink-rgb) / 0.06);
+  color: var(--text);
+  cursor:pointer;
+  font-weight: 800;
+}
+.btn:hover{ filter: brightness(1.08); }
+
+.btnPrimary{
+  border-color: rgb(var(--accent2-rgb) / 0.45);
+  background: var(--btn-bg, linear-gradient(180deg, rgb(var(--accent-rgb) / 0.92), rgb(var(--accent-rgb) / 0.72)));
+  color: var(--btn-text, var(--text));
+}
+.btnGhost{
+  background: rgb(var(--ink-rgb) / 0.04);
+}
+.btnDanger{
+  border-color: rgba(255,80,80,0.35);
+  background: linear-gradient(180deg, rgba(255,80,80,0.65), rgba(255,80,80,0.42));
+}
+.mini{ padding: 8px 10px; border-radius: 10px; }
+.bigBtn{ padding: 14px 18px; font-size: 18px; }
+
+.alert{
+  border-radius: 14px;
+  padding: 12px 12px;
+  border: 1px solid rgb(var(--ink-rgb) / 0.12);
+  margin-bottom: 12px;
+}
+.alertOk{ background: rgba(34,197,94,0.14); border-color: rgba(34,197,94,0.22); }
+.alertWarn{ background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.22); }
+.alertBad{ background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.22); }
+
+
+.row{
+  display:flex;
+  gap: 10px;
+  align-items:center;
+}
+.col{ flex: 1; display:flex; flex-direction: column; gap: 8px; }
+
+.sep{
+  border: none;
+  border-top: 1px solid rgb(var(--ink-rgb) / 0.10);
+  margin: 16px 0;
+}
+
+.list{ display:flex; flex-direction: column; gap: 10px; }
+.listRow{
+  display:flex; justify-content: space-between; align-items:center;
+  border: 1px solid rgb(var(--ink-rgb) / 0.10);
+  background: rgb(var(--shade-rgb) / calc(0.20 * var(--shade-k)));
+  border-radius: 14px;
+  padding: 12px;
+  gap: 12px;
+}
+.listTitle{ font-weight: 900; }
+
+.playersList{ display:flex; flex-direction: column; gap: 10px; }
+.playerRow{
+  display:flex; justify-content: space-between; align-items:center;
+  border: 1px solid rgb(var(--ink-rgb) / 0.10);
+  background: rgb(var(--shade-rgb) / calc(0.20 * var(--shade-k)));
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+.playerName{ font-weight: 900; }
+.playerMeta{ color: var(--muted); font-size: 12px; }
+
+.chips{ display:flex; flex-wrap: wrap; gap: 10px; }
+.chip{
+  padding: 10px 12px;
+  border-radius: 999px;
+  border: 1px solid rgb(var(--ink-rgb) / 0.10);
+  background: rgb(var(--shade-rgb) / calc(0.22 * var(--shade-k)));
+  font-weight: 800;
+}
+
+.nowPlaying{
+  min-width: 220px;
+}
+.npTitle{ font-weight: 900; }
+.npArtist{ color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+.cardGrid{
+  display:grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+/* B I N G O above the columns: first row of the card grid, so it always lines up with the squares.
+   Each letter is a tile of its own so it can light up. */
+.cardGrid .cardLetter{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box;
+  height: 36px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border-radius: 12px;
+  border: 1px solid rgb(var(--ink-rgb) / 0.14);
+  background: rgb(var(--accent-rgb) / 0.14);
+  color: rgb(var(--ink-rgb) / 0.85);
+  font-weight: 900 !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  letter-spacing: 0.04em;
+  transition: background .15s ease, color .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.cardGrid .cardLetter.lit{
+  color: var(--lit-text, #fff);
+  border-color: var(--accent2, #a78bfa);
+  background: var(--lit-bg, linear-gradient(180deg, var(--accent2, #a78bfa), var(--accent, #8b5cf6)));
+  box-shadow: 0 0 14px rgb(var(--accent2-rgb) / 0.75);
+}
+@media (max-width: 600px){ .cardGrid .cardLetter{ height: 30px !important; font-size: 16px !important; border-radius: 10px; } }
+@media (max-height: 500px){ .cardGrid .cardLetter{ height: 15px !important; font-size: 11px !important; border-radius: 7px; } }
+.sq{
+  border-radius: 16px;
+  border: 1px solid rgb(var(--ink-rgb) / 0.10);
+  background: rgb(var(--shade-rgb) / calc(0.20 * var(--shade-k)));
+  color: var(--text);
+  cursor:pointer;
+  text-align:left;
+  position: relative;
+}
+.sq:hover{ filter: brightness(1.08); }
+.sq.free{
+  border-color: rgb(var(--accent2-rgb) / 0.40);
+  background: rgb(var(--accent-rgb) / 0.16);
+}
+
+.sqText{
+  display:block;
+  font-weight: 900;
+  
+  line-height: 1.15;
+}
+
+.actionsRow{ margin-top: 14px; justify-content: space-between; }
+.claimRow{
+  display:flex; justify-content: space-between; align-items:center;
+  border: 1px solid rgb(var(--ink-rgb) / 0.10);
+  background: rgb(var(--shade-rgb) / calc(0.20 * var(--shade-k)));
+  border-radius: 14px;
+  padding: 12px;
+  gap: 12px;
+}
+
+/* bingo-ui-scale-v1 */
+:root{
+  --bingo-font-scale: 1.12;
+}
+
+html, body{
+  font-size: calc(16px * var(--bingo-font-scale));
+}
+
+.container{
+  max-width: 1180px;
+}
+
+.card{
+  padding: 20px;
+}
+
+
+input, select{
+  font-size: 1rem;
+  padding: 10px 12px;
+}
+
+.nowPlaying{
+  margin: 14px 0 10px 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgb(var(--ink-rgb) / 0.12);
+  background: rgb(var(--shade-rgb) / calc(0.12 * var(--shade-k)));
+}
+
+.sq{
+  min-height: 64px;
+  padding: 12px 12px;
+  font-size: 0.98rem;
+  line-height: 1.2;
+}
+.sq.marked{
+  outline: 2px solid rgb(var(--marked-rgb) / 0.95);
+  background: rgb(var(--marked-rgb) / 0.16);
+}
+
+
+/* UI_SCALE_PATCH */
+:root{ --uiScale: 1.08; }
+body{ font-size: calc(16px * var(--uiScale)); }
+.h1{ font-size: calc(30px * var(--uiScale)); }
+.btn{ font-size: calc(14px * var(--uiScale)); padding: 12px 16px; }
+.sqText{ font-size: calc(13px * var(--uiScale)); }
+
+/* Spotify header row (title + embedded player button) */
+.rowHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.btnTight{padding:8px 12px;font-size:14px;line-height:1;}
+
+/* Players, claims and played lists scroll inside their panel */
+.playersList{
+  max-height: 260px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 6px;
+}
+#playedList{
+  overflow-x: hidden;
+}
+
+#claimsList {
+  max-height: 360px;
+  
+}
+
+/* (same lists, host page ids) */
+#playersList { max-height: 260px;  overscroll-behavior: contain; }
+
+.alertBad.joinBlocked,
+.alert.alertBad.joinBlocked,
+.alert.joinBlocked {
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+}
+
+.alertBad.joinBlocked .joinBlockedTitle,
+.alertBad.joinBlocked .joinBlockedSub,
+.alert.alertBad.joinBlocked .joinBlockedTitle,
+.alert.alertBad.joinBlocked .joinBlockedSub,
+.alert.joinBlocked .joinBlockedTitle,
+.alert.joinBlocked .joinBlockedSub {
+  width: 100% !important;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.alert.joinBlocked {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 6px;
+}
+
+.alert.joinBlocked .joinBlockedTitle,
+.alert.joinBlocked .joinBlockedSub {
+    width: 100%;
+    text-align: center;
+}
+
+/* Center the alert box */
+.alert {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+/* Additional centering for the joinBlocked class */
+.alertBad.joinBlocked, .alert.alertBad.joinBlocked, .alert.joinBlocked {
+  width: 100%;
+  max-width: 600px; /* Optional: Limit width to make it look more consistent */
+  margin: 0 auto; /* Center horizontally */
+  padding: 15px; /* Optional: Add padding for better appearance */
+}
+
+#bingoBtn:disabled,
+#bingoBtn.disabled{
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(1);
+}
+
+/* -----------------------------
+   Player Bingo Overlays
+------------------------------ */
+.bingoOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.bingoOverlay.hidden {
+  display: none;
+}
+
+.bingoOverlayInner {
+  width: min(900px, 92vw);
+  text-align: center;
+  transform: rotate(-6deg);
+  padding: 30px 26px;
+  border-radius: 22px;
+}
+
+.bingoOverlayTitle {
+  font-size: clamp(42px, 7vw, 96px);
+  font-weight: 900;
+  letter-spacing: 1px;
+  line-height: 1.0;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  text-shadow: 0 10px 30px rgba(0,0,0,.55);
+  color: #ffffff;
+}
+
+.bingoOverlaySub {
+  font-size: clamp(16px, 2.2vw, 26px);
+  opacity: 0.95;
+  text-shadow: 0 8px 24px rgba(0,0,0,.45);
+  color: #ffffff;
+}
+
+/* Winner style (Image #1 vibe) */
+.bingoOverlay.winnerMode .bingoOverlayInner {
+  background: radial-gradient(circle at 50% 40%, rgb(var(--ink-rgb) / 0.25), rgb(var(--ink-rgb) / 0.08), rgba(0,0,0,0.0));
+}
+
+/* Announcement style (Image #2 vibe) */
+.bingoOverlay.announceMode .bingoOverlayInner {
+  background: radial-gradient(circle at 50% 40%, rgb(var(--ink-rgb) / 0.18), rgb(var(--ink-rgb) / 0.06), rgba(0,0,0,0.0));
+}
+
+/* Thanks style */
+.bingoOverlay.thanksMode .bingoOverlayInner {
+  background: rgb(var(--ink-rgb) / 0.10);
+  transform: none;
+}
+
+/* -----------------------------
+   Host: post-accept decision bar
+------------------------------ */
+.bingoDecisionBar {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgb(var(--ink-rgb) / 0.06);
+  border: 1px solid rgb(var(--ink-rgb) / 0.10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.bingoDecisionBar.hidden { display: none; }
+
+.bingoDecisionText {
+  font-weight: 700;
+  opacity: 0.95;
+}
+
+.bingoDecisionBtns {
+  display: flex;
+  gap: 10px;
+}
+
+.btn.danger {
+  background: rgba(255,80,80,0.20);
+  border: 1px solid rgba(255,80,80,0.35);
+}
+
+.userMenu{ position:relative; display:inline-block; }
+.userMenuBtn{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid rgb(var(--ink-rgb) / .14);
+  background: rgb(var(--ink-rgb) / .06);
+  color: var(--menu-text, #fff);
+  cursor:pointer;
+  line-height:1;
+}
+.userMenuBtn:hover{ background: rgb(var(--ink-rgb) / .10); }
+.userMenuName{ font-size:13px; font-weight:600; max-width: 180px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.userMenuCaret{ opacity:.8; font-size:12px; }
+.userMenuDropdown{
+  position:absolute;
+  right:0;
+  top: calc(100% + 8px);
+  min-width: 180px;
+  z-index: 1000;
+  display:none;
+  padding: 8px;
+  border-radius: 14px;
+  border:1px solid rgb(var(--ink-rgb) / .14);
+  background: var(--menu-bg, rgba(15,15,18,.95));
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+.userMenu.open .userMenuDropdown{ display:block; }
+.userMenuItem{
+  width:100%;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:10px 10px;
+  border-radius: 12px;
+  color: var(--menu-text, #fff);
+  text-decoration:none;
+  border:0;
+  background: transparent;
+  cursor:pointer;
+  font-size:14px;
+}
+.userMenuItem:hover{ background: rgb(var(--ink-rgb) / .08); }
+.userMenuItemIcon{ width: 20px; text-align:center; opacity: .95; }
+.userMenuSep{ height:1px; background: rgb(var(--ink-rgb) / .12); margin: 6px 2px; }
+.userMenuLogoutBtn{ justify-content:flex-start; }
+
+/* Host page: 3-column layout with stacked panels + scrollable lists.
+   Uses fixed px heights so browser zoom doesn't change list heights. */
+
+.hostGrid3{
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.0fr) minmax(0, 0.9fr);
+  gap: 16px;
+  align-items: start;
+  width: 100%;
+}
+
+.hostCol2, .hostCol3{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* Lists: keep full history via scrolling */
+.hostGrid3 #playersList,
+.hostGrid3 #playedList,
+.hostGrid3 #claimsList{
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding-right: 10px;
+}
+
+/* Fixed caps: tune as needed for your screen */
+.hostGrid3 #playersList{ max-height: 240px; }
+.hostGrid3 #playedList { max-height: 320px; }
+.hostGrid3 #claimsList { max-height: 520px; }
+
+/* Tighten vertical spacing so everything fits without page scroll */
+.hostGrid3 .panelHeader{ margin-bottom: 8px; }
+.hostGrid3 hr.sep{ margin: 10px 0; }
+
+/* Mobile: stack columns */
+@media (max-width: 980px){
+  .hostGrid3{ grid-template-columns: 1fr; }
+  .hostCol2, .hostCol3{ gap: 12px; }
+  .hostGrid3 #playersList{ max-height: 220px; }
+  .hostGrid3 #playedList { max-height: 280px; }
+  .hostGrid3 #claimsList { max-height: 420px; }
+}
+
+/* Goals:
+   - Make Host page text ~10% smaller overall (without changing global app typography).
+   - Make the bottoms of the 3 columns line up by giving the grid a viewport-based min-height,
+     then stretching panels/columns to fill and letting inner lists scroll.
+   Notes:
+   - This only targets .hostGrid3 so /play and other pages are unaffected.
+*/
+
+/* Slightly smaller text across the host grid */
+.hostGrid3{
+  font-size: 0.90em !important;
+}
+
+
+/* Make each column fill the grid height, and split column-2/3 into two stacked rows
+   where the lower panel expands to fill remaining space. */
+@media (min-width: 981px){
+  .hostGrid3 > .hostCol{
+    height: 100% !important;
+    min-height: 0 !important;
+  }
+
+  /* Column 1 has one big panel: let it fill the full height */
+  .hostGrid3 > .hostCol1{
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .hostGrid3 > .hostCol1 > .panel{
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+  }
+
+  /* Columns 2 and 3: 2-row grid (top auto, bottom fills) */
+  .hostGrid3 > .hostCol2,
+  .hostGrid3 > .hostCol3{
+    display: grid !important;
+    grid-template-rows: auto 1fr !important;
+    gap: 16px !important;
+    align-content: start !important;
+  }
+
+  .hostGrid3 > .hostCol2 > .panel,
+  .hostGrid3 > .hostCol3 > .panel{
+    min-height: 0 !important;
+  }
+
+  /* Ensure the LOWER panel in each of these columns can actually grow and scroll internally */
+  .hostGrid3 > .hostCol2 > .panel:nth-of-type(2),
+  .hostGrid3 > .hostCol3 > .panel:nth-of-type(2){
+    height: 100% !important;
+  }
+
+  /* Column 2 holds only Played Tracks: it takes the whole column */
+  .hostGrid3 > .hostCol2 > .panel:only-child{
+    grid-row: 1 / -1;
+    height: 100% !important;
+  }
+}
+
+/* Make lists always scroll inside panels (never expand page height) */
+.hostGrid3 #playersList,
+.hostGrid3 #playedList,
+.hostGrid3 #claimsList{
+  overflow-y: auto !important;
+  min-height: 0 !important;
+}
+
+/* Tighten a bit more inside list rows after font-size reduction */
+.hostGrid3 .chip,
+.hostGrid3 .playerRow,
+.hostGrid3 .claimRow{
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+
+
+/* Make inputs feel consistent after font scaling */
+.hostGrid3 .input {
+  font-size: 0.98em;
+}
+
+.hostGrid3 .hostCol1 #hostNowPlaying .npTimer {
+  line-height: 1.1;
+}
+
+/* Inline host message: reserve space and hide empty without reflow */
+.hostGrid3 #hostMsg {
+  min-height: 18px;
+}
+.hostGrid3 #hostMsg:empty {
+  visibility: hidden;
+}
+
+/* Remove the stray separator line at the bottom of the Column 1 panel */
+.hostGrid3 .hostCol1 .panel hr.sep:last-of-type {
+  display: none;
+}
+
+/* Host page polish:
+   - Reduce text size ~10% within host grid
+   - Remove extra separator line at bottom of Column 1 panel
+   - Prevent Now Playing area from expanding panel height (no page scroll from current track)
+   - Hide any legacy top-of-page message/status bar (#msg) */
+.hostGrid3{
+  font-size: 0.90em;
+}
+
+/* Slightly tighten panel text without shrinking buttons too much */
+.hostGrid3 .btn{ font-size: 0.98em; }
+.hostGrid3 .h1{ font-size: 1.35em; }
+.hostGrid3 .title{ font-size: 1.15em; }
+.hostGrid3 .sub, .hostGrid3 .muted{ font-size: 0.95em; }
+
+/* Remove the final separator in Column 1 (looks like a 'line at bottom') */
+.hostGrid3 .hostCol1 .panel > hr.sep:last-of-type{
+  display: none !important;
+}
+
+.hostGrid3 .hostCol1 #hostNowPlaying .npTitle,
+.hostGrid3 .hostCol1 #hostNowPlaying .npArtist{
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
+/* Hide any legacy 'top message/status bar' that some older patches injected */
+#msg{
+  display: none !important;
+}
+
+/* Keep Now Playing area stable */
+#hostNowPlaying{
+  min-height: 92px;
+  
+  
+}
+#hostNowPlaying .npTitle,
+#hostNowPlaying .npArtist{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Prevent the host page from "growing" vertically when content changes.
+   We don't globally disable page scroll; we just constrain the host grid. */
+.hostGrid3{
+  max-height: calc(100vh - 170px);
+  overflow: hidden;
+}
+.hostCol{
+  min-height: 0;
+}
+.hostCol .panel{
+  flex: 0 0 auto;
+}
+
+/* Slightly smaller typography within host panels (about ~10%). */
+.hostGrid3 .panel,
+.hostGrid3 .panelHeader,
+.hostGrid3 .panelHeader .title,
+.hostGrid3 .panelHeader .sub,
+.hostGrid3 .muted,
+.hostGrid3 .chip,
+.hostGrid3 .playerRow,
+.hostGrid3 .claimRow{
+  font-size: 0.92em;
+}
+
+/* (begin)
+   Fixes:
+   - Prevent the page from scrolling while the game runs (scroll inside lists only).
+   - Prevent bottom-of-panels from being clipped by ensuring the grid fits in the viewport.
+   Notes:
+   - Uses dvh where supported so the browser UI (address bar) doesn't steal height.
+   - Uses :has(.hostGrid3) so these rules apply ONLY on the host page.
+*//* Host game page: prevent page scroll; we scroll inside the list panels instead. */
+/* Give the container a tiny bottom padding so rounded panels don't get cut off. */
+body:has(.hostGrid3) .container{
+  padding-bottom: 16px !important;
+}
+
+/* Make the 3-col host grid fit within the viewport area under the topbar. */
+body:has(.hostGrid3) .hostGrid3{
+  /* Fallback for browsers without dvh */
+  height: calc(100vh - 140px);
+  max-height: calc(100vh - 140px);
+
+  overflow: hidden;          /* grid itself shouldn't scroll */
+  align-content: stretch;
+  align-items: stretch;
+  box-sizing: border-box;
+  padding-bottom: 12px;
+}
+
+/* Columns fill available grid height */
+body:has(.hostGrid3) .hostGrid3 .hostCol{
+  min-height: 0;             /* critical so children can shrink and lists can scroll */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Panels inside each column should not force the column taller than the viewport. */
+body:has(.hostGrid3) .hostGrid3 .panel{
+  min-height: 0;
+}
+
+/* Ensure the scroll areas are allowed to actually scroll within fixed layout */
+body:has(.hostGrid3) .hostGrid3 #playersList,
+body:has(.hostGrid3) .hostGrid3 #playedList,
+body:has(.hostGrid3) .hostGrid3 #claimsList{
+  min-height: 0 !important;
+}
+
+/* Small screens: allow page scroll again (stacked layout can be taller than viewport). */
+@media (max-width: 980px){
+  html:has(.hostGrid3),
+  body:has(.hostGrid3){
+    overflow: auto !important;
+  }
+  body:has(.hostGrid3) .hostGrid3{
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding-bottom: 16px !important;
+  }
+}
+
+/* === Host page: the grid is locked to the window; lists scroll inside their panels === */
+.hostGrid3 {
+  height: calc(100vh - 160px);
+  align-content: stretch;
+}
+
+/* Ensure columns stretch evenly */
+.hostGrid3 .hostCol {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Panels must not grow page height */
+.hostGrid3 .panel {
+  flex: 1 1 auto;
+}
+
+/* Scroll only inside lists */
+#playersList,
+#playedList,
+#claimsList {
+  overflow-y: auto;
+}
+
+/* Lock current track box height */
+#hostNowPlaying,.nowPlaying {
+  height: 96px;
+  max-height: 96px;
+  overflow: hidden;
+}
+
+/* Reduce current track title size */
+#hostNowPlaying .npTitle {
+  font-size: 0.85em;
+  line-height: 1.2;
+}
+
+/* Reduce artist text slightly */
+#hostNowPlaying .npArtist {
+  font-size: 0.8em;
+  opacity: 0.85;
+}
+
+/* Prevent body scrolling (host game only) */
+
+/* Allow normal pages to scroll */
+body{
+  overflow-y: auto;
+}
+/* Mobile fallback */
+@media (max-width: 1200px) {
+  body {
+    overflow-y: auto;
+  }
+}
+
+/* Prevent action rows from wrapping out of panel bounds */
+.hostGrid3 .row.actionsRow{
+  overflow: hidden;
+}
+
+.hostGrid3 #hostNowPlaying .npTitle{
+  font-size: 20px;
+  line-height: 1.15;
+  max-height: 2.3em; /* ~2 lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.hostGrid3 #hostNowPlaying .npArtist{
+  font-size: 14px;
+  line-height: 1.2;
+  max-height: 1.2em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hostGrid3 #hostNowPlaying .npTimer{
+  font-size: 12px;
+}
+
+/* Stable host layout: compact Now Playing, prevent action-row wrap, header buttons aligned */
+
+.hostGrid3 { padding-bottom: 18px; }
+
+.hostGrid3 #deviceSelect{
+  min-width: 0 !important;
+}
+
+/* Prevent action buttons from dropping below panel boundary */
+.hostGrid3 .row.actionsRow{
+  flex-wrap: nowrap !important;
+  justify-content: space-between;
+}
+
+/* Compact fixed-height Now Playing (no growth/shrink) */
+.hostGrid3 #hostNowPlaying{
+  margin-top: 10px;
+  padding: 10px 12px;
+  min-height: 74px;
+  max-height: 74px;
+  overflow: hidden;
+}
+
+.hostGrid3 #hostNpTitle{
+  font-size: 18px;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hostGrid3 #hostNpArtist{
+  font-size: 14px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hostGrid3 #hostNpTimer{
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+/* Device row should not wrap; let the select shrink instead */
+.hostGrid3 .deviceRow{
+  flex-wrap: nowrap;
+}
+.hostGrid3 .deviceRow .muted.small{ flex: 0 0 auto; }
+.hostGrid3 #deviceSelect{
+  flex: 1 1 auto;
+  max-width: 100%;
+}
+
+/* Make panels flex containers so we can pin the action row at the bottom */
+.hostGrid3 .panel{
+  display:flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Column 1: pin Play/Pause/Next row to bottom and prevent wrap */
+.hostGrid3 .hostCol1 .actionsRow{
+  display:flex;
+}
+.hostGrid3 .hostCol1 .actionsRow .btn{
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Compact Now Playing: fixed height, no box styling, no layout shifts */
+#hostNowPlaying[data-layout="compact"]{
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 6px 0 !important;
+  border-radius: 0 !important;
+  min-height: 62px;
+  max-height: 62px;
+  overflow: hidden;
+}
+
+#hostNowPlaying[data-layout="compact"] .npTitle{
+  font-size: 18px;
+  line-height: 1.12;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+#hostNowPlaying[data-layout="compact"] .npArtist{
+  font-size: 13px;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 0.85;
+}
+#hostNowPlaying[data-layout="compact"] .npTimer{
+  font-size: 12px;
+  line-height: 1.1;
+  margin-top: 2px;
+}
+
+/* Host page polish: keep layout stable, compact now playing, and make action buttons match global button styles. */
+
+.hostGrid3 .panel { overflow: hidden; }
+
+/* Spotify connected badge next to the "Spotify" title */
+.spotifyConnBadge{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1;
+  border: 1px solid rgb(var(--ink-rgb) / 0.16);
+  background: rgb(var(--shade-rgb) / calc(0.22 * var(--shade-k)));
+  color: rgb(var(--ink-rgb) / 0.86);
+}
+.spotifyConnBadge.on{
+  border-color: rgba(120,255,190,0.28);
+  background: rgba(20,80,50,0.30);
+}
+.spotifyConnBadge.off{
+  border-color: rgba(255,160,120,0.22);
+  background: rgba(80,40,20,0.30);
+}
+
+/* Actions row: keep buttons inside panel boundary, same look as rest of buttons */
+.hostGrid3 .row.actionsRow{
+  display: flex;
+  gap: 10px;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+.hostGrid3 .row.actionsRow .btn{
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Compact Now Playing block so it doesn't push buttons down */
+#hostNowPlaying.nowPlaying.compact{
+  min-height: 72px;
+  max-height: 72px;
+  padding: 10px 12px;
+  overflow: hidden;
+}
+#hostNowPlaying.nowPlaying.compact .npTitle{
+  font-size: 16px;
+  line-height: 1.1;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#hostNowPlaying.nowPlaying.compact .npArtist{
+  font-size: 13px;
+  line-height: 1.1;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#hostNowPlaying.nowPlaying.compact .npTimer{
+  font-size: 12px;
+  line-height: 1;
+  margin-top: 6px;
+}
+
+/* Remove any leftover big Spotify connected alert spacing on host page */
+.hostGrid3 .alert.alertOk,
+.hostGrid3 .alert.alertWarn{
+  display: none !important;
+}
+
+/* --- Host page: Spotify status lines placement --- */
+.hostGrid3 #deviceTransferStatus{
+  opacity: 0.9;
+}
+.hostGrid3 .hostCol1 .sub{
+  margin-top: 6px;
+}
+/* Tighten space above Play/Pause/Next in Column 1 */
+.hostGrid3 .hostCol1 .actionsRow{
+  margin-top: 8px !important;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
+.hostGrid3 .hostCol1 #hostNowPlaying .npTitle{
+  font-size: 1.05em !important;
+  line-height: 1.2 !important;
+  margin: 0 !important;
+  
+  
+  
+}
+.hostGrid3 .hostCol1 #hostNowPlaying .npArtist{
+  font-size: 0.95em !important;
+  line-height: 1.2 !important;
+  margin-top: 4px !important;
+  
+  
+  
+}
+/* Ensure buttons don't spill outside panel */
+.hostGrid3 .hostCol1 .panel{
+  overflow: hidden;
+}
+
+.hostGrid3 .rowHeader{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.hostGrid3 .hostCol1 .actionsRow{
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.hostGrid3 .hostCol1 .actionsRow .btn{
+  border-radius: 16px;
+}
+
+/* Keep Spotify header buttons clustered (prevents refresh button dropping under the device row) */
+.hostGrid3 .rowHeader{
+  align-items: center;
+}
+.hostGrid3 #deviceRefreshBtn{
+  white-space: nowrap;
+}
+
+/* ---- Host page: Spotify actions row (Start + Refresh + status) ---- */
+.hostGrid3 .deviceRow{ margin-top:10px; }
+.hostGrid3 #deviceNowPlaying{ margin-top:6px !important; }
+.hostGrid3 #deviceTransferStatus{ margin-top:4px !important; }
+
+/* ---- Host page: column 1 uses flex so Play/Pause/Next can sit at the bottom ---- */
+.hostGrid3 > .hostCol1 > .panel{ display:flex; flex-direction:column; }
+.hostGrid3 > .hostCol1 > .panel .actionsRow{ margin-top:auto; }
+body:has(.hostGrid3) .hostGrid3 .hostCol1 .row.actionsRow{
+  margin-top: 10px;
+}
+.hostGrid3 #deviceRefreshBtn { margin-left:0 !important; }
+.hostGrid3 .hostCol1 .row.actionsRow { margin-top: 6px !important; }
+
+/* Host (Grid3): transport status under Play/Pause/Next */
+.hostGrid3 .transportMsg{ margin-top: 8px; }
+
+/* Host (Grid3): playback device label above dropdown + SDK status below dropdown */
+.hostGrid3 .deviceRow{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:6px;
+}
+.hostGrid3 #deviceSelect{
+  width:100%;
+  min-width:0;
+}
+.hostGrid3 #sdkStatusWrap{
+  margin-top:6px;
+}
+
+/* Goals:
+   - Desktop: 2 columns; right column only as wide as controls row
+   - Prefer no page scroll; fit to viewport under topbar
+   - Bingo card does NOT scroll internally
+   - Played list scrolls vertically as it grows (stable right panel)
+   - Mobile: shrink + 1-column; allow page scroll only if still needed
+   Scope: ONLY solo page (body.soloPage) */
+
+/*
+   Single authoritative SOLO gameplay layout (desktop).
+
+   Goals:
+     - Full-screen NORMAL case: stable 2-col grid (no dependency on DevTools docked width)
+     - Columns always equal height
+     - No big dead space at bottom of panels
+     - Played list is a true vertical list and fills the right panel
+     - Subtle scrollbar; artist line de-emphasized
+*/
+@media (min-width: 981px){
+  /* Prevent the whole page from scrolling; panels manage overflow */
+  body.soloPage{
+    height: 100vh;
+    overflow: hidden !important;
+  }
+
+  /* Container should not constrain SOLO width */
+  body.soloPage .container{
+    max-width: none !important;
+    height: 100% !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Shared width constraint for topbar + grid */
+  body.soloPage .topbar,
+  body.soloPage #soloRoot.soloLayout{
+    width: 100% !important;
+    max-width: 1240px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Two-column SOLO grid: always fill remaining viewport height under topbar */
+  body.soloPage #soloRoot.soloLayout{
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 24vw, 360px) !important;
+    gap: 16px !important;
+
+    /* Critical: equal-height columns (and no dead space) */
+    /* Stop vh-driven growth (zoom-out increases CSS px in 100vh). Let row height be content-driven. */
+    height: auto !important;
+    max-height: none !important;
+    align-items: stretch !important;
+    overflow: visible !important;  /* hidden here clipped the panels' shadow into a flat dark box */
+  }
+
+  /* Panels fill the grid row height; inner regions can scroll */
+  body.soloPage #soloRoot.soloLayout > .panel{
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  /* LEFT: keep the card grid compact and top-aligned */
+  body.soloPage #soloCardGrid{
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    align-content: start !important;
+  }
+
+  body.soloPage #soloCardGrid .sq{
+    
+    
+    max-height: none !important;
+    padding: 8px !important;
+    overflow: hidden !important;
+  }
+  body.soloPage #soloCardGrid .sqText{
+    font-size: 12px !important;
+    line-height: 1.15 !important;
+  }
+
+  /* Hide the embed wrapper when empty so it cannot create a big gap */
+  body.soloPage #soloEmbedWrap{
+    margin-top: 14px !important;
+  }
+  body.soloPage #soloEmbedWrap:empty,
+  body.soloPage #soloEmbedWrap:has(#embedPlayer:empty){
+    display: none !important;
+    margin-top: 0 !important;
+  }
+  body.soloPage #embedPlayer:empty{
+    display: none !important;
+  }
+
+  /* RIGHT: controls row stays compact */
+  body.soloPage #soloPlayedPanel .soloControlsRow{
+    display: flex !important;
+    flex-wrap: nowrap !important;
+      gap: 8px !important;
+    align-items: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+      justify-content: space-between !important;
+}
+
+    /*
+       Controls must always fit inside the right panel with symmetric left/right insets.
+       Equal-width buttons prevent fractional-pixel overflow (DPR like 1.25) from pushing Next past the edge.
+    */
+    body.soloPage #soloPlayedPanel .soloControlsRow .btn{
+      flex: 1 1 0 !important;
+      min-width: 0 !important;
+      text-align: center !important;
+      white-space: nowrap !important;
+    }
+
+  /* Played list fills remaining panel height (no max-height cap) */
+  body.soloPage #soloPlayedPanel #playedList{
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    padding-right: 8px !important;
+    gap: 10px !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgb(var(--ink-rgb) / 0.18) rgb(var(--ink-rgb) / 0.06) !important;
+}
+
+  body.soloPage #soloPlayedPanel #playedList .chip{
+    width: 100% !important;
+    padding: 12px 14px !important;
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Artist line: slightly darker so it does not compete with title */
+  body.soloPage #soloPlayedPanel #playedList .playedTrackArtist {
+    color: rgb(var(--ink-rgb) / 0.62) !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+  }
+
+  body.soloPage #soloPlayedPanel #playedList::-webkit-scrollbar{
+    width: 10px;
+  }
+  body.soloPage #soloPlayedPanel #playedList::-webkit-scrollbar-track{
+    background: rgb(var(--ink-rgb) / 0.06);
+    border-radius: 10px;
+  }
+  body.soloPage #soloPlayedPanel #playedList::-webkit-scrollbar-thumb{
+    background: rgb(var(--ink-rgb) / 0.16);
+    border-radius: 10px;
+    border: 3px solid rgba(0,0,0,0);
+    background-clip: padding-box;
+  }
+  body.soloPage #soloPlayedPanel #playedList::-webkit-scrollbar-thumb:hover{
+    background: rgb(var(--ink-rgb) / 0.22);
+  }
+
+}
+
+/*
+   Mobile portrait helper banner (non-blocking).
+   Shown ONLY in portrait on small screens.
+*/
+body.soloPage #soloRotateHint.rotateHint{
+  display: none;
+  margin: 10px 0 6px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgb(var(--ink-rgb) / 0.10);
+  background: rgb(var(--shade-rgb) / calc(0.22 * var(--shade-k)));
+  color: rgb(var(--ink-rgb) / 0.90);
+  font-size: 13px;
+  line-height: 1.25;
+}
+body.soloPage #soloRotateHint .rotateHintIcon{
+  display: inline-block;
+  margin-right: 8px;
+  opacity: 0.85;
+  font-weight: 900;
+}
+body.soloPage #soloRotateHint b{
+  font-weight: 900;
+}
+
+@media (max-width: 980px) and (orientation: portrait){
+  body.soloPage #soloRotateHint.rotateHint{
+    display: block;
+  }
+}
+
+/*
+   SOLO (Play Alone) mobile portrait layout.
+   Goals:
+     - Single column stack (card panel, then controls + played)
+     - Allow normal page scroll (no vh-based lock)
+     - Bingo squares scale with screen width
+     - Controls in a 2x2 grid for touch
+     - Played list flows (no fixed max-height) in portrait
+*/
+@media (max-width: 980px) and (orientation: portrait){
+
+  body.soloPage{
+    height: auto !important;
+    overflow-y: auto !important;
+  }
+
+  body.soloPage .container{
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  body.soloPage #soloRoot.soloLayout{
+    display: block !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  body.soloPage #soloRoot.soloLayout > .panel{
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Bingo card grid: keep 5x5, scale squares */
+  body.soloPage #soloCardGrid{
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    align-content: start !important;
+  }
+
+  body.soloPage #soloCardGrid .sq{
+    
+    overflow: hidden !important;
+  }
+
+  /* Controls: 2x2 grid */
+  body.soloPage #soloPlayedPanel .soloControlsRow{
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    padding: 0 !important;
+  }
+
+  body.soloPage #soloPlayedPanel .soloControlsRow .btn{
+    width: 100% !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Played list: flow naturally in portrait (page scroll) */
+  body.soloPage #soloPlayedPanel #playedList{
+    max-height: none !important;
+    overflow: visible !important;
+    padding-right: 0 !important;
+  }
+
+  /*
+     Portrait phones are extremely narrow; the 5x5 grid leaves ~50-60px per square.
+     These overrides:
+       - reclaim horizontal space (smaller container/panel padding, smaller grid gap)
+       - keep squares square without fixed desktop heights
+       - clamp text to 2 lines with ellipsis so it doesn’t hard-cut
+  */
+  body.soloPage .container{ padding: 6px !important; }
+  body.soloPage #soloRoot.soloLayout > .panel{ padding: 12px !important; }
+
+  body.soloPage #soloCardGrid{ gap: 4px !important; }
+
+  body.soloPage #soloCardGrid .sq{
+    aspect-ratio: 1 / 1 !important;
+    
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+
+  body.soloPage #soloCardGrid .sqText{
+    
+    text-overflow: ellipsis !important;
+  }
+
+}
+
+@media (min-width: 1024px) {
+  /* Bump overall SOLO sizing on desktop without affecting mobile */
+  #soloRoot {
+    font-size: 110%;
+  }
+  /* Slightly increase panel padding so it feels proportionate */
+  #soloRoot .panel {
+    padding: 22px;
+  }
+  /* Make buttons a touch larger */
+  #soloRoot .btn {
+    font-size: 1em;
+  }
+}
+
+/*
+   Reserve space for the SOLO header so swapping "normal" vs "ended" copy
+   does not change panel height and push the right column down.
+*/
+@media (min-width: 981px){
+  body.soloPage #soloCardPanel .panelHeader{
+    /* Reserve enough height for either header variant */
+    min-height: 56px !important;
+  }
+  body.soloPage #soloHeaderNormal,
+  body.soloPage #soloHeaderEnded{
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  body.soloPage #soloGameOver{
+    /* Keep the banner compact */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 !important;
+  }
+}
+
+/*
+  Scale SOLO page (Play Alone) by +2.6% on desktop (was +8%, which looked too big at 100% browser zoom).
+
+  Why container-scale instead of #soloRoot:
+    - #soloRoot doesn't include the topbar/title/buttons (they live alongside it)
+    - Scaling the SOLO container scales title + controls + card + played list uniformly
+
+  Notes:
+    - Desktop only (min-width: 981px)
+    - Uses transform scale + width compensation so layout still fits the viewport
+*/
+@media (min-width: 981px){
+  body.soloPage .container{
+    transform: scale(1.026);
+    transform-origin: top center;
+    /* compensate so the scaled container still fits within viewport width */
+    width: calc(100% / 1.026) !important;
+  }
+  /* The page cannot scroll here, so on a short window (small screen, or browser zoom above 100%) the squares shrink
+     until the whole card fits: 5 rows x 1.026 scale, plus about 360px for header, letters, paddings and gaps. */
+  body.soloPage #soloCardGrid .sq{
+    height: clamp(40px, calc((100vh - 360px) / 5.13), 62px) !important;
+    min-height: 0 !important;
+  }
+}
+
+/* Player card: keep Now Playing compact (2 lines) and let it grow wider (to the left) */
+.nowPlaying.nowPlayingCompact {
+  /* Wider box so it can grow left while staying in the header row */
+  width: clamp(240px, 40vw, 560px);
+  max-width: 560px;
+
+  /* Compact height for exactly two text lines + padding */
+  padding: 10px 14px;
+  border-radius: 18px;
+
+  /* Prevent tall boxes */
+  height: auto;
+  min-height: 0;
+
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+
+  /* If parent is flex and this box is on the right, increasing width grows left */
+  margin-left: auto;
+}
+
+.nowPlaying.nowPlayingCompact .npTitle,
+.nowPlaying.nowPlayingCompact .npArtist {
+  /* Keep each to one line */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  /* Tighten line height to keep the box short */
+  line-height: 1.15;
+}
+
+.nowPlaying.nowPlayingCompact .npTitle {
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.nowPlaying.nowPlayingCompact .npArtist {
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+/*
+  Player card (hosted game): shrink now-playing box width so it doesn't span the whole row.
+  - Title + Artist: one line each (2 lines total).
+  - Box shrinks to content when short, but clamps at a reasonable max width.
+  - Uses high-specificity selector to override existing global rules.
+*/
+body .topbar {
+  align-items: flex-start;
+}
+
+body .topbar .topActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+}
+
+body .topbar .topActions .nowPlaying.nowPlayingCompact {
+  align-items: flex-start;
+
+  /* but don't get ridiculous */
+  
+
+  /* don't force row height */
+  min-height: 0 !important;
+  border-radius: 16px !important;
+
+  /* prevent flexbox stretching */
+  flex: 0 1 auto !important;
+}
+
+body .topbar .topActions .nowPlaying.nowPlayingCompact .npTitle,
+body .topbar .topActions .nowPlaying.nowPlayingCompact .npArtist {
+  width: 100%;
+  max-width: 100%;
+}
+
+/*
+   Player card: keep the now-playing pill compact (2-line), shrink-to-fit width,
+   and reserve height even when title/artist are empty to avoid layout shift.
+   Targets: .topbar .topActions .nowPlaying.nowPlayingCompact (player_card.html).
+*/
+
+/* Make the topActions area not force the pill to stretch */
+body .topbar .topActions {
+  align-items: center;
+}
+
+/* Compact pill: shrink-to-fit, but capped so it can't take over the whole row */
+body .topbar .topActions .nowPlaying.nowPlayingCompact {
+  display: inline-flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+
+  /* width behavior */
+  width: fit-content !important;
+  max-width: min(58vw, 720px) !important;
+  min-width: 260px !important;
+
+  /* fixed 2-line height to prevent shifting */
+  padding: 10px 14px !important;
+  box-sizing: border-box !important;
+}
+
+/* Two lines: title + artist */
+body .topbar .topActions .nowPlaying.nowPlayingCompact .npTitle,
+body .topbar .topActions .nowPlaying.nowPlayingCompact .npArtist {
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
+}
+
+/* Reserve line height even when blank (pre-reveal / no track yet) */
+body .topbar .topActions .nowPlaying.nowPlayingCompact .npTitle:empty::before,
+body .topbar .topActions .nowPlaying.nowPlayingCompact .npArtist:empty::before {
+  content: "\00a0"; /* NBSP to preserve height */
+}
+
+/* Host Played Tracks: make it behave like SOLO
+   - vertical list instead of chips grid
+   - title prominent, artist de-emphasized
+   - dark scrollbar like SOLO
+   NOTE: CSS-only (no JS changes) to avoid fragile patching.
+*/
+
+#playedList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+  padding-right: 6px; /* room for scrollbar */
+  max-height: 260px;  /* keeps panel tidy */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+#playedList .chip {
+  width: 100%;
+  display: block;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgb(var(--shade-rgb) / calc(0.18 * var(--shade-k)));
+  border: 1px solid rgb(var(--ink-rgb) / 0.08);
+}
+
+#playedList .chip span {
+  display: block;
+  line-height: 1.15;
+}
+
+#playedList .chip .playedTrackTitle,
+#playedList .chip span:first-of-type {
+  font-weight: 800;
+}
+
+#playedList .chip .playedTrackArtist,
+#playedList .chip span:nth-of-type(2) {
+  font-weight: 600;
+  opacity: 0.72;
+  margin-top: 4px;
+}
+
+#playedList::-webkit-scrollbar {
+  width: 12px;
+}
+#playedList::-webkit-scrollbar-track {
+  background: rgb(var(--shade-rgb) / calc(0.35 * var(--shade-k)));
+  border-radius: 10px;
+}
+#playedList::-webkit-scrollbar-thumb {
+  background: rgb(var(--ink-rgb) / 0.22);
+  border-radius: 10px;
+}
+#playedList::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--ink-rgb) / 0.28);
+}
+#playedList {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(var(--ink-rgb) / 0.22) rgba(0,0,0,0.35);
+}
+
+/*
+   Goal: make Played Tracks actually scroll on the HOST page.
+   Pattern: #playedList has overflow-y:auto but never overflows because its height is unconstrained
+   (or a parent forces layout such that max-height doesn't take effect). Fix by forcing a fixed block height.
+*/
+body:has(.hostGrid3) #playedList {
+  display: block !important;
+  height: 320px !important;
+  max-height: 320px !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+  padding-right: 2px; /* space so scrollbar doesn't overlap chips */
+}
+
+/* If host still renders "chips", make them vertical like SOLO */
+body:has(.hostGrid3) #playedList.chips {
+  display: block !important;
+}
+
+/* Ensure chip rows don't re-expand height unexpectedly */
+body:has(.hostGrid3) #playedList .chip {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 8px 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+/* Dark scrollbar like SOLO */
+body:has(.hostGrid3) #playedList::-webkit-scrollbar {
+  width: 10px;
+}
+body:has(.hostGrid3) #playedList::-webkit-scrollbar-track {
+  background: rgb(var(--ink-rgb) / 0.06);
+  border-radius: 10px;
+}
+body:has(.hostGrid3) #playedList::-webkit-scrollbar-thumb {
+  background: rgb(var(--shade-rgb) / calc(0.45 * var(--shade-k)));
+  border-radius: 10px;
+}
+body:has(.hostGrid3) #playedList::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.60);
+}
+
+/* Host Played Tracks (host_game): inline title + artist, no giant gap
+   - Keep list column layout (from prior host/solo styling), but ensure the two spans are inline.
+   - Avoid flex layouts that push artist to the far right.
+*/
+body:has(.hostGrid3) .hostGrid3 #playedList .chip{
+  display: block !important;      /* normal flow */
+  text-align: left !important;
+}
+
+/* Override earlier rule: "#playedList .chip span { display:block; }" */
+body:has(.hostGrid3) .hostGrid3 #playedList .chip .playedTrackTitle,
+body:has(.hostGrid3) .hostGrid3 #playedList .chip .playedTrackArtist,
+body:has(.hostGrid3) .hostGrid3 #playedList .chip span{
+  display: inline !important;
+  white-space: normal !important;
+}
+
+/* Keep the title prominent, artist muted, but on the same line */
+body:has(.hostGrid3) .hostGrid3 #playedList .chip .playedTrackTitle{
+  font-weight: 800 !important;
+}
+body:has(.hostGrid3) .hostGrid3 #playedList .chip .playedTrackArtist{
+  font-weight: 600 !important;
+  opacity: 0.72 !important;
+  margin-top: 0 !important;
+}
+
+/* Ensure the em dash doesn't end up separated weirdly */
+body:has(.hostGrid3) .hostGrid3 #playedList .chip .playedTrackArtist::before{
+  content: '';
+}
+
+@media (min-width: 901px) {
+  .hostGrid3 { max-height: none !important; overflow: visible !important; }
+  #hostNowPlaying {
+    min-height: 88px;
+    max-height: 88px;
+    overflow: hidden;
+  }
+}
+
+/* Tighten vertical spacing in host left Spotify control panel so buttons don't get pushed/clipped. */
+.hostGrid3 > .hostCol.hostCol1 .panel {
+  overflow: visible; /* keep safe */
+}
+
+/* Reduce large gaps */
+.hostGrid3 > .hostCol.hostCol1 .panel hr.sep {
+  margin: 10px 0;
+}
+
+.hostGrid3 > .hostCol.hostCol1 .panel .nowPlaying.compact {
+  margin: 10px 0 10px 0;
+}
+
+.hostGrid3 > .hostCol.hostCol1 .panel .row.actionsRow {
+  margin-top: 10px;
+}
+
+.hostGrid3 > .hostCol.hostCol1 .panel #transportMsg {
+  margin-top: 6px;
+}
+
+/* Final, high-specificity overrides for host left column:
+   - Make hostCol1 panel a flex column so the action row can be pinned to bottom
+   - Fix Now Playing height so it never expands and pushes buttons
+   - Keep transport/status line above buttons
+*/
+body:has(.hostGrid3) .hostGrid3 > .hostCol.hostCol1 > .panel {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+}
+
+body:has(.hostGrid3) .hostGrid3 > .hostCol.hostCol1 > .panel #hostNowPlaying {
+  flex: 0 0 auto !important;
+  height: 70px !important;
+  max-height: 70px !important;
+  overflow: hidden !important;
+  margin: 4px 0 0 !important;
+}
+
+body:has(.hostGrid3) .hostGrid3 > .hostCol.hostCol1 > .panel #hostNowPlaying .npTitle {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+body:has(.hostGrid3) .hostGrid3 > .hostCol.hostCol1 > .panel #hostNowPlaying .npArtist {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body:has(.hostGrid3) .hostGrid3 > .hostCol.hostCol1 > .panel #transportMsg {
+  flex: 0 0 auto !important;
+  margin: 4px 0 0 !important;
+}
+
+body:has(.hostGrid3) .hostGrid3 > .hostCol.hostCol1 > .panel .row.actionsRow {
+  margin-top: auto !important;  /* pin to bottom */
+  padding-top: 10px !important;
+  flex-wrap: nowrap !important;
+}
+
+body:has(.hostGrid3) .hostGrid3 > .hostCol.hostCol1 > .panel .row.actionsRow .btn {
+  flex: 1 1 0 !important;
+}
+
+/*
+   Player card: mobile-friendly sizing
+   - allow full-page vertical scroll
+   - prevent horizontal scroll (esp. landscape)
+   - make 5x5 grid always fit the viewport width
+*/
+body { overflow-x: hidden; }   /* on body alone, so the page scrolls as a whole: with html set too, body became a second scroll area inside the window */
+
+body.playerPage .container{
+  padding: 10px !important;
+  margin: 0 auto;
+}
+
+/* Keep panels fluid; do NOT lock heights (page scrolls naturally) */
+body.playerPage #cardPanel{
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Ensure the grid can shrink to fit (min-width:0 is key) */
+body.playerPage #cardGrid.cardGrid{
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+/* Help square contents wrap instead of forcing horizontal overflow */
+body.playerPage #cardGrid .sq,
+body.playerPage #cardGrid button.sq{
+  min-width: 0 !important;
+}
+
+/* Rotate hint: show only in portrait on small screens; never block taps */
+
+@media (max-width: 900px) and (orientation: portrait){
+  body.playerPage .container{ padding: 6px !important; }
+  body.playerPage #cardGrid.cardGrid{ gap: 4px !important; }
+  body.playerPage #cardGrid .sqText{ font-size: clamp(11px, 3.2vw, 13px) !important; }
+}
+
+@media (max-width: 900px) and (orientation: landscape){
+  body.playerPage .container{ padding: 6px !important; }
+  body.playerPage #cardGrid.cardGrid{ gap: 4px !important; }
+  body.playerPage #cardGrid .sqText{ font-size: clamp(10px, 2.2vw, 12px) !important; }
+}
+
+body.playerPage .container{ max-width: 1100px; }
+
+/* Rotate hint (mirrors solo styling but non-blocking) */
+
+/* Ensure the card grid never causes horizontal overflow */
+body.playerPage #cardPanel{ overflow-x:hidden; }
+
+body.playerPage #cardGrid .sq{ min-width: 0; }
+body.playerPage #cardGrid .sqText{
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+@media (max-width: 980px){
+
+  body.playerPage #cardPanel{ padding: 12px !important; }
+  body.playerPage #cardGrid{ gap: 4px !important; }
+  /* Keep squares readable while fitting 5 columns */
+  body.playerPage #cardGrid .sq{ height: clamp(52px, 16vw, 78px) !important; }
+  body.playerPage #cardGrid .sqText{ font-size: clamp(11px, 3.2vw, 13px) !important; }
+  /* Make the Bingo button easier to hit */
+  body.playerPage #bingoBtn{ width: 100%; touch-action: manipulation; }
+}
+
+@media (max-width: 980px) and (orientation: landscape){
+  /* Landscape has less height; shrink squares a bit more */
+  body.playerPage #cardGrid .sq{ height: clamp(44px, 10vw, 64px) !important; }
+}
+
+@media (max-width: 980px){
+  body.playerPage .container{ width: 100vw !important; margin: 8px auto 22px !important; padding: 8px !important; }
+  body.playerPage .panel{ max-width: 100% !important; }
+  body.playerPage #cardGrid.cardGrid,
+  body.playerPage #cardGrid{
+    width: 100% !important;
+    max-width: 100% !important;
+    
+  }
+  body.playerPage #cardGrid .sq{
+    min-width: 0 !important;
+  }
+}
+
+@media (max-width: 980px) and (orientation: portrait){
+  body.playerPage #cardGrid{ gap: 4px !important; }
+  body.playerPage #cardGrid .sqText{
+    font-size: clamp(10px, 2.6vw, 13px) !important;
+    line-height: 1.15 !important;
+    overflow: hidden !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+  }
+}
+
+@media (max-width: 980px) and (orientation: landscape){
+  body.playerPage #cardGrid{ gap: 4px !important; }
+  body.playerPage #cardGrid .sqText{
+    font-size: clamp(10px, 1.8vw, 13px) !important;
+    line-height: 1.15 !important;
+    overflow: hidden !important;
+  }
+}
+
+.rotateHint{ pointer-events:none; }
+@media (orientation: landscape){ .rotateHint{ display:none; } }
+
+/*
+   Scope: ONLY player page (body.playerPage)
+   Goals:
+   - No whole-page scroll on mobile; keep header/now-playing visible
+   - Card panel scrolls if needed, so bottom rows + BINGO button are reachable
+   - Card grid fits horizontally (no cut-off)
+*/
+
+body.playerPage .container{
+  max-height: 100%;
+  overflow: hidden;
+}
+
+/* Keep topbar visible and compact on mobile */
+body.playerPage .topbar{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* Card panel is the scroller */
+body.playerPage #cardPanel{
+  -webkit-overflow-scrolling: touch;
+}
+@supports not (height: 100dvh){
+  body.playerPage #cardPanel{ max-height: calc(100vh - 140px); }
+}
+
+/* Ensure the grid doesn't overflow horizontally */
+body.playerPage #cardGrid{
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Rotate hint should be non-blocking and visually match SOLO */
+
+/* Player page scroll model:
+   - Allow the DOCUMENT to scroll (works on Android/iOS dynamic toolbars)
+   - Do NOT make the card grid a scroll container
+   - Keep header visible on phones with sticky topbar
+*/
+body.playerPage{
+  min-height: 100dvh;
+  height: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+body.playerPage .container{ height: auto !important; }
+body.playerPage #cardPanel{
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+body.playerPage #cardGrid{
+  overflow: visible !important;
+  max-height: none !important;
+}
+
+@media (max-width: 980px){
+  body.playerPage .topbar{
+    position: sticky;
+    top: 0;
+    z-index: 60;
+    padding-top: 6px;
+    margin-top: 0;
+    /* painted with the same fixed background as the page, so the header is seamless (no darker band) and cards scrolling
+       under it stay hidden behind it */
+    background:
+      radial-gradient(circle at 15% 10%, rgb(var(--accent-rgb) / 0.20), transparent 55%),
+      radial-gradient(circle at 90% 0%, rgb(var(--glow2-rgb, var(--accent2-rgb)) / 0.16), transparent 55%),
+      linear-gradient(180deg, var(--bgTop), var(--bgMid) 40%, var(--bgBot));
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+  }
+}
+
+/* Player card only: remove the heavy shadow/raised box around the card panel on desktop + mobile. */
+body.playerPage #cardPanel.panel,
+body.playerPage #cardPanel,
+body.playerPage .panel#cardPanel {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  filter: none !important;
+}
+
+/* Neutralize backdrop-based shadow effects for the card panel only. */
+body.playerPage #cardPanel {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* If nested elements inherit shadow, neutralize near the panel header too. */
+body.playerPage #cardPanel .panelHeader {
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+/*
+   Mobile player card: prevent edge-square dab glow from being clipped.
+   Root cause: several mobile rules set overflow:hidden/auto on #cardPanel/#cardGrid/.container.
+   Fix: allow overflow to be visible around the grid, and add a small padding gutter.
+*/
+@media (max-width: 980px) {
+  body.playerPage .container { overflow: visible !important; }
+  body.playerPage #cardPanel,
+  body.playerPage #cardPanel.panel,
+  body.playerPage .panel#cardPanel {
+    overflow: visible !important;
+  }
+  body.playerPage #cardGrid,
+  body.playerPage #cardGrid.cardGrid {
+    overflow: visible !important;
+    padding: 10px !important;          /* gutter so glow isn't cut off at viewport edge */
+    margin: -6px !important;           /* counter existing padding so layout stays similar */
+    box-sizing: border-box !important;
+  }
+  /* Ensure squares can render their glow outside their own box */
+  body.playerPage #cardGrid .sq,
+  body.playerPage #cardGrid button.sq {
+    overflow: visible !important;
+  }
+}
+
+/*
+   Portrait phones: squares are ~60px wide, and 12px side padding left ~38px for text, so titles broke
+   mid-word ("Genera|tion"). Narrower side padding + wrap between words; hyphenate only when a word
+   still can't fit. */
+@media (max-width: 980px) and (orientation: portrait){
+  body.playerPage #cardGrid .sq,
+  body.playerPage #cardGrid button.sq{
+    padding-left: 4px !important;
+    padding-right: 4px !important;
+  }
+  body.playerPage #cardGrid .sqText{
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    -webkit-hyphens: auto !important;
+    hyphens: auto !important;
+  }
+}
+
+/* Host claims panel: why the auto-check marked a claim invalid */
+.claimWhy{ color: #fbbf24; margin-top: 4px; }
+
+/*
+   Player card on phones: the whole card + BINGO button fit on one screen, no scrolling, in either
+   orientation. Portrait: slim one-line header, card sized from width and height. Landscape: card fills
+   the height on the left, header/now-playing/BINGO in a column on the right.
+   Last in the file on purpose: overrides the older stacked phone patches above. Desktop is untouched. */
+@media (max-width: 980px), (orientation: landscape) and (max-height: 540px){
+  /* 100vw + padding made the page wider than the screen */
+  body.playerPage .container{
+    width: auto !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 6px 8px !important;
+    box-sizing: border-box !important;
+  }
+  body.playerPage #cardPanel .panelHeader{ display: none !important; }
+  /* Even gutter around the grid (older dab-glow fix used margin:-6px + padding:10px, which pushed it off-centre) */
+  body.playerPage #cardGrid,
+  body.playerPage #cardGrid.cardGrid{ margin: 0 !important; padding: 4px !important; width: 100% !important; box-sizing: border-box !important; }
+  body.playerPage #cardPanel{ padding: 6px !important; margin: 0 !important; }
+  body.playerPage .topbar .h1{ font-size: 18px !important; line-height: 1.15 !important; margin: 0 !important; }
+  body.playerPage .topbar > div:first-child{
+    min-width: 0; font-size: 12px; line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  body.playerPage #nowPlaying.nowPlayingCompact{
+    height: auto !important; max-height: none !important;
+    min-width: 0 !important; padding: 6px 10px !important; box-sizing: border-box;
+  }
+  body.playerPage #bingoBtn{ width: 100%; min-height: 46px; touch-action: manipulation; }
+  /* Reveal countdown needs two lines; the compact phone box was shorter than that, clipping "Guess it by ear" */
+  body.playerPage #nowPlaying.nowPlayingCompact{ min-height: 58px !important; }
+  body.playerPage #nowPlaying .npCountdown{ padding: 6px 10px 8px !important; }
+  body.playerPage #nowPlaying .npcLine{ font-size: 15px; }
+  body.playerPage #nowPlaying .npcSub{ font-size: 13px; }
+}
+
+@media (max-width: 980px) and (orientation: portrait){
+  body.playerPage .topbar{
+    display: flex !important; align-items: center !important; justify-content: space-between !important;
+    gap: 8px; padding: 2px 0 6px !important; margin: 0 0 6px !important;
+  }
+  body.playerPage .topbar .topActions{ flex: 0 1 58% !important; min-width: 0 !important; }
+  body.playerPage #nowPlaying.nowPlayingCompact{ width: 100% !important; max-width: none !important; }
+  /* Squares: as wide as the screen allows; height from what's left of the screen, capped so they don't get too tall */
+  body.playerPage #cardGrid .sq{
+    height: clamp(48px, min(calc((100vh - 276px) / 5), calc((100vw - 48px) / 5 * 1.35)), 120px) !important;
+    height: clamp(48px, min(calc((100svh - 276px) / 5), calc((100vw - 48px) / 5 * 1.35)), 120px) !important;
+  }
+  /* Keep the existing small portrait font (bigger text breaks words mid-word); taller squares allow 4 lines */
+  body.playerPage #cardGrid .sqText{ -webkit-line-clamp: 4 !important; max-height: 4.8em !important; }
+  body.playerPage .actionsRow{ display: block !important; margin-top: 8px !important; padding: 0 4px !important; box-sizing: border-box; }
+}
+
+@media (orientation: landscape) and (max-height: 540px){
+  body.playerPage .container{
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) clamp(170px, 26vw, 250px);
+    grid-template-rows: auto auto 1fr;
+    column-gap: 10px;
+    align-items: start;
+  }
+  body.playerPage .topbar{
+    grid-column: 2; grid-row: 1;
+    display: flex !important; flex-direction: column !important; align-items: stretch !important;
+    gap: 6px; margin: 0 !important; padding: 0 !important;
+    position: static !important; background: none !important; backdrop-filter: none !important;
+  }
+  body.playerPage .topbar .topActions{ width: 100% !important; }
+  body.playerPage #nowPlaying.nowPlayingCompact{ width: 100% !important; max-width: none !important; }
+  body.playerPage #waitingMsg{ grid-column: 1; }
+  body.playerPage #cardPanel{ grid-column: 1; grid-row: 1 / span 3; }
+  /* Squares share the full screen height */
+  body.playerPage #cardGrid .sq{
+    height: calc((100vh - 78px) / 5) !important;
+    height: calc((100svh - 78px) / 5) !important;
+    min-height: 36px !important;
+    padding: 5px 8px !important;
+  }
+  /* Text size follows square HEIGHT so 3 lines always fit: square = (100svh-56px)/5, minus 10px padding,
+     divided by 3 lines x 1.15 line-height  =>  (100svh - 106px) / 17.25 (rounded to 17.5 for font metrics) */
+  body.playerPage #cardGrid .sqText{
+    font-size: clamp(9px, min(1.7vw, calc((100vh - 128px) / 17.5)), 14px) !important;
+    font-size: clamp(9px, min(1.7vw, calc((100svh - 128px) / 17.5)), 14px) !important;
+    line-height: 1.15 !important; max-height: 3.45em !important;
+    display: -webkit-box !important; -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important; overflow: hidden !important;
+  }
+  /* Never let text escape the square (the dab highlight is the square's own outline, which overflow doesn't clip) */
+  body.playerPage #cardGrid .sq{ overflow: hidden !important; }
+  /* BINGO button (and claim messages above it) pinned to the bottom of the right column */
+  body.playerPage .actionsRow{
+    position: fixed !important; right: 8px; bottom: 8px; z-index: 30;
+    width: clamp(170px, 26vw, 250px); margin: 0 !important;
+    display: flex !important; flex-direction: column-reverse !important; gap: 6px;
+  }
+  body.playerPage .actionsRow > *{ margin: 0 !important; }
+}
+
+/*
+   Host now-playing box: title/band lines clip overflow (for "…"); at line-height 1.2 Windows' Segoe UI
+   descenders (g, y, p) were cut. 1.35 fits its ~1.33em glyph box. */
+body #hostNowPlaying .npTitle,
+body #hostNowPlaying .npArtist,
+body .hostGrid3 .hostCol1 #hostNowPlaying .npTitle,
+body .hostGrid3 .hostCol1 #hostNowPlaying .npArtist{
+  line-height: 1.35 !important;
+  padding-bottom: 0.05em;
+  max-height: none !important;  /* older max-height:1.2em / 2.3em caps clipped regardless; line-clamp limits lines */
+}
+
+/*
+   Play Alone on phones: card, song box and Bingo/Play/Pause/Next on one screen, in either orientation
+   (same approach as for the hosted card). Portrait: slim one-line header,
+   card sized from width and height, buttons below, Played Tracks below that. Landscape: card fills the
+   height on the left; header, song box, buttons and a scrolling Played Tracks in a column on the right.
+   Last in the file on purpose: overrides the older solo phone patches above. Desktop is untouched. */
+@media (max-width: 980px), (orientation: landscape) and (max-height: 540px){
+  body.soloPage .container{
+    transform: none !important; width: auto !important; max-width: 100% !important;
+    margin: 0 auto !important; padding: 6px 8px !important; box-sizing: border-box !important;
+  }
+  body.soloPage #soloRotateHint{ display: none !important; }
+  /* "Your Bingo Card / Tap squares…" takes a row the card needs; the game-over banner still shows */
+  body.soloPage #soloHeaderNormal{ display: none !important; }
+  body.soloPage #soloCardPanel .panelHeader{ min-height: 0 !important; margin: 0 !important; }
+  body.soloPage #soloRoot.soloLayout > .panel{ padding: 6px !important; margin: 0 !important; }
+  body.soloPage #soloCardGrid{ gap: 4px !important; margin: 0 !important; }
+  body.soloPage #soloCardGrid .sq{ aspect-ratio: auto !important; min-height: 0 !important; max-height: none !important; overflow: hidden !important; }
+  body.soloPage .topbar .h1{ font-size: 18px !important; line-height: 1.15 !important; margin: 0 !important; }
+  body.soloPage .topbar > div:first-child{
+    min-width: 0; font-size: 12px; line-height: 1.3;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  body.soloPage #nowPlaying.nowPlayingCompact{
+    width: 100% !important; max-width: none !important; min-width: 0 !important;
+    height: auto !important; min-height: 58px !important; padding: 6px 10px !important; box-sizing: border-box;
+  }
+  body.soloPage #nowPlaying .npCountdown{ padding: 6px 10px 8px !important; }
+  body.soloPage #nowPlaying .npcLine{ font-size: 15px; }
+  body.soloPage #nowPlaying .npcSub{ font-size: 13px; }
+  body.soloPage #soloPlayedPanel .soloControlsRow{
+    display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 6px !important; padding: 0 !important; margin: 0 0 6px !important;
+  }
+  body.soloPage #soloPlayedPanel .soloControlsRow .btn{ width: 100% !important; min-width: 0 !important; min-height: 42px; padding: 6px !important; font-size: 15px !important; touch-action: manipulation; }
+  body.soloPage #soloPlayStatus{ margin: 8px 0 6px !important; font-size: 13px; }
+  body.soloPage #soloRightPanel{ margin: 0 !important; }
+  body.soloPage #soloRightPanel .title{ font-size: 15px; }
+  /* Bingo result ("Sorry, No Bingo Yet"): a toast at the bottom instead of a row under the card */
+  body.soloPage #bingoResult{
+    position: fixed; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 50;
+    max-width: calc(100vw - 32px); padding: 8px 14px; border-radius: 12px;
+    background: var(--panelSolid); border: 1px solid rgb(var(--ink-rgb) / 0.12); color: var(--text);
+    font-size: 14px !important; font-weight: 700; white-space: normal; text-align: center; width: max-content; line-height: 1.35;
+  }
+  body.soloPage #bingoResult:empty{ display: none; }
+  /* Played Tracks entries used the desktop size (a single entry filled the column) */
+  body.soloPage #soloPlayedPanel #playedList{ gap: 4px !important; }
+  body.soloPage #soloPlayedPanel #playedList .chip{
+    font-size: 13px !important; line-height: 1.3 !important; padding: 6px 10px !important;
+    border-radius: 10px !important; min-height: 0 !important; margin: 0 !important;
+  }
+  /* A word longer than the square is wide (e.g. "Jumpdafuckup") wraps onto the next line instead of being cut off */
+  body.soloPage #soloCardGrid .sqText{ overflow-wrap: break-word !important; word-break: normal !important; }
+}
+
+@media (max-width: 980px) and (orientation: portrait){
+  body.soloPage .topbar{
+    display: flex !important; flex-wrap: nowrap !important; align-items: center !important; justify-content: space-between !important;
+    gap: 8px; padding: 2px 0 6px !important; margin: 0 0 6px !important;
+  }
+  body.soloPage .topbar .topActions{ flex: 0 1 62% !important; width: auto !important; min-width: 0 !important; gap: 6px !important; }
+  body.soloPage #soloRoot.soloLayout > .panel{ margin-bottom: 8px !important; }
+  /* The song box shares the row with the heading and account menu: countdown text scales with the width */
+  body.soloPage #nowPlaying .npcLine{ font-size: clamp(12.5px, 3.5vw, 15px); }
+  body.soloPage #nowPlaying .npcSub{ font-size: clamp(11.5px, 3.2vw, 13px); }
+  /* Squares: as wide as the screen allows; height from what's left after the header and the two rows
+     of buttons, capped so they don't get too tall */
+  body.soloPage #soloCardGrid .sq{
+    height: clamp(52px, min(calc((100vh - 250px) / 5), calc((100vw - 48px) / 5 * 1.35)), 120px) !important;
+    height: clamp(52px, min(calc((100svh - 250px) / 5), calc((100vw - 48px) / 5 * 1.35)), 120px) !important;
+    padding: 4px !important;
+  }
+  /* Small font (bigger text breaks words mid-word); taller squares allow 4 lines */
+  body.soloPage #soloCardGrid .sqText{
+    font-size: 10.5px !important; line-height: 1.15 !important;
+    display: -webkit-box !important; -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 4 !important; max-height: 4.6em !important; overflow: hidden !important;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 540px){
+  body.soloPage{ height: 100vh !important; height: 100svh !important; overflow: hidden !important; }
+  body.soloPage .container{
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) clamp(190px, 30vw, 280px);
+    grid-template-rows: auto minmax(0, 1fr);
+    column-gap: 10px;
+    height: 100vh !important; height: 100svh !important; overflow: hidden !important;
+  }
+  /* Let the two panels sit directly in the container grid */
+  body.soloPage #soloRoot.soloLayout{ display: contents !important; }
+  body.soloPage .topbar{
+    grid-column: 2; grid-row: 1;
+    display: flex !important; flex-direction: column !important; align-items: stretch !important;
+    gap: 6px; margin: 0 0 6px !important; padding: 0 !important;
+    position: static !important; background: none !important; backdrop-filter: none !important;
+  }
+  body.soloPage .topbar .topActions{ width: 100% !important; gap: 6px !important; }
+  /* The right column is narrow next to the account menu: smaller countdown text so the digit isn't cut off */
+  body.soloPage #nowPlaying .npcLine{ font-size: 13px; }
+  body.soloPage #nowPlaying .npcSub{ font-size: 12px; }
+  body.soloPage #soloCardPanel{ grid-column: 1; grid-row: 1 / span 2; height: auto !important; max-height: none !important; overflow: hidden !important; }
+  /* Right column: buttons, status, and Played Tracks scrolling in whatever height is left */
+  body.soloPage #soloPlayedPanel{
+    grid-column: 2; grid-row: 2; min-height: 0;
+    height: auto !important; max-height: none !important;
+    display: flex !important; flex-direction: column !important; overflow: hidden !important;
+  }
+  body.soloPage #soloPlayedPanel #playedList{ flex: 1 1 auto; min-height: 0; max-height: none !important; overflow-y: auto !important; }
+  body.soloPage #soloPlayedPanel .soloControlsRow .btn{ min-height: 36px; font-size: 14px !important; }
+  /* Squares share the full screen height (same sums as the hosted card) */
+  body.soloPage #soloCardGrid .sq{
+    height: calc((100vh - 56px) / 5) !important;
+    height: calc((100svh - 56px) / 5) !important;
+    min-height: 40px !important; padding: 5px 8px !important;
+  }
+  body.soloPage #soloCardGrid .sqText{
+    font-size: clamp(9.5px, min(1.7vw, calc((100vh - 106px) / 17.5)), 14px) !important;
+    font-size: clamp(9.5px, min(1.7vw, calc((100svh - 106px) / 17.5)), 14px) !important;
+    line-height: 1.15 !important; max-height: 3.45em !important;
+    display: -webkit-box !important; -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important; overflow: hidden !important;
+  }
+}
+
+/*
+   Play Alone Played Tracks: song and "— artist" on one line, wrapping only when they don't fit
+   (same as; "#playedList .chip span{display:block}" put them on two lines). */
+body.soloPage #soloPlayedPanel #playedList .chip .playedTrackTitle,
+body.soloPage #soloPlayedPanel #playedList .chip .playedTrackArtist,
+body.soloPage #soloPlayedPanel #playedList .chip span{
+  display: inline !important;
+  white-space: normal !important;
+  margin-top: 0 !important;
+}
+body.soloPage #soloPlayedPanel #playedList .chip .playedTrackArtist{ font-size: inherit !important; }
+body.soloPage #soloPlayedPanel #playedList .chip{ line-height: 1.3 !important; }
+
+/* submit button blocked by the live Spotify-made playlist check (static/playlist_check.js) */
+form:has(.playlistCheckNote) button[type="submit"]:disabled{ opacity: 0.45; cursor: not-allowed; filter: grayscale(0.4); }
+.playlistCheckNote{ margin-top: 8px; font-size: 14px; line-height: 1.45; text-align: left; }
+
+/* "cards out of date" notice (static/paper_stale.js) */
+.staleBanner{ margin: 8px 0; padding: 10px 12px; border-radius: 12px; background: rgba(245,158,11,0.12); border: 1px solid rgba(251,191,36,0.4); font-size: 14px; line-height: 1.45; }
+.staleTitle{ font-weight: 800; margin-bottom: 4px; }
+.staleBanner .staleBtn{ margin-top: 8px; width: 100%; }
+.staleMsg{ margin-top: 6px; color: #fbbf24; min-height: 1em; }
+.staleOk{ margin: 6px 0; color: #6ee7b7; }
+
+/* Saved-playlist tools: hide-explicit checkbox and sort menu */
+.plTools{ display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; margin: 8px 0; }
+.plTools .hideExplicit{ margin: 0; }
+.hideExplicit{ display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.plSortLabel{ display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.plSort{ width: auto; padding: 4px 8px; font-size: 14px; }
+
+/*
+   Player card on desktop/tablets: the squares follow the window height, so the whole card and the BINGO button
+   fit without scrolling (phones have their own rules above). 392px = everything on the page that isn't a square.
+   Last in the file on purpose. */
+@media (min-width: 981px) and (min-height: 541px){
+  body.playerPage #cardGrid .sq,
+  body.playerPage #cardGrid button.sq{
+    height: clamp(40px, calc((100vh - 392px) / 5), 100px) !important;
+    height: clamp(40px, calc((100svh - 392px) / 5), 100px) !important;
+    min-height: 0 !important;
+  }
+}
+
+/* Short desktop windows: drop the "Bingo Card / Tap squares" heading (as on phones) so the squares get that height. */
+@media (min-width: 981px) and (min-height: 541px) and (max-height: 760px){
+  body.playerPage #cardPanel .panelHeader{ display: none !important; }
+  body.playerPage #cardGrid .sq,
+  body.playerPage #cardGrid button.sq{
+    height: clamp(40px, calc((100vh - 336px) / 5), 100px) !important;
+    height: clamp(40px, calc((100svh - 336px) / 5), 100px) !important;
+  }
+  body.playerPage #cardGrid .sqText{ font-size: 12px !important; line-height: 1.15 !important; }
+}
+
+/* Bingo hints on/off toggle switches (host page, phone card, solo page) */
+.hintSwitch{ display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); cursor: pointer; user-select: none; white-space: nowrap; }
+.hintSwitch[hidden]{ display: none !important; }
+.hintSwitch input{
+  -webkit-appearance: none; appearance: none; box-sizing: border-box;
+  position: relative; flex: 0 0 auto; margin: 0; cursor: pointer;
+  width: 34px; height: 20px; border-radius: 999px;
+  background: rgb(var(--ink-rgb) / 0.20); border: 1px solid rgb(var(--ink-rgb) / 0.14);
+  transition: background .15s ease;
+}
+.hintSwitch input::after{
+  content: ""; position: absolute; top: 50%; left: 2px; width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; transform: translateY(-50%); transition: transform .15s ease;
+}
+.hintSwitch input:checked{ background: var(--accent, #8b5cf6); border-color: var(--accent2, #a78bfa); }
+.hintSwitch input:checked::after{ transform: translate(14px, -50%); }
+.hintSwitch input:focus-visible{ outline: 2px solid var(--accent2, #a78bfa); outline-offset: 2px; }
+.hintSwitch input:disabled{ cursor: not-allowed; }
+.hintSwitch.isOff{ opacity: 0.45; cursor: not-allowed; }
+
+/* Hints switch on the player's name line: sit on the text's centre line, same size as the line */
+#hintToggleWrap{ vertical-align: middle; margin-left: 8px; font-size: 14px; line-height: 1; color: inherit; opacity: 0.9; gap: 6px; }
+#hintToggleWrap input{ width: 30px; height: 18px; }
+#hintToggleWrap input::after{ width: 12px; height: 12px; }
+#hintToggleWrap input:checked::after{ transform: translate(12px, -50%); }
+
+/* Host page, left column: a few pixels back so the Play/Pause/Next row always fits once a game is running
+   (more status lines show then), and the panel scrolls rather than cutting the buttons off on a short window. */
+.hostGrid3 .hostCol1 .panel hr.sep{ margin: 6px 0 !important; }
+
+.hostGrid3 .hostCol1 #sdkStatusWrap{ margin-top: 2px !important; }
+.hostGrid3 .hostCol1 .hintRow{ margin-top: 6px; }
+.hostGrid3 .hostCol1 .paperLinkRow{ margin-top: 8px; }
+.hostGrid3 > .hostCol.hostCol1 > .panel{ overflow-y: auto !important; }
+
+/* Host page, left column: every status line has a slot of fixed size, so showing, changing or clearing a message
+   (Playing on, Playback transferred, Play/Pause confirmations, long song titles) never moves the song box or the buttons.
+   The slots are as small as the text allows, so the Play/Pause/Next row fits on a short window. */
+.hostGrid3 .hostCol1 #deviceNowPlaying{ height: 18px; line-height: 18px; margin-top: 2px !important; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.hostGrid3 .hostCol1 .spotifyStatus{ height: 36px; overflow: hidden; }
+.hostGrid3 .hostCol1 .spotifyStatus > *{ height: 18px; line-height: 18px; margin: 0 !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hostGrid3 .hostCol1 #hostNowPlaying{ height: 70px !important; min-height: 70px !important; max-height: 70px !important; padding: 3px 0 !important; box-sizing: border-box; overflow: hidden !important; margin: 4px 0 0 !important; }
+.hostGrid3 .hostCol1 #hostNowPlaying .npTitle,
+.hostGrid3 .hostCol1 #hostNowPlaying .npArtist{ white-space: nowrap !important; overflow: hidden !important; text-overflow: ellipsis !important; display: block !important; }
+.hostGrid3 .hostCol1 #hostNowPlaying .npTitle{ height: 1.45em; }
+.hostGrid3 .hostCol1 #hostNowPlaying .npArtist{ height: 1.35em; }
+.hostGrid3 .hostCol1 #hostNowPlaying .npTimer{ height: 1.25em; margin-top: 0; }
+.hostGrid3 .hostCol1 #transportMsg{ height: 18px; line-height: 18px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-top: 4px; }
+
+.hostGrid3 .hostCol1 .hintLine #hostMsg{ min-height: 0 !important; visibility: visible !important; }
+
+/* Bingo claim cards on the host page: name and the auto-check result on one line, the reason under it,
+   and the Accept/Reject buttons side by side across the bottom (the text used to be squeezed into a narrow column). */
+.hostGrid3 .claimRow{ display: flex !important; flex-direction: column !important; align-items: stretch !important; gap: 6px !important; padding: 10px 12px !important; }
+.claimHead{ display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.claimName{ font-weight: 800; font-size: 15px; overflow-wrap: anywhere; }
+.claimBadge{ font-size: 12px; font-weight: 800; padding: 2px 9px; border-radius: 999px; white-space: nowrap; border: 1px solid transparent; }
+.claimBadge.ok{ color: #86efac; background: rgba(34,197,94,0.14); border-color: rgba(34,197,94,0.35); }
+.claimBadge.bad{ color: #fca5a5; background: rgba(248,113,113,0.12); border-color: rgba(248,113,113,0.35); }
+.claimRow .claimWhy{ margin: 0; }
+.claimRow .claimStatus{ margin: 0; }
+.claimActions{ display: flex; gap: 8px; margin-top: 2px; }
+.claimActions .btn{ flex: 1 1 0; min-width: 0; min-height: 30px !important; height: 30px; padding: 0 10px !important; font-size: 13px !important; line-height: 1 !important; border-radius: 10px !important; white-space: nowrap; }
+
+/* Host page, desktop: the Played Tracks list (and the claims list) use the whole height of their panel instead of
+   stopping at a fixed 320/520px, so a long game's history shows without scrolling in a tall window. */
+@media (min-width: 981px){
+  .hostGrid3 > .hostCol2 > .panel,
+  .hostGrid3 > .hostCol3 > .panel:nth-of-type(2){ display: flex !important; flex-direction: column !important; min-height: 0 !important; }
+  .hostGrid3 .hostCol2 #playedList,
+  .hostGrid3 .hostCol3 #claimsList{ flex: 1 1 auto !important; max-height: none !important; min-height: 0 !important; }
+}
+
+/* Several bingo claims in one round: who clicked first is marked, and a banner says so */
+.claimBanner{ border: 1px solid rgba(251,191,36,0.5); background: rgba(251,191,36,0.10); color: #fcd34d; border-radius: 12px; padding: 8px 12px; font-size: 13px; font-weight: 700; line-height: 1.35; margin-bottom: 8px; }
+.claimRank{ display: inline-block; font-size: 11px; font-weight: 900; padding: 1px 7px; border-radius: 999px; background: rgb(var(--ink-rgb) / 0.10); color: var(--muted); margin-right: 4px; vertical-align: middle; }
+.claimRank.first{ background: rgba(251,191,36,0.20); color: #fcd34d; }
+.claimRow.claimFirst{ border-color: rgba(251,191,36,0.55) !important; }
+
+/* Host page lists: slim, dark scrollbars instead of the browser's bright default */
+.hostGrid3 #playersList, .hostGrid3 #playedList, .hostGrid3 #claimsList, .hostGrid3 > .hostCol1 > .panel{ scrollbar-width: thin; scrollbar-color: rgb(var(--ink-rgb) / 0.25) transparent; }
+.hostGrid3 #playersList::-webkit-scrollbar, .hostGrid3 #playedList::-webkit-scrollbar, .hostGrid3 #claimsList::-webkit-scrollbar, .hostGrid3 > .hostCol1 > .panel::-webkit-scrollbar{ width: 8px; }
+.hostGrid3 #playersList::-webkit-scrollbar-track, .hostGrid3 #playedList::-webkit-scrollbar-track, .hostGrid3 #claimsList::-webkit-scrollbar-track, .hostGrid3 > .hostCol1 > .panel::-webkit-scrollbar-track{ background: transparent; }
+.hostGrid3 #playersList::-webkit-scrollbar-thumb, .hostGrid3 #playedList::-webkit-scrollbar-thumb, .hostGrid3 #claimsList::-webkit-scrollbar-thumb, .hostGrid3 > .hostCol1 > .panel::-webkit-scrollbar-thumb{ background: rgb(var(--ink-rgb) / 0.22); border-radius: 8px; }
+.hostGrid3 #claimsList::-webkit-scrollbar-thumb:hover, .hostGrid3 #playedList::-webkit-scrollbar-thumb:hover{ background: rgb(var(--ink-rgb) / 0.35); }
+
+/* Small "Remove" button on a rejected claim */
+.claimStatus{ display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.claimRemove{ margin-left: auto; background: none; border: 1px solid rgb(var(--ink-rgb) / 0.16); color: var(--muted); border-radius: 8px; padding: 1px 8px; font-size: 11px; cursor: pointer; }
+.claimRemove:hover{ color: #fca5a5; border-color: rgba(248,113,113,0.5); }
+
+/* Host page on desktop: the page itself never scrolls (the grid is sized to the window, and the lists and the left
+   panel scroll inside themselves), so no page scrollbar. */
+@media (min-width: 981px){
+  html:has(.hostGrid3), body:has(.hostGrid3){ overflow: hidden !important; height: 100% !important; }
+}
+
+/* Former inline style="" attributes (moved here so the content security policy can refuse inline styles).
+   data-hide elements start hidden; static/inline_hide.js turns that into the display:none a script can undo. */
+[data-hide]{display:none}
+.mt14{margin-top: 14px;}
+.mt10{margin-top: 10px;}
+.is3{margin-top: 10px; gap: 10px; flex-wrap: wrap;}
+.mt4{margin-top: 4px;}
+.is5{margin-top: 8px; line-height: 1.45;}
+.is6{margin-top: 12px; line-height: 1.5;}
+.mt16{margin-top: 16px;}
+.is8{display: flex; align-items: center; gap: 10px; justify-content: flex-end; white-space: nowrap;}
+.is9{margin: 0;}
+.is10{margin-left: 8px;}
+.is11{width: 420px;}
+.is12{display: inline-block; margin-right: 8px;}
+.is13{width: 180px; display: inline-block;}
+.is14{display: inline-block;}
+.is15{display: flex; justify-content: center; margin-top: 14px;}
+.is16{margin-left: 10px;}
+.mt8{margin-top: 8px;}
+.mt6{margin-top: 6px;}
+.mt2{margin-top: 2px;}
+.is20{margin-bottom: 10px;}
+.is21{display: block;}
+.is22{align-items: center; justify-content: space-between; gap: 10px;}
+.is23{margin: 10px 0 12px; line-height: 1.4; display: flex; align-items: center; gap: 4px; flex-wrap: wrap;}
+.is24{margin: 0 0 0 auto;}
+.is25{margin-bottom: 16px;}
+.is26{text-transform: uppercase;}
+.is27{position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.85); color: #fff; cursor: pointer;}
+.is28{position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); text-align: center; padding: 24px; max-width: 720px; width: 90%;}
+.is29{font-size: 40px; font-weight: 800; margin-bottom: 12px;}
+.is30{font-size: 18px; opacity: 0.85;}
+.is31{display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 12px;}
+.is32{justify-content: center; padding: 16px 14px; font-size: 18px;}
+
+/* Host left column: when the window is too short for everything, the panel scrolls; nothing is squeezed or clipped
+   (the Play/Pause/Next row used to shrink and cut off the bottom of the buttons). */
+body:has(.hostGrid3) .hostGrid3 > .hostCol.hostCol1 > .panel > *{ flex-shrink: 0 !important; }
+body:has(.hostGrid3) .hostGrid3 > .hostCol.hostCol1 > .panel .row.actionsRow{ overflow: visible !important; }
+
+/* Host Players list: name and status on the left, Admit / Kick on the right */
+.playerInfo{ min-width: 0; }
+.playerInfo .playerName{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.playerBtns{ display: flex; gap: 6px; flex: 0 0 auto; margin-left: 10px; }
+.removedNotice{ max-width: 520px; margin: 40px auto; text-align: center; }
+.playerBtns .btn{ padding: 6px 12px; font-size: 13px; border-radius: 12px; }
+
+/* Players list: rows end where the Check card button below them ends (no extra right padding unless the list scrolls) */
+.hostGrid3 #playersList{ padding-right: 0 !important; }
+
+/* Small status tag used by the Spotify bar on the dashboard and the Saved Playlists page */
+.spotifyState{ font-weight: 800; font-size: 14px; padding: 3px 12px; border-radius: 999px; border: 1px solid transparent; }
+.spotifyOk{ color: #86efac; background: rgba(34,197,94,0.14); border-color: rgba(52,211,153,0.4); }
+.spotifyWarn{ color: #fcd34d; background: rgba(245,158,11,0.12); border-color: rgba(251,191,36,0.4); }
+
+/* Host left column, short windows: the "Playback device" picker needs no label (its first option says what it is), the
+   Now Playing slot is a little shorter, and the Play/Pause/Next row stays pinned to the bottom of the panel, so if the
+   column is ever taller than the window the buttons are still whole and the rest scrolls above them. */
+body:has(.hostGrid3) .hostGrid3 .hostCol1 #hostNowPlaying{ height: 64px !important; min-height: 64px !important; max-height: 64px !important; }
+body:has(.hostGrid3) .hostGrid3 > .hostCol.hostCol1 > .panel .row.actionsRow{
+  position: sticky; bottom: 0; z-index: 2;
+  padding-bottom: 14px; margin-bottom: -14px;
+  background: linear-gradient(to top, var(--panelSolid) 75%, transparent);
+}
+/* the left column rarely needs to scroll now; when it does, no scrollbar is drawn over the buttons (the wheel still works) */
+.hostGrid3 .hostCol1 .panel{ scrollbar-width: none; }
+.hostGrid3 .hostCol1 .panel::-webkit-scrollbar{ display: none; }
+
+/* The event the host chose (logo, or name) fills the FREE square on digital cards, like the centre of a paper card.
+   The logo is scaled to fit whatever shape the square has; the "FREE" text stays for screen readers. */
+.sq.free.hasEvent{ position: relative; }
+.sq.free.hasEvent .sqText{ visibility: hidden; }
+.sq.free.hasEvent .eventMark{ position: absolute; inset: 5px; display: flex; align-items: center; justify-content: center;
+                              border-radius: 10px; background: #fff; overflow: hidden; pointer-events: none; }
+.sq.free.hasEvent .eventMark img{ max-width: 92%; max-height: 92%; object-fit: contain; }
+.sq.free.hasEvent .eventMarkName{ background: transparent; }
+.sq.free.hasEvent .eventNameText{ color: var(--text); font-weight: 900; text-align: center; line-height: 1.1; padding: 2px;
+                                  overflow-wrap: anywhere; font-size: clamp(10px, 2.8vw, 14px); }
+
+/* Phone, portrait: the now-playing box gets more of the top row, and a long song title wraps onto a second line at a smaller size
+   instead of being cut to a few letters */
+@media (max-width: 700px) and (orientation: portrait){
+  body.playerPage .topbar .topActions{ flex: 0 1 66% !important; }
+  body.playerPage #nowPlaying.nowPlayingCompact .npTitle{
+    font-size: 14px !important; line-height: 1.2 !important;
+    display: -webkit-box !important; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2;
+    white-space: normal !important; overflow: hidden !important; overflow-wrap: anywhere;
+    height: auto !important; min-height: 0 !important;
+  }
+  body.playerPage #nowPlaying.nowPlayingCompact .npArtist{ font-size: 12px !important; }
+}
+
+/* "Not you? Join as someone else" on the join page */
+.notMeForm{ margin: 4px 0 14px; font-size: 14px; text-align: center; }
+.notMeForm .linkBtn{ background: none; border: 0; padding: 0; font: inherit; color: var(--accent2, #a78bfa); cursor: pointer; text-decoration: underline; }
+
+/* ---- Light theme: status colors that are written for dark panels (pale green, amber and red text) become darker ---- */
+html{ background: var(--bgBot); }   /* the page color also shows below a short page, not the browser's white */
+html[data-tone="light"] .spotifyOk,
+html[data-tone="light"] .claimBadge.ok,
+html[data-tone="light"] .staleOk,
+html[data-tone="light"] .plPublic{ color: #0b6b3a; }
+html[data-tone="light"] .claimWhy,
+html[data-tone="light"] .staleMsg,
+html[data-tone="light"] .claimBanner,
+html[data-tone="light"] .claimRank.first,
+html[data-tone="light"] .spotifyWarn,
+html[data-tone="light"] .plPrivate,
+html[data-tone="light"] .paperCardsBtn.stale,
+html[data-tone="light"] .pmMsg{ color: #8a5600; }
+html[data-tone="light"] .claimBadge.bad,
+html[data-tone="light"] .claimRemove:hover,
+html[data-tone="light"] .plExplicit,
+html[data-tone="light"] .plUnreadable,
+html[data-tone="light"] .plJobError{ color: #b42318; }
+
+/* ---- Options pages (Account, Themes, Saved Games, Game History, Manage Playlists): a menu down the left, the page beside it ---- */
+.optionsLayout{ display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 18px; align-items: start; }
+.optionsMain{ min-width: 0; }
+.optionsNav{ position: sticky; top: 14px; display: flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: 16px;
+             border: 1px solid var(--border); background: linear-gradient(180deg, var(--panelTop), var(--panelBot)); }
+.optionsNavItem{ display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 11px; color: var(--text); text-decoration: none; font-weight: 700; font-size: 14px; white-space: nowrap; }
+.optionsNavItem:hover{ background: rgb(var(--ink-rgb) / 0.07); }
+.optionsNavItem.active{ background: rgb(var(--accent-rgb) / 0.22); box-shadow: inset 3px 0 0 var(--accent2); }
+.optionsNavIcon{ width: 20px; text-align: center; flex: none; }
+@media (max-width: 760px){
+  .optionsLayout{ grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .optionsNav{ position: static; flex-direction: row; flex-wrap: wrap; padding: 6px; gap: 2px; }
+  .optionsNavItem{ padding: 9px 12px; flex: 1 1 auto; justify-content: center; }
+}
+
+code{ overflow-wrap: anywhere; }   /* a long address in a sentence breaks instead of making the page wider than a phone */
+
+/* Win pattern: its name and a tiny picture of the squares it needs */
+.patternBadge{ display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+.patternBadge b{ color: var(--text); }
+.patternMini{ display: inline-grid; grid-template-columns: repeat(5, 0.5em); gap: 1px; }
+.patternMini i{ width: 0.5em; height: 0.5em; border-radius: 1px; background: rgb(var(--ink-rgb) / 0.2); }
+.patternMini i.on{ background: var(--accent2, #a78bfa); }
+.patternBadge[data-pattern="line"] .patternMini{ display: none; }
+.roundPart[hidden]{ display: none; }
+.patternRow{ display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin-top: 8px; }
+.patternRow label{ font-size: 13px; color: var(--muted); }
+.patternRow select{ width: auto; }
+.patternRow.compact .patternWhat, .patternRow.compact .sepDot{ display: none; }   /* the host's select already says the name; the round and the picture are enough */
+
+/* Winners so far (player's phone) and the final standings on the game-over screen */
+.winnersBox{ margin: 8px 0 12px; padding: 8px 12px; border-radius: 12px; background: rgb(var(--ink-rgb) / 0.05); font-size: 14px; }
+.winnersBox summary{ cursor: pointer; font-weight: 700; }
+.winnersBox ol, .finalWinners{ margin: 6px 0 0; padding-left: 1.4em; }
+.winnersBox .what, .finalWinners .what{ color: var(--muted); font-size: 0.85em; }
+.finalWinners{ text-align: left; display: inline-block; font-size: 1.1em; margin: 10px 0; }
+
+/* Co-host link box in the Bingo Claims panel */
+.cohostBox{ margin: 6px 0 10px; padding: 8px 10px; border-radius: 10px; background: rgb(var(--ink-rgb) / 0.06); }
+.cohostRow{ display: flex; gap: 6px; margin-top: 6px; }
+.cohostRow input{ flex: 1; min-width: 0; font-size: 12px; }
+.headLinks{ display: inline-flex; gap: 12px; align-items: baseline; }
+.row.alignTop{ align-items: flex-start; }
+.patternRow.compact{ margin-bottom: 14px; }   /* a gap before the claims list under it */

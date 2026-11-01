@@ -1,0 +1,2 @@
+{# A player's picture: an animal in a colored circle (the color is a class, so no inline styles). #}
+{% macro avatar(p, size='') %}{% set a = avatar_info(p.avatar, p.avatar_color) %}<span class="avatar avc-{{ a.color }}{% if size %} {{ size }}{% endif %}" role="img" aria-label="{{ a.label }}" title="{{ a.label }}">{{ a.emoji }}</span>{% endmacro %}
