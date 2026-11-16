@@ -23,6 +23,28 @@
 
 <div class="panel">
   <div class="panelHeader">
+    <div class="title">Change user name</div>
+    <div class="sub">Your games, playlists and settings stay with you. You stay signed in.{% if sso_login(request).enabled %} If you sign in with {{ sso_login(request).name }}, the name there has to match this one, so tell whoever runs Bingo if you change it.{% endif %}</div>
+  </div>
+  {% if user and user.username|lower == 'admin' %}
+  <div class="muted">The local admin account keeps the name "admin".</div>
+  {% else %}
+  <form method="post" action="/host/account/username" class="form">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+    <div class="row">
+      <div class="col">
+        <label class="label" for="f_new_username">New user name (now: {{ user.username if user else '' }})</label>
+        <input id="f_new_username" class="input" name="new_username" maxlength="64" autocomplete="off" required />
+      </div>
+      <div class="col"></div>
+    </div>
+    <button class="btn btnPrimary" type="submit">Change user name</button>
+  </form>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <div class="panelHeader">
     <div class="title">Change password</div>
     <div class="sub">You must enter your current password.</div>
   </div>

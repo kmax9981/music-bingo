@@ -4,6 +4,7 @@ __pycache__/
 *.pyd
 .env
 config-bingo.env
+oidc.secrets
 config/postgres/data/
 .DS_Store
 \n

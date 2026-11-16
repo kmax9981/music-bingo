@@ -60,8 +60,59 @@
 
 <div class="panel">
   <div class="panelHeader">
+    <div class="title">Single sign-in (optional)</div>
+    <div class="sub">Let hosts sign in through another service (Authentik, Keycloak, Google and so on) instead of a password here. Players never sign in. A host signs in with the service only if their name there matches a host account here. Anything set in the server's settings file is shown but can only be changed there.</div>
+  </div>
+  <form method="post" action="/host/admin/sso" class="form" autocomplete="off">
+    <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+    <div class="mt10">
+      {% if sso.switch.src == 'env' %}<div class="muted">Single sign-in is <b>{{ 'turned on' if sso.switch.on else 'turned off' }}</b> <span class="small">(set in the settings file)</span></div>
+      {% else %}<label><input type="checkbox" name="enabled" value="1" {{ 'checked' if sso.switch.on else '' }}/> <b>Turn on single sign-in</b> (untick to switch it off and keep the settings below)</label>{% endif %}
+    </div>
+    <div class="muted">Status: <b>{{ 'on' if sso.enabled else ('off, switched off (settings kept)' if sso.configured else 'off, not set up yet') }}</b>. Register this redirect address with the service: <code>{{ sso.redirect_uri }}</code></div>
+    <label class="label mt10" for="f_sso_issuer">Service address (issuer), for example https://login.example.com/application/o/bingo/</label>
+    {% if sso.OIDC_ISSUER.src == 'env' %}<div class="muted">{{ sso.OIDC_ISSUER.value }} <span class="small">(set in the settings file)</span></div>
+    {% else %}<input id="f_sso_issuer" class="input" name="issuer" value="{{ sso.OIDC_ISSUER.value }}" spellcheck="false" placeholder="https://login.example.com/application/o/bingo/" />{% endif %}
+    <div class="row">
+      <div class="col">
+        <label class="label" for="f_sso_id">Client ID</label>
+        {% if sso.OIDC_CLIENT_ID.src == 'env' %}<div class="muted">{{ sso.OIDC_CLIENT_ID.value }} <span class="small">(set in the settings file)</span></div>
+        {% else %}<input id="f_sso_id" class="input" name="client_id" value="{{ sso.OIDC_CLIENT_ID.value }}" spellcheck="false" />{% endif %}
+      </div>
+      <div class="col">
+        <label class="label" for="f_sso_secret">Client secret</label>
+        {% if sso.secret_src == 'env' %}<div class="muted">Set in the settings file</div>
+        {% else %}<input id="f_sso_secret" class="input" type="password" name="client_secret" autocomplete="off" spellcheck="false" placeholder="{{ 'Saved. Type to replace it.' if sso.secret_src else 'Not set' }}" />{% endif %}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <label class="label" for="f_sso_name">Button text, shown as "Sign in with ..."</label>
+        {% if sso.OIDC_PROVIDER_NAME.src == 'env' %}<div class="muted">{{ sso.OIDC_PROVIDER_NAME.value }} <span class="small">(set in the settings file)</span></div>
+        {% else %}<input id="f_sso_name" class="input" name="provider_name" value="{{ sso.OIDC_PROVIDER_NAME.value }}" placeholder="Single sign-in" />{% endif %}
+      </div>
+      <div class="col">
+        <label class="label" for="f_sso_claim">Which field holds the user name (default preferred_username)</label>
+        {% if sso.OIDC_USERNAME_CLAIM.src == 'env' %}<div class="muted">{{ sso.OIDC_USERNAME_CLAIM.value }} <span class="small">(set in the settings file)</span></div>
+        {% else %}<input id="f_sso_claim" class="input" name="username_claim" value="{{ sso.OIDC_USERNAME_CLAIM.value }}" placeholder="preferred_username" spellcheck="false" />{% endif %}
+      </div>
+    </div>
+    <div class="mt10">
+      {% if sso.hide.src == 'env' %}<div class="muted">Hide the password form on the login page: <b>{{ 'yes' if sso.hide.value else 'no' }}</b> <span class="small">(set in the settings file)</span></div>
+      {% else %}<label><input type="checkbox" name="hide_local" value="1" {{ 'checked' if sso.hide.value else '' }}/> Hide the password form on the login page (a local admin can still sign in at <code>/login?local=1</code>)</label>{% endif %}
+    </div>
+    <button class="btn btnPrimary" type="submit">Save single sign-in settings</button>
+  </form>
+  <form method="post" action="/host/admin/sso/test" class="form mt10">
+    <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+    <button class="btn" type="submit">Check that the service answers</button>
+  </form>
+</div>
+
+<div class="panel">
+  <div class="panelHeader">
     <div class="title">Create host user</div>
-    <div class="sub">Users will log in at /login with their own username + password. The password you set here is temporary: they are asked to choose their own at their first login.</div>
+    <div class="sub">{% if sso_login(request).enabled %}This person signs in with {{ sso_login(request).name }}, so the user name here must be the same as their name there. No password is needed: leave it empty and nobody can use the password form for this account. If you do set one, it works as a back-up at /login?local=1 and they are asked to choose their own at that first login.{% else %}Users will log in at /login with their own username + password. The password you set here is temporary: they are asked to choose their own at their first login.{% endif %}</div>
   </div>
 
   <form method="post" action="/host/admin/users/create" class="form">
@@ -72,8 +123,8 @@
         <input id="f_username" class="input" name="username" autocomplete="username" required />
       </div>
       <div class="col">
-        <label class="label" for="f_password">Temporary password</label>
-        <input id="f_password" class="input" name="password" type="password" autocomplete="new-password" required />
+        <label class="label" for="f_password">{% if sso_login(request).enabled %}Back-up password (optional){% else %}Temporary password{% endif %}</label>
+        <input id="f_password" class="input" name="password" type="password" autocomplete="new-password" {% if not sso_login(request).enabled %}required{% endif %} />
       </div>
     </div>
 
@@ -115,11 +166,27 @@
             {% endif %}
           </td>
           <td>
+            {% if u.username|lower == 'admin' %}
+            <span class="muted small">local admin: name stays "admin"</span>
+            {% else %}
+            <form class="is12" method="post" action="/host/admin/users/rename">
+  <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
+              <input type="hidden" name="user_id" value="{{ u.id }}" />
+              <input class="is13 input" name="new_username" maxlength="64" autocomplete="off" placeholder="new user name" required />
+              <button class="btn btnGhost" type="submit">Rename</button>
+            </form>
+            {% endif %}
+
             <form class="is12" method="post" action="/host/admin/users/set_password">
   <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
               <input type="hidden" name="user_id" value="{{ u.id }}" />
+              {% if sso_login(request).enabled %}
+              <input class="is13 input" name="password" type="password" autocomplete="new-password" placeholder="back-up password" title="Only used at /login?local=1. Signing in with {{ sso_login(request).name }} is not affected. At their first password login they choose their own." required />
+              <button class="btn btnGhost" type="submit" title="Only used at /login?local=1. Signing in with {{ sso_login(request).name }} is not affected. At their first password login they choose their own.">Set back-up password</button>
+              {% else %}
               <input class="is13 input" name="password" type="password" autocomplete="new-password" placeholder="new password" required />
               <button class="btn btnGhost" type="submit">Set password</button>
+              {% endif %}
             </form>
 
             <form class="is12" method="post" action="/host/admin/users/toggle_admin">

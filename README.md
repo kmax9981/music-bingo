@@ -126,6 +126,8 @@ the author, are responsible for following Spotify's terms. Read the current poli
 | `HOST_ADMIN_PASSWORD` | Optional, for unattended installs: creates the admin account from this password instead of showing the setup screen |
 | `COOKIE_SECRET` | Optional: normally made by the app. Signs session cookies and paper-card check codes (changing it invalidates printed cards) |
 | `TRUST_PROXY_HEADERS` | `true` (default) when a proxy such as Cloudflare sets the visitor's address; `false` if the app is reachable directly |
+| `OIDC_ISSUER`, `OIDC_CLIENT_ID`, `OIDC_CLIENT_SECRET` | Optional single sign-in (OpenID Connect) for the host login, for example through Authentik: all three switch it on. Players never sign in. See [Single sign-in](docs/SSO.md) |
+| `OIDC_PROVIDER_NAME`, `OIDC_USERNAME_CLAIM`, `OIDC_HIDE_LOCAL_LOGIN` | Optional single sign-in details: button text, which claim is the user name, hiding the password form |
 
 Back up before every update: see [Backing up, restoring and updating](docs/BACKUP_AND_UPDATE.md). Database changes are applied
 automatically when the app starts.

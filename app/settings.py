@@ -6,7 +6,8 @@ from urllib.parse import urlparse
 from .db import SessionLocal
 from . import models
 
-KEYS = ('PUBLIC_BASE_URL', 'SPOTIFY_CLIENT_ID', 'SPOTIFY_CLIENT_SECRET', 'SPOTIFY_REDIRECT_URI')
+KEYS = ('PUBLIC_BASE_URL', 'SPOTIFY_CLIENT_ID', 'SPOTIFY_CLIENT_SECRET', 'SPOTIFY_REDIRECT_URI',
+        'OIDC_ENABLED', 'OIDC_ISSUER', 'OIDC_CLIENT_ID', 'OIDC_CLIENT_SECRET', 'OIDC_PROVIDER_NAME', 'OIDC_USERNAME_CLAIM', 'OIDC_HIDE_LOCAL_LOGIN')
 _cache = None   # key -> saved value; one worker process, refreshed whenever a value is saved here
 
 

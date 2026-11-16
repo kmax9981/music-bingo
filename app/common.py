@@ -78,8 +78,19 @@ def session_stamp(u) -> str:
     return hashlib.sha256((getattr(u, 'password_hash', '') or '').encode()).hexdigest()[:12]
 
 
-def host_session_value(u) -> str:
-    return sign({'host': True, 'uid': int(u.id), 'pv': session_stamp(u)})
+def host_session_value(u, sso: bool = False) -> str:
+    """The signed host session cookie. sso=True marks a session that began with the single sign-in (the mark is part of the signed
+    value, so it cannot be added by hand)."""
+    data = {'host': True, 'uid': int(u.id), 'pv': session_stamp(u)}
+    if sso:
+        data['sso'] = True
+    return sign(data)
+
+
+def session_is_sso(request: Request) -> bool:
+    cookie = request.cookies.get('host_session', '')
+    data = unsign(cookie) if cookie else None
+    return bool(data and data.get('sso') is True)
 
 
 def _host_user_from_session(request: Request, db: Session):
@@ -151,7 +162,7 @@ def require_host(request: Request, next_path: str = "/host"):
         u = _host_user_from_session(request, db)   # the user must still exist (deleted users keep old cookies)
         if u is None:
             return RedirectResponse(url=f"/login?next={next_path}", status_code=302)
-        if getattr(u, 'must_change_password', False) and request.url.path.rstrip('/') not in _ALLOWED_WHILE_CHANGING_PASSWORD:
+        if getattr(u, 'must_change_password', False) and not session_is_sso(request) and request.url.path.rstrip('/') not in _ALLOWED_WHILE_CHANGING_PASSWORD:   # a single sign-in session is not held up by a temporary password it never used
             return RedirectResponse(url='/host/account?error=' + quote(MUST_CHANGE_PASSWORD_MSG), status_code=302)
     finally:
         db.close()

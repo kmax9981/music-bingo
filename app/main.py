@@ -33,12 +33,12 @@ app.mount('/static', CachedStaticFiles(directory='app/static'), name='static')
 from . import migrations  # noqa: E402,F401  (creates the tables and applies the column migrations while it is imported)
 from . import themes  # noqa: E402,F401  (registers theme_of() for the templates)
 from . import setup_flow  # noqa: E402
-from .routes import home, solo, player, auth, host_games, playlist_pages, spotify_account, game_live, game_playback, game_claims, paper_pages, setup, cohost  # noqa: E402
+from .routes import home, solo, player, auth, host_games, playlist_pages, spotify_account, game_live, game_playback, game_claims, paper_pages, setup, cohost, sso  # noqa: E402
 
 setup_flow.startup()   # unattended install from HOST_ADMIN_PASSWORD, or send visitors to the first-run screen
 app.middleware("http")(setup.setup_redirect_middleware)   # no host account yet: every page goes to /setup
 
-for _module in (home, solo, player, auth, host_games, playlist_pages, spotify_account, game_live, game_playback, game_claims, paper_pages, setup, cohost):
+for _module in (home, solo, player, auth, host_games, playlist_pages, spotify_account, game_live, game_playback, game_claims, paper_pages, setup, cohost, sso):
     app.include_router(_module.router)
 
 # Used by the test server and tools that import this module

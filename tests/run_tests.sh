@@ -24,6 +24,8 @@ if [ "${SKIP_SOLO:-}" != "1" ]; then "$PYTHON" "$HERE/test_solo.py" > "$SOLO_OUT
 if [ "${1:-}" = "--solo-only" ]; then shift; else "$PYTHON" "$HERE/test_app.py" "$@" || status=1; fi
 if [ -n "$solo_pid" ]; then wait "$solo_pid" || status=1; cat "$SOLO_OUT"; fi
 if [ "${SKIP_SETUP:-}" != "1" ] && [ "${SOLO_ONLY:-}" != "1" ]; then BASE="http://127.0.0.1:$SETUP_PORT" CONTAINER="$SETUP_NAME" "$PYTHON" "$HERE/test_setup.py" || status=1; fi
+# Accounts: renaming, creating hosts, and single sign-in staying invisible while off (no browser needed)
+if [ "${SKIP_ACCOUNTS:-}" != "1" ] && [ "${SOLO_ONLY:-}" != "1" ]; then BASE="http://127.0.0.1:$PORT" "$PYTHON" "$HERE/test_accounts.py" || status=1; fi
 # Accessibility (axe-core): SKIP_A11Y=1 to leave out
 if [ "${SKIP_A11Y:-}" != "1" ] && [ "${SOLO_ONLY:-}" != "1" ]; then BASE="http://127.0.0.1:$PORT" "$PYTHON" "$HERE/test_a11y.py" || status=1; fi
 # The player's whole game in other browser engines: BROWSERS="chromium firefox webkit" (WebKit runs in Playwright's Docker image)

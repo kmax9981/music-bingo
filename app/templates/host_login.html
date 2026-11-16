@@ -9,7 +9,12 @@
   <div class="alert alertBad">{{ error }}</div>
   {% endif %}
 
-  <form method="post" action="/login" class="form">
+  {% set sso = sso_login(request) %}
+  {% if sso.enabled %}
+  <p><a class="btn btnPrimary" href="/auth/oidc/login?next={{ (next or '')|urlencode }}">Sign in with {{ sso.name }}</a></p>
+  {% endif %}
+  {% if not sso.hide_local %}
+  <form method="post" action="/login?local=1" class="form">
   <input type="hidden" name="csrf_token" value="{{ request.state.csrf_token }}"/>
   
     <input type="hidden" name="next" value="{{ next or '' }}" />
@@ -25,5 +30,6 @@
     <button class="btn btnPrimary" type="submit">Login</button>
   
 </form>
+  {% endif %}
 </div>
 {% endblock %}

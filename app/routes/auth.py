@@ -1,4 +1,5 @@
 """Host login/logout, account page and admin user management."""
+import secrets
 from urllib.parse import quote
 from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
@@ -8,9 +9,10 @@ from .. import models
 from ..login_guard import LOGIN_BLOCKED_MSG as _LOGIN_BLOCKED_MSG, login_blocked as _login_blocked, login_failed as _login_failed, login_keys as _login_keys, login_succeeded as _login_succeeded
 from ..passwords import pw_hash as _pw_hash, pw_verify as _pw_verify
 from ..http_headers import safe_next_path as _safe_next_path
-from .. import themes, settings
+from .. import themes, settings, oidc, usernames
 from urllib.parse import urlparse
 from ..cleanup import delete_host
+from .sso import admin_cfg as _sso_admin_cfg
 from ..common import _bootstrap_admin_user, _host_user_from_session, host_session_value, _require_admin, clear_cookie, host_authed, require_host, set_cookie, templates
 from ..errors import best_effort, log_swallowed, rollback_quietly
 
@@ -29,20 +31,27 @@ def host_login(request: Request):
     return RedirectResponse(url='/login', status_code=307)
 
 
-@router.get('/host/logout')
-def host_logout_get(request: Request):
-    resp = RedirectResponse(url='/', status_code=302)
+def _logout_response(request: Request):
+    """Back to the home page; someone who signed in through the single sign-in is also sent to the provider's sign-out
+    address, so signing out here ends that session too (otherwise the next click on Sign in would log them straight back in)."""
+    dest = '/'
+    if request.cookies.get('host_sso') and oidc.enabled():
+        dest = oidc.end_session_url() or '/'
+    resp = RedirectResponse(url=dest, status_code=302)
     clear_cookie(resp, 'host_session')
     clear_cookie(resp, 'host_state')
+    clear_cookie(resp, 'host_sso')
     return resp
+
+
+@router.get('/host/logout')
+def host_logout_get(request: Request):
+    return _logout_response(request)
 
 
 @router.post('/host/logout')
 def host_logout(request: Request):
-    resp = RedirectResponse(url='/', status_code=302)
-    clear_cookie(resp, 'host_session')
-    clear_cookie(resp, 'host_state')
-    return resp
+    return _logout_response(request)
 
 
 @router.get('/host/whoami')
@@ -203,7 +212,7 @@ def host_admin_users(request: Request, db: Session = Depends(get_db)):
         return ar
     users = db.query(models.HostUser).order_by(models.HostUser.created_at.desc()).all()
     return templates.TemplateResponse(request, 'host_admin_users.html', {
-        'request': request, 'users': users,
+        'request': request, 'users': users, 'sso': _sso_admin_cfg(),
         'ok': request.query_params.get('ok'), 'error': request.query_params.get('error'),
         'cfg': {'public_url': settings.public_base(), 'public_src': settings.source('PUBLIC_BASE_URL'),
                 'spotify_id': settings.spotify_client_id(), 'spotify_id_src': settings.source('SPOTIFY_CLIENT_ID'),
@@ -241,7 +250,7 @@ def host_admin_settings(request: Request, db: Session = Depends(get_db), public_
 
 
 @router.post('/host/admin/users/create')
-def host_admin_users_create(request: Request, db: Session = Depends(get_db), username: str = Form(...), password: str = Form(...), is_admin: str = Form('')):
+def host_admin_users_create(request: Request, db: Session = Depends(get_db), username: str = Form(...), password: str = Form(''), is_admin: str = Form('')):
     r = require_host(request)
     if r:
         return r
@@ -250,17 +259,70 @@ def host_admin_users_create(request: Request, db: Session = Depends(get_db), use
         return ar
     uname = (username or '').strip()
     pw = (password or '')
-    if not uname or not pw:
+    sso = oidc.enabled()
+    if not uname or (not pw and not sso):
         return RedirectResponse(url='/host/admin/users', status_code=302)
-    if len(pw) < 8:
+    existing = {(n or '').lower() for (n,) in db.query(models.HostUser.username).all()}
+    uname, err = usernames.check_new_username(uname, '', existing)
+    if err:
+        return RedirectResponse(url='/host/admin/users?error=' + quote(err), status_code=302)
+    if pw and len(pw) < 8:
         return RedirectResponse(url='/host/admin/users?error=' + quote('The temporary password must be at least 8 characters.'), status_code=302)
-    exists = db.query(models.HostUser).filter(models.HostUser.username == uname).first()
-    if exists:
-        return RedirectResponse(url='/host/admin/users', status_code=302)
-    u = models.HostUser(username=uname, password_hash=_pw_hash(pw), is_admin=bool(is_admin), must_change_password=True)   # the host picks their own at first login
+    random_pw = not pw   # single sign-in is on and no password was typed: nobody needs to know one, the person signs in with the service
+    if random_pw:
+        pw = secrets.token_urlsafe(32)
+    u = models.HostUser(username=uname, password_hash=_pw_hash(pw), is_admin=bool(is_admin), must_change_password=not random_pw)   # the host picks their own at first login
     db.add(u)
     db.commit()
     return RedirectResponse(url='/host/admin/users', status_code=302)
+
+
+def _do_rename(db: Session, target, new_name: str, by) -> tuple:
+    """Rename a host account. Returns (ok, message). Nothing else about the account changes (its games, playlists and Spotify link
+    stay with it: they point at its id)."""
+    existing = {(n or '').lower() for (n,) in db.query(models.HostUser.username).all()}
+    clean, err = usernames.check_new_username(new_name, target.username, existing)
+    if err:
+        return False, err
+    old = target.username
+    target.username = clean
+    try:
+        db.commit()
+    except Exception:
+        rollback_quietly(db)
+        return False, 'The name could not be saved. Try another one.'
+    print(f"HOST_RENAMED id={target.id} old={old!r} new={clean!r} by={getattr(by, 'username', None)!r}")
+    return True, f'{old} is now called {clean}.'
+
+
+@router.post('/host/admin/users/rename')
+def host_admin_users_rename(request: Request, db: Session = Depends(get_db), user_id: int = Form(...), new_username: str = Form('')):
+    """Admin: rename any host account except the local admin."""
+    r = require_host(request)
+    if r:
+        return r
+    ar = _require_admin(request, db)
+    if ar:
+        return ar
+    me = _host_user_from_session(request, db)
+    u = db.query(models.HostUser).filter(models.HostUser.id == user_id).first()
+    if not u:
+        return RedirectResponse(url='/host/admin/users', status_code=302)
+    ok, msg = _do_rename(db, u, new_username, me)
+    return RedirectResponse(url='/host/admin/users?' + ('ok=' if ok else 'error=') + quote(msg), status_code=302)
+
+
+@router.post('/host/account/username')
+def host_account_change_username(request: Request, db: Session = Depends(get_db), new_username: str = Form('')):
+    """A host renames their own account (the session stays valid: it is tied to the account id and password, not the name)."""
+    r = require_host(request)
+    if r:
+        return r
+    u = _host_user_from_session(request, db)
+    if not u:
+        return RedirectResponse(url='/login?next=/play', status_code=302)
+    ok, msg = _do_rename(db, u, new_username, u)
+    return RedirectResponse(url='/host/account?' + ('ok=' if ok else 'error=') + quote(msg), status_code=302)
 
 
 @router.post('/host/admin/users/toggle_admin')
